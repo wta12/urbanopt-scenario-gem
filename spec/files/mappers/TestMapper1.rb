@@ -20,6 +20,8 @@ module URBANopt
       
         geometry_file = scenario.geometry_file
         
+        OpenStudio::Extension.set_measure_argument(@osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature_id.to_f*1000.0)
+        
         @osw[:name] = feature_name
         @osw[:description] = feature_name
         return @osw
