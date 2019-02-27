@@ -26,6 +26,27 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
+require "openstudio/extension"
+
+module URBANopt
+  module Scenario
+    class ScenarioDatapoint 
+    
+      attr_accessor :scenario, :feature_id, :feature_name, :mapper_class
+      
+      def initialize(scenario)
+        @scenario = scenario
+      end
+      
+      def run_dir
+        raise "Feature ID not set" if @feature_id.nil?
+        return File.join(@scenario.root_dir, @feature_id)
+      end
+      
+      def create_osw
+      
+      end
+      
+    end
+  end
+end

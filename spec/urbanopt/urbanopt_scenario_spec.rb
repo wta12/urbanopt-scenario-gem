@@ -26,6 +26,31 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
+require_relative '../spec_helper'
+
+RSpec.describe URBANopt::Scenario do
+  it 'has a version number' do
+    expect(URBANopt::Scenario::VERSION).not_to be nil
+  end
+  
+  it 'can run a scenario' do
+    name = 'Example Scenario'
+    root_dir = File.join(File.dirname(__FILE__), '../files/')
+    csv_file = File.join(root_dir, 'example_scenario.csv')
+    mapper_files_dir = File.join(root_dir, 'mappers/')
+    run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
+    
+    scenario = URBANopt::Scenario::ScenarioCSV.new(name, root_dir, csv_file, mapper_files_dir, run_dir)
+    expect(scenario.name).to eq(name)
+    expect(scenario.root_dir).to eq(root_dir)
+    expect(scenario.csv_file).to eq(csv_file)
+    expect(scenario.mapper_files_dir).to eq(mapper_files_dir)
+    expect(scenario.run_dir).to eq(run_dir)
+    
+    failures = scenario.run
+    
+    expect(failures).to be empty?
+  end
+
+
+end

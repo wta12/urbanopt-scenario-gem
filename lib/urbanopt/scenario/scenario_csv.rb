@@ -26,6 +26,88 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require "urbanopt/scenario/version"
 require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
+require "urbanopt/scenario/scenario_datapoint"
+
+require 'csv'
+require 'fileutils'
+
+module URBANopt
+  module Scenario
+    class ScenarioCSV < ScenarioBase
+    
+      attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows
+      
+      def initialize(name, root_dir, csv_file, mapper_files_dir, run_dir)
+        super()
+        @name = name
+        @root_dir = root_dir
+        
+        @csv_file = csv_file
+        @mapper_files_dir = mapper_files_dir
+        @run_dir = run_dir
+        
+        @num_header_rows = 0
+      end
+      
+      # return an array of ScenarioDatapoint objects from the CSV
+      def read_csv
+        
+        # DLM: TODO use HeaderConverters
+        
+        rows_skipped = 0
+        result = []
+        CSV.foreach(@csv_file) do |row|
+          
+          if rows_skipped < @num_header_rows
+            rows_skipped += 1
+            next
+          end
+          
+          feature_id = row[0]
+          feature_name = row[1]
+          mapper_class = row[2]
+          
+          datapoint = ScenarioDatapoint.new(self)
+          datapoint.feature_id = feature_id
+          datapoint.feature_name = feature_name
+          datapoint.mapper_class = mapper_class
+          
+          result << datapoint
+        end
+        
+        return result
+      end
+      
+      
+      def create_osws
+        
+        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
+        
+        Dir.glob(File.join(@run_dir, '/*')).each do |f|
+          FileUtils.rm_rf(f)
+        end
+        
+        datapoints = read_csv
+        
+        osws = []
+        datapoints.each do |datapoint|
+          osws << datapoint.create_osw
+        end
+
+        return osws
+      end
+      
+      def run
+        runner = OpenStudio::Extension::Runner.new(@root_dir)
+        
+        osws = create_osws
+        
+        failures = runner.run_osws(osws)
+        
+        return failures
+      end
+
+    end
+  end
+end

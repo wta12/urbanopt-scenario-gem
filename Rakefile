@@ -43,6 +43,6 @@ RSpec::Core::RakeTask.new(:spec)
 require "openstudio/extension/rake_task"
 require "urbanopt/scenario"
 rake_task = OpenStudio::Extension::RakeTask.new
-rake_task.set_extension_class(URBANopt::Scenario::Scenario)
+rake_task.set_extension_class(URBANopt::Scenario::ScenarioBase)
 
 task :default => :spec
