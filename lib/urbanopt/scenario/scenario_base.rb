@@ -26,7 +26,19 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
+require "openstudio/extension"
+
+module URBANopt
+  module Scenario
+    class ScenarioBase < OpenStudio::Extension::Extension
+    
+      attr_accessor :name, :geometry_file
+      
+      def initialize
+        super
+        @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
+      end
+      
+    end
+  end
+end

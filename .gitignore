@@ -1,13 +1,14 @@
-/.bundle/
+.bundle/
 /.yardoc
 /.ruby-version
-/Gemfile.lock
+Gemfile.lock
 /gems
 /_yardoc/
 /coverage/
 /doc/
 /pkg/
 /spec/reports/
+/spec/test/
 /tmp/
 /test/
 /lib/measures/test_results

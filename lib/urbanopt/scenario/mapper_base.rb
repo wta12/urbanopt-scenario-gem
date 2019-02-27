@@ -26,21 +26,22 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require_relative '../spec_helper'
+require "openstudio/extension"
 
-RSpec.describe URBANopt::Scenario do
-  it "has a version number" do
-    expect(URBANopt::Scenario::VERSION).not_to be nil
-  end
+module URBANopt
+  module Scenario
+    class MapperBase 
+      
+      # perform initialization functions
+      def initialize
 
-  it 'has a base version number' do
-    instance = URBANopt::Scenario::Scenario.new
-    expect(instance.version).not_to be nil
-    expect(instance.version).to eq(URBANopt::Scenario::VERSION)
-  end
-
-  it 'does not have a measures directory' do
-    instance = URBANopt::Scenario::Scenario.new
-    expect(File.exists?(instance.measures_dir)).to be false
+      end
+      
+      # create osw file given a ScenarioBase object, feature_id, and feature_name
+      def create_osw(scenario, feature_id, feature_name)
+        raise "create_osw not implemented for MapperBase, override in your class"
+      end
+      
+    end
   end
 end
