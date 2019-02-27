@@ -26,7 +26,22 @@
 #  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ########################################################################################################################
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
+require "openstudio/extension"
+
+module URBANopt
+  module Scenario
+    class MapperBase 
+      
+      # perform initialization functions
+      def initialize
+
+      end
+      
+      # create osw file given a ScenarioBase object, feature_id, and feature_name
+      def create_osw(scenario, feature_id, feature_name)
+        raise "create_osw not implemented for MapperBase, override in your class"
+      end
+      
+    end
+  end
+end

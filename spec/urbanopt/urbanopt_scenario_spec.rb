@@ -37,10 +37,13 @@ RSpec.describe URBANopt::Scenario do
     name = 'Example Scenario'
     root_dir = File.join(File.dirname(__FILE__), '../../')
     csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
+    geometry_file = File.join(File.dirname(__FILE__), '../files/example_geometry.json')
     mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
     
+    # create a new ScenarioCSV, we could create many of these
     scenario = URBANopt::Scenario::ScenarioCSV.new(name, root_dir, csv_file, mapper_files_dir, run_dir)
+    scenario.geometry_file = geometry_file
     scenario.num_header_rows = 1
     
     expect(scenario.name).to eq(name)
@@ -67,6 +70,8 @@ RSpec.describe URBANopt::Scenario do
     failures = scenario.run
     
     expect(failures).to be_empty
+    
+    # DLM: TODO, add in post-processing
   end
 
 
