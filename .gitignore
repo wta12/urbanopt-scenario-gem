@@ -8,6 +8,7 @@ Gemfile.lock
 /doc/
 /pkg/
 /spec/reports/
+/spec/test/
 /tmp/
 /test/
 /lib/measures/test_results

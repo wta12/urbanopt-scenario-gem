@@ -48,6 +48,25 @@ module URBANopt
         @run_dir = run_dir
         
         @num_header_rows = 0
+        
+        load_mapper_files
+      end
+      
+      def clear
+        Dir.glob(File.join(@run_dir, '/*')).each do |f|
+          FileUtils.rm_rf(f)
+        end
+      end
+      
+      def load_mapper_files
+        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
+          begin
+            require(f)
+          rescue LoadError => e
+            puts e.message
+            raise         
+          end
+        end
       end
       
       # return an array of ScenarioDatapoint objects from the CSV
@@ -64,9 +83,11 @@ module URBANopt
             next
           end
           
-          feature_id = row[0]
-          feature_name = row[1]
-          mapper_class = row[2]
+          break if row[0].nil?
+          
+          feature_id = row[0].chomp
+          feature_name = row[1].chomp
+          mapper_class = row[2].chomp
           
           datapoint = ScenarioDatapoint.new(self)
           datapoint.feature_id = feature_id
@@ -82,11 +103,9 @@ module URBANopt
       
       def create_osws
         
-        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
+        clear
         
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
+        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
         
         datapoints = read_csv
         

@@ -40,11 +40,26 @@ module URBANopt
       
       def run_dir
         raise "Feature ID not set" if @feature_id.nil?
-        return File.join(@scenario.root_dir, @feature_id)
+        raise "Scenario run dir not set" if @scenario.run_dir.nil?
+        return File.join(@scenario.run_dir, @feature_id + '/')
       end
       
       def create_osw
-      
+        osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
+        dir = run_dir
+        FileUtils.rm_rf(dir) if File.exists?(dir)
+        FileUtils.mkdir_p(dir) if !File.exists?(dir)
+        osw_path = File.join(dir, 'in.osw')
+        File.open(osw_path, 'w') do |f|
+          f << JSON.pretty_generate(osw) 
+          # make sure data is written to the disk one way or the other
+          begin
+            f.fsync
+          rescue
+            f.flush
+          end
+        end
+        return osw_path
       end
       
     end

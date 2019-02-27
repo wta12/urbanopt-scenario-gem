@@ -1,4 +1,4 @@
-Feature Id	Feature Name	Mapper Class
-1	Building 1	TestMapper1
-2	Building 2	TestMapper1
-3	Building 3	TestMapper1
+Feature Id,	Feature Name,	Mapper Class
+1,Building 1,URBANopt::Scenario::TestMapper1
+2,Building 2,URBANopt::Scenario::TestMapper1
+3,Building 3,URBANopt::Scenario::TestMapper1
