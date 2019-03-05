@@ -28,7 +28,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-
 require 'urbanopt/scenario'
 require 'openstudio/common_measures'
 require 'openstudio/model_articulation'
