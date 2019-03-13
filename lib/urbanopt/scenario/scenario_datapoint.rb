@@ -28,8 +28,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
-
 module URBANopt
   module Scenario
     class ScenarioDatapoint 

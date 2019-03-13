@@ -30,6 +30,7 @@
 
 require "urbanopt/scenario/scenario_base"
 require "urbanopt/scenario/scenario_datapoint"
+require "urbanopt/scenario/scenario_post_processor_base"
 
 require 'csv'
 require 'fileutils'
@@ -38,7 +39,7 @@ module URBANopt
   module Scenario
     class ScenarioCSV < ScenarioBase
     
-      attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows
+      attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows, :post_processors
       
       ##
       # ScenarioCSV defines a scenario by assigning a Ruby MapperBase to 
@@ -59,6 +60,8 @@ module URBANopt
         
         @instance_lock = Mutex.new
         @datapoints = nil
+        
+        @post_processors = [ScenarioPostProcessorBase.new]
         
         @num_header_rows = 0
         
@@ -165,26 +168,17 @@ module URBANopt
       end
       
       ##
-      # Clears all results, creates simulation OSWs for all datapoints, and runs simulations
+      # Run all registered post processors
       ##
-      #  @return [Array] Array of failed simulations
       def post_process
 
-        #TODO: Rawad fill in here
-        
-        # create a new ScenarioResult object
-        result = ScenarioResult.new
-        
-        # loop over each datapoint and get that datapoints result files
-        datapoints.each do |datapoint|
-          # add those results to the ScenarioResult
-          result.add(datapoint)
+        # loop over all post processors
+        post_processors.each do |pp|
+          pp.set_scenario(self)
+          pp.run
+          pp.save
         end
-
-        # save the ScenarioResult
-        result.save
         
-        return result
       end
       
       private

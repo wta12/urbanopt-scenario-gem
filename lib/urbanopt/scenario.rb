@@ -31,4 +31,6 @@
 require "urbanopt/scenario/version"
 require "urbanopt/scenario/mapper_base"
 require "urbanopt/scenario/scenario_base"
+require "urbanopt/scenario/scenario_datapoint"
 require "urbanopt/scenario/scenario_csv"
+require "urbanopt/scenario/scenario_post_processor_base"

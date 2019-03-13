@@ -28,23 +28,37 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
 
 module URBANopt
   module Scenario
-    class ScenarioResult
+    class ScenarioPostProcessorBase
     
-
       ##
-      # ScenarioResult contains overall results for the entire scenario (or at least a subset of datapoints)
+      # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
       ##
-      #  @param [ScenarioBase] scenario Scenario for this result
-      def initialize(scenario)
-        @scenario = scenario
+      def initialize()
         
         # TODO: Rawad might need other arguments to constructor, e.g. result name, etc
         
         # TODO: Rawad this will need other members to collect the timeseries data from each data point, etc
+        
+      end
+      
+      ##
+      # Assign the scenario to this result
+      ##
+      def set_scenario(scenario)
+        @scenario = scenario
+      end
+      
+      ##
+      # Run the post processor on this scenario
+      ##
+      def run
+        # this run method adds all the datapoints, you can extend it to do more custom stuff
+        @scenario.datapoints.each do |datapoint|
+          add_datapoint(datapoint)
+        end
       end
       
       ##
@@ -59,6 +73,14 @@ module URBANopt
       ##
       def save
         # TODO: Rawad, save the timeseries data to a CSV and the summary data to JSON
+        
+        File.open( File.join(@scenario.run_dir, 'scenario_out.json'), 'w') do |file|
+          file << "{\"Results\": 1}"
+        end
+        
+        File.open( File.join(@scenario.run_dir, 'scenario_timeseries.csv'), 'w') do |file|
+          file << "1,2,3"
+        end        
       end
       
     end
