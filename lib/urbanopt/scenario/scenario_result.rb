@@ -32,36 +32,33 @@ require "openstudio/extension"
 
 module URBANopt
   module Scenario
-    class ScenarioBase < OpenStudio::Extension::Extension
+    class ScenarioResult
     
-      attr_accessor :name, :geometry_file
-      
+
       ##
-      # Base class for Scenarios, extends OpenStudio::Extension::Extension
-      def initialize
-        super
-        @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+      # ScenarioResult contains overall results for the entire scenario (or at least a subset of datapoints)
+      ##
+      #  @param [ScenarioBase] scenario Scenario for this result
+      def initialize(scenario)
+        @scenario = scenario
+        
+        # TODO: Rawad might need other arguments to constructor, e.g. result name, etc
+        
+        # TODO: Rawad this will need other members to collect the timeseries data from each data point, etc
       end
       
       ##
-      # Return the absolute path of the measures or nil if there is none, can be used when configuring OSWs
-      def measures_dir
-        nil
+      # Add results from a datapoint to this result
+      ##
+      def add_datapoint(datapoint)
+        # TODO: Rawad, add results from a datapoint, this includes parsing its out.osw to find out if it ran, collecting the timeseries data, etc
       end
       
       ##
-      # Relevant files such as weather data, design days, etc.
-      # Return the absolute path of the files or nil if there is none, used when configuring OSWs
-      def files_dir
-        return nil
-      end
-      
+      # Save scenario result
       ##
-      # Doc templates are common files like copyright files which are used to update measures and other code
-      # Doc templates will only be applied to measures in the current repository
-      # Return the absolute path of the doc templates dir or nil if there is none
-      def doc_templates_dir
-        return File.absolute_path(File.join(@root_dir, 'doc_templates'))
+      def save
+        # TODO: Rawad, save the timeseries data to a CSV and the summary data to JSON
       end
       
     end

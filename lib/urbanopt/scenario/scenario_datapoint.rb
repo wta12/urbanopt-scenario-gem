@@ -36,16 +36,44 @@ module URBANopt
     
       attr_accessor :scenario, :feature_id, :feature_name, :mapper_class
       
-      def initialize(scenario)
+      ##
+      # ScenarioDatapoint represents the simulation of a feature in a given scenario
+      ##
+      #  @param [ScenarioBase] scenario Scenario containing this ScenarioDatapoint
+      #  @param [String] feature_id Unique id of the feature for this ScenarioDatapoint
+      #  @param [String] feature_name Human readable name of the feature for this ScenarioDatapoint
+      #  @param [String] mapper_class Name of Ruby class used to translate feature to simulation OSW
+      def initialize(scenario, feature_id, feature_name, mapper_class)
         @scenario = scenario
+        @feature_id = feature_id
+        @feature_name = feature_name
+        @mapper_class = mapper_class
       end
       
+      ##
+      # Return the directory that this datapoint will run in
+      ##
+      #  @return [String] Directory that this datapoint will run in
       def run_dir
         raise "Feature ID not set" if @feature_id.nil?
         raise "Scenario run dir not set" if @scenario.run_dir.nil?
         return File.join(@scenario.run_dir, @feature_id + '/')
       end
       
+      ##
+      # Return the directory that this datapoint will run in
+      ##
+      def clear
+        dir = run_dir
+        FileUtils.rm_rf(dir) if File.exists?(dir)
+        FileUtils.mkdir_p(dir) if !File.exists?(dir)
+      end
+      
+      ##
+      # Create run directory and generate simulation OSW, all previous contents of directory are removed
+      # The simulation OSW is created by evaluating the mapper_class's create_osw method
+      ##
+      #  @return [String] Path to the simulation OSW
       def create_osw
         osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
         dir = run_dir
@@ -62,6 +90,55 @@ module URBANopt
           end
         end
         return osw_path
+      end
+      
+      ##
+      # Return true if the datapoint is out of date, false otherwise.  Non-existant files are out of date.
+      ##
+      #  @return [Boolean] True if the datapoint is out of date, false otherwise
+      def out_of_date?
+        dir = run_dir
+        if !File.exists?(dir)
+          return true
+        end
+        
+        out_osw = File.join(dir, 'out.osw')
+        if !File.exists?(out_osw)
+          return true
+        end
+        out_osw_time = File.mtime(out_osw)
+        
+        # array of files that this datapoint depends on
+        dependencies = []
+        
+        # depends on the geometry file
+        dependencies << scenario.geometry_file
+        
+        # depends on the csv file
+        dependencies << scenario.csv_file
+        
+        # depends on the mapper classes
+        Dir.glob(File.join(scenario.mapper_files_dir, "*")).each do |f|
+          dependencies << f
+        end
+        
+        # depends on the root gemfile
+        dependencies << File.join(scenario.root_dir, 'Gemfile')
+        dependencies << File.join(scenario.root_dir, 'Gemfile.lock')
+        
+        # todo, depends on all the measures?
+        
+        # check if out of date
+        dependencies.each do |f|
+          if File.exists?(f)
+            if File.mtime(f) > out_osw_time
+              puts "File '#{f}' is newer than '#{out_osw}', datapoint out of date"
+              return true
+            end
+          end
+        end
+        
+        return false
       end
       
     end

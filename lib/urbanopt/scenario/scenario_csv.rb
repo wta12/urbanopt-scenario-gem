@@ -40,6 +40,14 @@ module URBANopt
     
       attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows
       
+      ##
+      # ScenarioCSV defines a scenario by assigning a Ruby MapperBase to 
+      ##
+      #  @param [String] name Name of this scenario
+      #  @param [String] root_dir Directory that includes Gemfile for gems used in this scenario
+      #  @param [String] csv_file Path to a CSV file that assigns Ruby MapperBase to each feature in the scenario
+      #  @param [String] mapper_files_dir Directory containing Ruby files which define MapperBase used in the scenario 
+      #  @param [String] run_dir Directory that all ScenarioDatapoints will run in and will contain scenario level results
       def initialize(name, root_dir, csv_file, mapper_files_dir, run_dir)
         super()
         @name = name
@@ -49,17 +57,43 @@ module URBANopt
         @mapper_files_dir = mapper_files_dir
         @run_dir = run_dir
         
+        @instance_lock = Mutex.new
+        @datapoints = nil
+        
         @num_header_rows = 0
         
         load_mapper_files
       end
       
+      ##
+      # Delete all content in the run_dir
+      ##
       def clear
         Dir.glob(File.join(@run_dir, '/*')).each do |f|
           FileUtils.rm_rf(f)
         end
       end
       
+      ##
+      # Remove all folders in run_dir that do not correspond to a datapoint
+      ##
+      #  @return [Array] Array of removed directories
+      def clean
+        dirs = run_dirs
+        
+        result = []
+        Dir.glob(File.join(@run_dir, '/*')).each do |f|
+          if !dirs.include?(f)
+            FileUtils.rm_rf(f)
+            result << f
+          end
+        end
+        return f
+      end      
+      
+      ##
+      # Require all Ruby files in the mapper_files_dir
+      ##
       def load_mapper_files
         Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
           begin
@@ -71,7 +105,94 @@ module URBANopt
         end
       end
       
-      # return an array of ScenarioDatapoint objects from the CSV
+      ##
+      # Return array of ScenarioDatapoints, will read from CSV if not already read
+      ##
+      #  @return [Array] Array of ScenarioDatapoints
+      def datapoints
+        @instance_lock.synchronize do
+          if @datapoints.nil?
+            @datapoints = read_csv
+          end
+        end
+        return @datapoints
+      end
+      
+      ##
+      # Create OSWs for all out of date datapoints, if you need to create all OSWS call clear first
+      ##
+      #  @return [Array] Array of newly created datapoint OSWs
+      def create_osws
+        
+        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
+        
+        osws = []
+        datapoints.each do |datapoint|
+          if datapoint.out_of_date?
+            osws << datapoint.create_osw
+          end
+        end
+
+        return osws
+      end
+      
+      ##
+      # Return run directories for all ScenarioDatapoints
+      ##
+      #  @return [Array] Array of run directories
+      def run_dirs
+
+        result = []
+        datapoints.each do |datapoint|
+          result << datapoint.run_dir
+        end
+
+        return result
+      end
+      
+      ##
+      # Runs all out of date datapoints, if you want to run all datapoints call clear first
+      ##
+      #  @return [Array] Array of failed simulations
+      def run
+        runner = OpenStudio::Extension::Runner.new(@root_dir)
+
+        osws = create_osws
+        
+        failures = runner.run_osws(osws)
+        
+        return failures
+      end
+      
+      ##
+      # Clears all results, creates simulation OSWs for all datapoints, and runs simulations
+      ##
+      #  @return [Array] Array of failed simulations
+      def post_process
+
+        #TODO: Rawad fill in here
+        
+        # create a new ScenarioResult object
+        result = ScenarioResult.new
+        
+        # loop over each datapoint and get that datapoints result files
+        datapoints.each do |datapoint|
+          # add those results to the ScenarioResult
+          result.add(datapoint)
+        end
+
+        # save the ScenarioResult
+        result.save
+        
+        return result
+      end
+      
+      private
+      
+      ##
+      # Parse the CSV file and return array of ScenarioDatapoints
+      ##
+      #  @return [Array] Array of ScenarioDatapoints
       def read_csv
         
         # DLM: TODO use HeaderConverters
@@ -91,10 +212,7 @@ module URBANopt
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
           
-          datapoint = ScenarioDatapoint.new(self)
-          datapoint.feature_id = feature_id
-          datapoint.feature_name = feature_name
-          datapoint.mapper_class = mapper_class
+          datapoint = ScenarioDatapoint.new(self, feature_id, feature_name, mapper_class)
           
           result << datapoint
         end
@@ -102,33 +220,6 @@ module URBANopt
         return result
       end
       
-      
-      def create_osws
-        
-        clear
-        
-        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
-        
-        datapoints = read_csv
-        
-        osws = []
-        datapoints.each do |datapoint|
-          osws << datapoint.create_osw
-        end
-
-        return osws
-      end
-      
-      def run
-        runner = OpenStudio::Extension::Runner.new(@root_dir)
-        
-        osws = create_osws
-        
-        failures = runner.run_osws(osws)
-        
-        return failures
-      end
-
     end
   end
 end

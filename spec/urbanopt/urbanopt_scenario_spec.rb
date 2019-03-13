@@ -57,7 +57,7 @@ RSpec.describe URBANopt::Scenario do
     
     scenario.clear
     
-    datapoints = scenario.read_csv
+    datapoints = scenario.datapoints
     expect(datapoints.size).to eq(3)
     expect(datapoints[0].feature_id).to eq('1')
     expect(datapoints[0].feature_name).to eq('Building 1')
@@ -73,7 +73,9 @@ RSpec.describe URBANopt::Scenario do
     
     expect(failures).to be_empty
     
-    # DLM: TODO, add in post-processing
+    scenario_result = scenario.post_process
+    
+    # TODO: Rawad, add test assertions on scenario_result
   end
 
 
