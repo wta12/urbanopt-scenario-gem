@@ -86,12 +86,20 @@ module URBANopt
         
         result = []
         Dir.glob(File.join(@run_dir, '/*')).each do |f|
+          # don't delete files, only delete directories
+          next if !File.directory?(f)
+          
+          if f[-1] != '/'
+            f += '/'
+          end
+          
           if !dirs.include?(f)
+            puts "Removing '#{f}', not in [#{dirs.join(',')}]"
             FileUtils.rm_rf(f)
             result << f
           end
         end
-        return f
+        return result
       end      
       
       ##
