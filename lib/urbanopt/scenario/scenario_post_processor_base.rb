@@ -66,6 +66,20 @@ module URBANopt
       ##
       def add_datapoint(datapoint)
         # TODO: Rawad, add results from a datapoint, this includes parsing its out.osw to find out if it ran, collecting the timeseries data, etc
+        
+        puts "feature_id = #{datapoint.feature_id}"
+        puts "feature_name = #{datapoint.feature_name}"
+        puts "out_of_date? = #{datapoint.out_of_date?}"
+        puts "run_dir = #{datapoint.run_dir}"
+        
+        out_osw = nil
+        if File.exists?(File.join(datapoint.run_dir, 'out.osw'))
+          File.open(File.join(datapoint.run_dir, 'out.osw'), 'r') do |f|
+            out_osw = JSON::parse(f.read, symbolize_names: true)
+          end
+        end
+        puts "out_osw = #{out_osw}"
+        
       end
       
       ##

@@ -55,7 +55,11 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.run_dir).to eq(run_dir)
     expect(scenario.num_header_rows).to eq(1)
     
-    scenario.clear
+    scenario.clean
+    
+    # Rawad: set clear_results to be false if you want the tests to run faster
+    clear_results = true
+    scenario.clear if clear_results 
     
     datapoints = scenario.datapoints
     expect(datapoints.size).to eq(3)
@@ -63,11 +67,17 @@ RSpec.describe URBANopt::Scenario do
     expect(datapoints[0].feature_name).to eq('Building 1')
     expect(datapoints[0].mapper_class).to eq('URBANopt::Scenario::TestMapper1')
     expect(datapoints[0].run_dir).to eq(File.join(run_dir, '1/'))
-    expect(File.exists?(datapoints[0].run_dir)).to be false
+    
+    if clear_results
+      expect(File.exists?(datapoints[0].run_dir)).to be false
+    end
     
     osws = scenario.create_osws
-    expect(osws.size).to eq(3)
-    expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
+    
+    if clear_results
+      expect(osws.size).to eq(3)
+      expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
+    end
     
     failures = scenario.run
     
