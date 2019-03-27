@@ -68,13 +68,11 @@ module URBANopt
 
 
 #####another method
-      # Copy csv files to a new directory and chnage there name_of_first_csv
-
+      #### Copy csv files to a new directory and chnage there names
       # Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario"
       # puts Dir.pwd
       # FileUtils.mkdir_p 'scenario_results'
       # Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/scenario_results"
-      # puts Dir.pwd
 
 ##### csv post process method ..should go in the "save" method
 
@@ -104,7 +102,6 @@ module URBANopt
        end
 
 ##### rawad trial ends
-
 
 
       ##
