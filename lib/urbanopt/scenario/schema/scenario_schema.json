@@ -1,0 +1,238 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"description": "Comment describing your JSON Schema",
+	"type": "object",
+	"properties": {
+		"scenario_id": {
+			"type": "string"
+		},
+		"scenario_name": {
+			"type": "string"
+		},
+		"scenario_directory": {
+			"type": "string"
+		},
+		"scenario_results": {
+			"description": "Aggregated results over the entire scenario",
+			"type": "object",
+			"properties": {
+				"scenario_program": {
+					"$ref": "#/definitions/Program"
+				},
+				"scenario_cost": {
+					"$ref": "#/definitions/Cost"
+				},
+				"simulation_periods": {
+					"$ref": "#/definitions/SimulationPeriods"
+				}
+			}
+		},
+		"features": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"feature_id": {
+						"type": "string"
+					},
+					"feature_name": {
+						"type": "string"
+					},
+					"feature_directory": {
+						"type": "string"
+					},
+					"simulatioin_status": {
+						"type": "string",
+						"enum": [
+							"Not Started",
+							"Started",
+							"Complete",
+							"Failed"
+						]
+					},
+					"feature_results": {
+						"type": "object",
+						"properties": {
+							"feature_program": {
+								"$ref": "#/definitions/Program"
+							},
+							"simulation_periods": {
+								"$ref": "#/definitions/SimulationPeriods"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"EnergyUse": {
+			"type": "object",
+			"properties": {
+				"total_site_energy": {
+					"type": "number"
+				}
+			}
+		},
+		"SimulationPeriod": {
+			"type": "object",
+			"properties": {
+				"simulation_period_id": {
+					"type": "string"
+				},
+				"simulation_period_name": {
+					"type": "string"
+				},
+				"start_date": {
+					"type": "string"
+				},
+				"end_date": {
+					"type": "string"
+				},
+				"energy_use": {
+					"$ref": "#/definitions/EnergyUse"
+				}
+			}
+		},
+		"SimulationPeriods": {
+			"type": "object",
+			"properties": {
+				"simulation_period": {
+					"$ref": "#/definitions/SimulationPeriod"
+				}
+			}
+		},
+		"DetailedConstructionCost": {
+			"description": "Program related information, does not change in time",
+			"type": "object",
+			"properties": {
+				"cost_type": {
+					"description": "$",
+					"type": "string",
+					"enum": [
+						"Capital Cost"
+					]
+				},
+				"total_cost": {
+					"description": "$",
+					"type": "number"
+				}
+			}
+		},
+		"DetailedEnergyCost": {
+			"description": "Program related information, does not change in time",
+			"type": "object",
+			"properties": {
+				"fuel_type": {
+					"type": "string",
+					"enum": [
+						"Electricity",
+						"Natural Gas"
+					]
+				},
+				"total_cost": {
+					"description": "$",
+					"type": "number"
+				},
+				"usage_cost": {
+					"type": "number"
+				},
+				"demand_cost": {
+					"type": "number"
+				}
+			}
+		},
+		"Cost": {
+			"description": "Program related information, does not change in time",
+			"type": "object",
+			"properties": {
+				"total_energy_cost": {
+					"description": "$",
+					"type": "number"
+				},
+				"total_construction_cost": {
+					"description": "$",
+					"type": "number"
+				},
+				"life_cycle_period": {
+					"description": "Years",
+					"type": "number"
+				},
+				"life_cycle_cost": {
+					"description": "$",
+					"type": "number"
+				},
+				"energy_costs": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/DetailedEnergyCost"
+					}
+				},
+				"construction_costs": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/DetailedConstructionCost"
+					}
+				}
+			}
+		},
+		"Program": {
+			"description": "Program related information, does not change in time",
+			"type": "object",
+			"properties": {
+				"total_building_floor_area": {
+					"description": "Building gross floor area (ft^2)",
+					"type": "number"
+				},
+				"total_building_footprint_area": {
+					"description": "Building gross floorprint area (ft^2)",
+					"type": "number"
+				},
+				"total_parking_floor_area": {
+					"description": "Building gross floorprint area (ft^2)",
+					"type": "number"
+				},
+				"total_parking_footprint_area": {
+					"description": "Building gross floorprint area (ft^2)",
+					"type": "number"
+				},
+				"total_site_area": {
+					"description": "Site gross area (ft^2)",
+					"type": "number"
+				},
+				"total_window_area": {
+					"type": "number"
+				},
+				"total_wall_area": {
+					"type": "number"
+				},
+				"total_roof_area": {
+					"type": "number"
+				},
+				"maximum_height": {
+					"type": "number"
+				},
+				"maximum_number_of_stories": {
+					"type": "number"
+				},
+				"available_roof_area": {
+					"type": "number"
+				},
+				"building_types": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"building_type": {
+								"type": "string"
+							},
+							"floor_area": {
+								"type": "number"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
