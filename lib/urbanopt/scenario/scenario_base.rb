@@ -34,7 +34,7 @@ module URBANopt
   module Scenario
     class ScenarioBase < OpenStudio::Extension::Extension
     
-      attr_accessor :name, :geometry_file
+      attr_accessor :name, :feature_file
       
       def initialize
         super

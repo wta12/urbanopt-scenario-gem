@@ -29,6 +29,7 @@
 #*********************************************************************************
 
 require_relative '../spec_helper'
+require_relative '../files/example_feature_file'
 
 RSpec.describe URBANopt::Scenario do
   it 'has a version number' do
@@ -39,13 +40,20 @@ RSpec.describe URBANopt::Scenario do
     name = 'Example Scenario'
     root_dir = File.join(File.dirname(__FILE__), '../../')
     csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
-    geometry_file = File.join(File.dirname(__FILE__), '../files/example_geometry.json')
+    feature_file_path = File.join(File.dirname(__FILE__), '../files/example_feature_file.json')
     mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
     
-    # create a new ScenarioCSV, we could create many of these
+    feature_file = ExampleFeatureFile.new(feature_file_path)
+    expect(feature_file.features.size).to eq(3)
+    expect(feature_file.get_feature_by_id('1')).not_to be_nil
+    expect(feature_file.get_feature_by_id('2')).not_to be_nil
+    expect(feature_file.get_feature_by_id('3')).not_to be_nil
+    expect(feature_file.get_feature_by_id('4')).to be_nil
+    
+    # create a new ScenarioCSV, we could create many of these in a project
     scenario = URBANopt::Scenario::ScenarioCSV.new(name, root_dir, csv_file, mapper_files_dir, run_dir)
-    scenario.geometry_file = geometry_file
+    scenario.feature_file = feature_file
     scenario.num_header_rows = 1
     
     expect(scenario.name).to eq(name)
