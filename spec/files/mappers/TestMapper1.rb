@@ -41,7 +41,6 @@ module URBANopt
       # class level variables
       @@instance_lock = Mutex.new
       @@osw = nil
-      @@geometry = nil
     
       def initialize()
       
@@ -66,27 +65,10 @@ module URBANopt
       end
       
       def create_osw(scenario, feature_id, feature_name)
-      
-        # do initialization of class variables in thread safe way
-        @@instance_lock.synchronize do
-          if @@geometry.nil? 
-            
-            # in a real example, geometry_file would be a GeoJSON or LadybugJSON
-            geometry_file = scenario.geometry_file
-            File.open(geometry_file, 'r') do |file|
-              @@geometry = JSON.parse(file.read, symbolize_names: true)
-            end
-          end
-        end
-        
-        # @@geometry would be a class that has methods to find a feature by id
-        feature = nil
-        @@geometry[:buildings].each do |building|
-          if building[:id] == feature_id
-            feature = building
-            break
-          end
-        end
+       
+        # get the feature from the scenario's feature_file
+        feature_file = scenario.feature_file
+        feature = feature_file.get_feature_by_id(feature_id)
         
         raise "Cannot find feature '#{feature_id}' in '#{scenario.geometry_file}'" if feature.nil?
         
