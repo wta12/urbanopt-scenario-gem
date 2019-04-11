@@ -28,7 +28,21 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require 'urbanopt/core/feature'
 require 'urbanopt/core/feature_file'
+
+class ExampleFeature < URBANopt::Core::Feature
+  def initialize(json)
+    super()
+    @id = json[:id]
+    @name = json[:name]
+    @json = json
+  end
+  
+  def area
+    @json[:area]
+  end
+end
 
 # Simple example of a FeatureFile
 class ExampleFeatureFile < URBANopt::Core::FeatureFile
@@ -42,8 +56,11 @@ class ExampleFeatureFile < URBANopt::Core::FeatureFile
     File.open(path, 'r') do |file|
       @json = JSON.parse(file.read, symbolize_names: true)
     end
-    @features = @json[:buildings]
-
+    
+    @features = []
+    @json[:buildings].each do |building|
+      @features << ExampleFeature.new(building)
+    end
   end
 
   def path()
@@ -51,12 +68,13 @@ class ExampleFeatureFile < URBANopt::Core::FeatureFile
   end
 
   def features()
+    result = []
     @features
   end
 
   def get_feature_by_id(id)
     @features.each do |f|
-      if f[:id] == id
+      if f.id == id
         return f
       end
     end

@@ -76,7 +76,7 @@ module URBANopt
         osw = Marshal.load(Marshal.dump(@@osw))
         
         # now we have the feature, we can look up its properties and set arguments in the OSW
-        OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature[:area])
+        OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature.area)
         
         osw[:name] = feature_name
         osw[:description] = feature_name
