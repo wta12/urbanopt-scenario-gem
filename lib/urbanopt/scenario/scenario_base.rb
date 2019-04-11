@@ -31,7 +31,57 @@
 module URBANopt
   module Scenario
     class ScenarioBase 
-      attr_accessor :name, :root_dir, :feature_file
+
+      def initialize(name, run_dir, feature_file, mapper_files_dir)
+        @name = name
+        @run_dir = run_dir
+        @feature_file = feature_file
+        @mapper_files_dir = mapper_files_dir
+      end
+      
+      # the name of this Scenario
+      def name
+        @name
+      end
+      
+      # the directory to run this Scenario in
+      def run_dir
+        @run_dir
+      end
+      
+      # the Feature File associated with this Scenario
+      def feature_file
+        @feature_file
+      end
+      
+      # return directory containing Simulation Mapper class files
+      def mapper_files_dir
+        @mapper_files_dir
+      end
+      
+      # return an array of ScenarioDatapoint objects
+      def datapoints
+        raise "datapoints not implemented for ScenarioBase, override in your class"
+      end
+      
+      # remove all input and output files for this Scenario
+      def clear
+        Dir.glob(File.join(@run_dir, '/*')).each do |f|
+          FileUtils.rm_rf(f)
+        end
+      end
+      
+      # require all Simulation Mappers in mapper_files_dir
+      def load_mapper_files
+        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
+          begin
+            require(f)
+          rescue LoadError => e
+            puts e.message
+            raise         
+          end
+        end
+      end  
       
     end
   end

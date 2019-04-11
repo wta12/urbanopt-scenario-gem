@@ -38,43 +38,24 @@ module URBANopt
   module Scenario
     class ScenarioCSV < ScenarioBase
     
-      attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows
-      
-      def initialize(name, root_dir, csv_file, mapper_files_dir, run_dir)
-        super()
-        @name = name
-        @root_dir = root_dir
+      def initialize(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
+        super(name, run_dir, feature_file, mapper_files_dir)
         
         @csv_file = csv_file
-        @mapper_files_dir = mapper_files_dir
-        @run_dir = run_dir
-        
-        @num_header_rows = 0
-        
-        load_mapper_files
+        @num_header_rows = num_header_rows
       end
       
-      def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
+      def csv_file
+        @csv_file
       end
       
-      def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            puts e.message
-            raise         
-          end
-        end
+      def num_header_rows
+        @num_header_rows
       end
       
-      # return an array of ScenarioDatapoint objects from the CSV
-      def read_csv
+      def datapoints
         
-        # DLM: TODO use HeaderConverters
+        # DLM: TODO use HeaderConverters from CSV module
         
         rows_skipped = 0
         result = []
@@ -100,33 +81,6 @@ module URBANopt
         end
         
         return result
-      end
-      
-      
-      def create_osws
-        
-        clear
-        
-        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
-        
-        datapoints = read_csv
-        
-        osws = []
-        datapoints.each do |datapoint|
-          osws << datapoint.create_osw
-        end
-
-        return osws
-      end
-      
-      def run
-        runner = OpenStudio::Extension::Runner.new(@root_dir)
-        
-        osws = create_osws
-        
-        failures = runner.run_osws(osws)
-        
-        return failures
       end
 
     end

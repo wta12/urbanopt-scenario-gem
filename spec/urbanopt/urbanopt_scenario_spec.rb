@@ -37,13 +37,15 @@ RSpec.describe URBANopt::Scenario do
   end
   
   it 'can run a scenario' do
+  
     name = 'Example Scenario'
-    root_dir = File.join(File.dirname(__FILE__), '../../')
-    csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
+    run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
     feature_file_path = File.join(File.dirname(__FILE__), '../files/example_feature_file.json')
     mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
-    run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
-    
+    csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
+    num_header_rows = 1
+    root_dir = File.join(File.dirname(__FILE__), '../../')
+      
     feature_file = ExampleFeatureFile.new(feature_file_path)
     expect(feature_file.features.size).to eq(3)
     expect(feature_file.get_feature_by_id('1')).not_to be_nil
@@ -52,12 +54,8 @@ RSpec.describe URBANopt::Scenario do
     expect(feature_file.get_feature_by_id('4')).to be_nil
     
     # create a new ScenarioCSV, we could create many of these in a project
-    scenario = URBANopt::Scenario::ScenarioCSV.new(name, root_dir, csv_file, mapper_files_dir, run_dir)
-    scenario.feature_file = feature_file
-    scenario.num_header_rows = 1
-    
+    scenario = URBANopt::Scenario::ScenarioCSV.new(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
     expect(scenario.name).to eq(name)
-    expect(scenario.root_dir).to eq(root_dir)
     expect(scenario.csv_file).to eq(csv_file)
     expect(scenario.mapper_files_dir).to eq(mapper_files_dir)
     expect(scenario.run_dir).to eq(run_dir)
@@ -65,7 +63,7 @@ RSpec.describe URBANopt::Scenario do
     
     scenario.clear
     
-    datapoints = scenario.read_csv
+    datapoints = scenario.datapoints
     expect(datapoints.size).to eq(3)
     expect(datapoints[0].feature_id).to eq('1')
     expect(datapoints[0].feature_name).to eq('Building 1')
@@ -73,11 +71,15 @@ RSpec.describe URBANopt::Scenario do
     expect(datapoints[0].run_dir).to eq(File.join(run_dir, '1/'))
     expect(File.exists?(datapoints[0].run_dir)).to be false
     
-    osws = scenario.create_osws
+    # create a ScenarioRunner to run the ScenarioCSV
+    scenario_runner = URBANopt::Scenario::ScenarioRunner.new(root_dir)
+    expect(scenario_runner.root_dir).to eq(root_dir)
+    
+    osws = scenario_runner.create_osws(scenario)
     expect(osws.size).to eq(3)
     expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
     
-    failures = scenario.run
+    failures = scenario_runner.run_osws(scenario)
     
     expect(failures).to be_empty
     

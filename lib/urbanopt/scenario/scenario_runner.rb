@@ -28,9 +28,53 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
 require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_csv"
-require "urbanopt/scenario/scenario_runner"
-require "urbanopt/scenario/extension"
+require "urbanopt/scenario/scenario_datapoint"
+
+require 'csv'
+require 'fileutils'
+
+module URBANopt
+  module Scenario
+    class ScenarioRunner
+      
+      # Initialize a ScenarioRunner with root_dir containing Gemfile
+      def initialize(root_dir)
+        @root_dir = root_dir
+      end
+      
+      def root_dir
+        @root_dir
+      end
+
+      # Create OSW files for scenario
+      def create_osws(scenario)
+        
+        scenario.clear
+        
+        FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
+        
+        scenario.load_mapper_files
+        
+        osws = []
+        scenario.datapoints.each do |datapoint|
+          osws << datapoint.create_osw
+        end
+
+        return osws
+      end
+      
+      # Create and run OSW files for scenario
+      def run_osws(scenario)
+        runner = OpenStudio::Extension::Runner.new(@root_dir)
+
+        osws = create_osws(scenario)
+        
+        failures = runner.run_osws(osws)
+        
+        return failures
+      end
+
+    end
+  end
+end
