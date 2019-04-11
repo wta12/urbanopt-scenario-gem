@@ -28,15 +28,39 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+require 'urbanopt/core/feature_file'
 
-RSpec::Core::RakeTask.new(:spec)
+# Simple example of a FeatureFile
+class ExampleFeatureFile < URBANopt::Core::FeatureFile
 
-# Load in the rake tasks from the base extension gem
-require "openstudio/extension/rake_task"
-require "urbanopt/scenario"
-rake_task = OpenStudio::Extension::RakeTask.new
-rake_task.set_extension_class(URBANopt::Scenario::Extension)
+  def initialize(path)
+    super()
+    
+    @path = path
+    
+    @json = nil
+    File.open(path, 'r') do |file|
+      @json = JSON.parse(file.read, symbolize_names: true)
+    end
+    @features = @json[:buildings]
 
-task :default => :spec
+  end
+
+  def path()
+    @path
+  end
+
+  def features()
+    @features
+  end
+
+  def get_feature_by_id(id)
+    @features.each do |f|
+      if f[:id] == id
+        return f
+      end
+    end
+    return nil
+  end
+
+end

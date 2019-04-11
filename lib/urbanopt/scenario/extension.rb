@@ -28,15 +28,35 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+require "openstudio/extension"
 
-RSpec::Core::RakeTask.new(:spec)
-
-# Load in the rake tasks from the base extension gem
-require "openstudio/extension/rake_task"
-require "urbanopt/scenario"
-rake_task = OpenStudio::Extension::RakeTask.new
-rake_task.set_extension_class(URBANopt::Scenario::Extension)
-
-task :default => :spec
+module URBANopt
+  module Scenario
+    class Extension < OpenStudio::Extension::Extension
+      
+      def initialize
+        super
+        @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+      end
+      
+      # Return the absolute path of the measures or nil if there is none, can be used when configuring OSWs
+      def measures_dir
+        nil
+      end
+      
+      # Relevant files such as weather data, design days, etc.
+      # Return the absolute path of the files or nil if there is none, used when configuring OSWs
+      def files_dir
+        return nil
+      end
+      
+      # Doc templates are common files like copyright files which are used to update measures and other code
+      # Doc templates will only be applied to measures in the current repository
+      # Return the absolute path of the doc templates dir or nil if there is none
+      def doc_templates_dir
+        return File.absolute_path(File.join(@root_dir, 'doc_templates'))
+      end
+      
+    end
+  end
+end
