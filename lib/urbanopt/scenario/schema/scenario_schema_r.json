@@ -16,7 +16,7 @@
 			"description": "Aggregated results over the entire scenario",
 			"type": "object",
 			"properties": {
-				"scenario_program": {
+				"scenario_template": {
 					"$ref": "#/definitions/Program"
 				},
 				"scenario_cost": {
@@ -60,7 +60,7 @@
 					"feature_results": {
 						"type": "object",
 						"properties": {
-							"feature_program": {
+							"feature_template": {
 								"$ref": "#/definitions/Program"
 							},
 							"simulation_periods": {
@@ -76,19 +76,6 @@
 					},
 					"timesteps_per_hour": {
 						"$ref": "#/definitions/TimestepsPerHour"
-					},
-					"occupancy": {
-						"type": "object",
-						"properties": {
-							"total_occupancy": {
-								"description": "(people)",
-								"type": "integer"
-							},
-							"occupant_density": {
-								"description": "(people/ft^2)",
-								"type": "number"
-							}
-						}
 					}
 				}
 			}
@@ -266,6 +253,161 @@
 						}
 					}
 				},
+				"total_monthly_results_N": {
+					"type": "object",
+					"properties": {
+						"january": {
+							"type": "object",
+							"properties": {
+								" Electricity:Facility": {
+									"type": "array"
+								},
+								"Gas:Facility": {
+									"type": "array"
+								},
+								"DistrictCooling:Facility": {
+									"type": "array"
+								},
+								"DistrictHeating:Facility": {
+									"type": "array"
+								},
+								"District_Cooling_Chilled_Water_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Outlet_Temperature": {
+									"type": "array"
+								},
+								"District_Heating_Hot_Water_Rate": {
+									"type": "array"
+								},
+								"District_Heating_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"Electricity:Facility_Power": {
+									"type": "array"
+								},
+								"Electricity:Facility_Apparent_Power": {
+									"type": "array"
+								},
+								"District_Cooling_Inlet_Temperature": {
+									"type": "array"
+								}
+							}
+						},
+						"february": {
+							"type": "object",
+							"properties": {
+								" Electricity:Facility": {
+									"type": "array"
+								},
+								"Gas:Facility": {
+									"type": "array"
+								},
+								"DistrictCooling:Facility": {
+									"type": "array"
+								},
+								"DistrictHeating:Facility": {
+									"type": "array"
+								},
+								"District_Cooling_Chilled_Water_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Outlet_Temperature": {
+									"type": "array"
+								},
+								"District_Heating_Hot_Water_Rate": {
+									"type": "array"
+								},
+								"District_Heating_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"Electricity:Facility_Power": {
+									"type": "array"
+								},
+								"Electricity:Facility_Apparent_Power": {
+									"type": "array"
+								},
+								"District_Cooling_Inlet_Temperature": {
+									"type": "array"
+								}
+							}
+						},
+						"march": {
+							"type": "object",
+							"properties": {
+								" Electricity:Facility": {
+									"type": "array"
+								},
+								"Electricity:Facility_Apparent_Power": {
+									"type": "array"
+								},
+								"Gas:Facility": {
+									"type": "array"
+								},
+								"DistrictCooling:Facility": {
+									"type": "array"
+								},
+								"DistrictHeating:Facility": {
+									"type": "array"
+								},
+								"District_Cooling_Chilled_Water_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"District_Cooling_Outlet_Temperature": {
+									"type": "array"
+								},
+								"District_Heating_Hot_Water_Rate": {
+									"type": "array"
+								},
+								"District_Heating_Mass_Flow_Rate": {
+									"type": "array"
+								},
+								"Electricity:Facility_Power": {
+									"type": "array"
+								},
+								"District_Cooling_Inlet_Temperature": {
+									"type": "array"
+								}
+							}
+						},
+						"april": {
+							"type": "object"
+						},
+						"may": {
+							"type": "object"
+						},
+						"june": {
+							"type": "object"
+						},
+						"july": {
+							"type": "object"
+						},
+						"august": {
+							"type": "object"
+						},
+						"september": {
+							"type": "object"
+						},
+						"october": {
+							"type": "object"
+						},
+						"noember": {
+							"type": "object"
+						},
+						"december": {
+							"type": "object"
+						}
+					}
+				},
 				"time_setpoint_not_met": {
 					"description": "feature level results only",
 					"type": "object",
@@ -304,7 +446,9 @@
 						"begin_day_of_month": {
 							"type": "integer"
 						},
-						"begin_year": {}
+						"begin_year": {
+							"type": "integer"
+						}
 					}
 				},
 				"end_date": {
@@ -316,6 +460,46 @@
 				},
 				"energy_use": {
 					"$ref": "#/definitions/EnergyUse"
+				},
+				"transformers_results": {
+					"type": "object",
+					"properties": {
+						"transformer_results": {
+							"type": "object",
+							"properties": {
+								"transformer_max_peak": {
+									"type": "number"
+								},
+								"transformer_max_peak_index": {
+									"type": "number"
+								},
+								"transformer_max_peak_timestamp": {
+									"type": "number"
+								},
+								"transformer_max_peak_start_day_index": {
+									"type": "number"
+								},
+								"transformer_max_peak_start_day_timestamp": {
+									"type": "number"
+								},
+								"transformer_max_peak_end_day_index": {
+									"type": "number"
+								},
+								"transformer_max_peak_end_day_timestamp": {
+									"type": "number"
+								},
+								"transformer_max_peak_range": {
+									"type": "number"
+								},
+								"transformer_hours_above_rating": {
+									"type": "number"
+								},
+								"transformer_hours_extreme_above_rating": {
+									"type": "number"
+								}
+							}
+						}
+					}
 				},
 				"reopt_results": {
 					"type": "object",
@@ -442,73 +626,79 @@
 					"type": "number"
 				},
 				"total_window_area": {
-					"description": "Windows gross area (ft^2)",
+					"description": "Exterior windows gross area (ft^2)",
 					"type": "number"
 				},
 				"total_wall_area": {
-					"description": "Walls gross area (ft^2)",
+					"description": "exterior walls gross area (ft^2)",
 					"type": "number"
 				},
 				"total_roof_area": {
-					"description": "Roofs gross area (ft^2)",
+					"description": "Exterior roofs gross area (ft^2)",
+					"type": "number"
+				},
+				"total_fenestration_area": {
+					"description": "building total area of openings (doors + windows)",
 					"type": "number"
 				},
 				"maximum_height": {
 					"description": "Floor maximum height (ft).Floor height is measured from the top of the floor to the top of the floor above.",
 					"type": "number"
 				},
-				"maximum_number_of_stories": {
+				"number_of_stories": {
 					"description": "Number of stories or floors made up of spaces that are all on the same level.",
-					"type": "number"
+					"type": "integer"
 				},
 				"available_roof_area": {
 					"description": "gross roof area (ft^2)",
 					"type": "number"
 				},
 				"building_types": {
-					"description": "Building program (Commercial,Residential, Multifamily etc.)",
+					"description": "A list of building types",
 					"type": "array",
 					"items": {
 						"type": "object",
 						"properties": {
 							"building_type": {
+								"description": "Building program (Commercial,Residential, Multifamily etc.)",
 								"type": "string"
 							},
 							"floor_area": {
+								"description": "building gross floor area",
 								"type": "number"
 							}
 						}
 					}
 				},
-				"net_WWR": {
+				"scenario_WWR": {
 					"description": "Net ratio of total window area to total wall area, where the total wall area is calculated using the floor to floor height, rather than the floor to ceiling height.",
 					"type": "object",
 					"properties": {
-						"net_WWR": {
+						"aggregate_WWR": {
 							"description": "(%)",
 							"type": "number",
 							"minimum": 0,
 							"maximum": 100
 						},
-						"net_WWR_north": {
+						"aggregate_WWR_north": {
 							"description": "(%)",
 							"type": "number",
 							"minimum": 0,
 							"maximum": 100
 						},
-						"net_WWR_south": {
+						"aggregate_WWR_south": {
 							"description": "(%)",
 							"type": "number",
 							"minimum": 0,
 							"maximum": 100
 						},
-						"net_WWR_east": {
+						"aggregate_WWR_east": {
 							"description": "(%)",
 							"type": "number",
 							"minimum": 0,
 							"maximum": 100
 						},
-						"net_WWR_west": {
+						"aggregate_WWR_west": {
 							"description": "(%)",
 							"type": "number",
 							"minimum": 0,
@@ -552,10 +742,15 @@
 						}
 					}
 				},
+				"aspect_ratio": {
+					"description": "The ratio of width to length, of a premises (south-north wall area /east-west wall area)",
+					"type": "number"
+				},
 				"occupancy": {
 					"type": "object",
 					"properties": {
-						"occupancy": {
+						"total_occupancy": {
+							"description": "sum of all occupant in a building",
 							"type": "integer"
 						},
 						"occupant_density": {
@@ -564,25 +759,25 @@
 						}
 					}
 				},
-				"net_occupancy": {
-					"description": "scenario level results only",
+				"scenario_occupancy": {
 					"type": "object",
 					"properties": {
-						"total_occupancy": {
+						"aggregate_occupancy": {
+							"description": "cumulative number of occupants at the scenario level",
 							"type": "integer"
 						},
-						"total_occupant_density": {
+						"aggreagte_occupant_density": {
 							"description": "(people/ft^2)",
 							"type": "number"
 						}
 					}
 				},
-				"net_unconditioned_area": {
-					"description": "for scenario level results only (ft^2)",
+				"scenario_unconditioned_area": {
+					"description": "(ft^2)",
 					"type": "number"
 				},
-				"net_conditioned_area": {
-					"description": "for scnenario level results only (ft^2)",
+				"scenario_conditioned_area": {
+					"description": " (ft^2)",
 					"type": "number"
 				},
 				"conditioned_area": {
@@ -593,21 +788,21 @@
 					"description": "(ft^2)",
 					"type": "number"
 				},
-				"net_lighting_power": {
-					"description": "for scenario level results",
+				"scenario_lighting": {
+					"description": " ",
 					"type": "object",
 					"properties": {
-						"net_lighting_power": {
+						"aggregate_lighting_power": {
 							"description": "(W)",
 							"type": "number"
 						},
-						"net_lighting_power_density": {
+						"aggregate_lighting_power_density": {
 							"description": "(W)",
 							"type": "number"
 						}
 					}
 				},
-				"lighting_power": {
+				"lighting": {
 					"type": "object",
 					"properties": {
 						"lighting_power": {
@@ -620,12 +815,12 @@
 						}
 					}
 				},
-				"net_infiltration_rate": {
-					"description": "for scenario level results only  (ACH)",
+				"scenario_infiltration_rate": {
+					"description": "aggregate infiltration rate (ACH)",
 					"type": "number"
 				},
 				"infiltration_rate": {
-					"description": "(ACH)",
+					"description": "building envelop infiltration rate(ACH)",
 					"type": "number"
 				}
 			}
