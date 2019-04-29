@@ -28,61 +28,57 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-module URBANopt
-  module Scenario
-    class ScenarioBase 
+require 'urbanopt/core/feature'
+require 'urbanopt/core/feature_file'
 
-      def initialize(name, run_dir, feature_file, mapper_files_dir)
-        @name = name
-        @run_dir = run_dir
-        @feature_file = feature_file
-        @mapper_files_dir = mapper_files_dir
-      end
-      
-      # the name of this Scenario
-      def name
-        @name
-      end
-      
-      # the directory to run this Scenario in
-      def run_dir
-        @run_dir
-      end
-      
-      # the Feature File associated with this Scenario
-      def feature_file
-        @feature_file
-      end
-      
-      # return directory containing Simulation Mapper class files
-      def mapper_files_dir
-        @mapper_files_dir
-      end
-      
-      # return an array of ScenarioDatapoint objects
-      def datapoints
-        raise "datapoints not implemented for ScenarioBase, override in your class"
-      end
-      
-      # remove all input and output files for this Scenario
-      def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
-      end
-      
-      # require all Simulation Mappers in mapper_files_dir
-      def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            puts e.message
-            raise         
-          end
-        end
-      end  
-      
+class ExampleFeature < URBANopt::Core::Feature
+  def initialize(json)
+    super()
+    @id = json[:id]
+    @name = json[:name]
+    @json = json
+  end
+  
+  def area
+    @json[:area]
+  end
+end
+
+# Simple example of a FeatureFile
+class ExampleFeatureFile < URBANopt::Core::FeatureFile
+
+  def initialize(path)
+    super()
+    
+    @path = path
+    
+    @json = nil
+    File.open(path, 'r') do |file|
+      @json = JSON.parse(file.read, symbolize_names: true)
+    end
+    
+    @features = []
+    @json[:buildings].each do |building|
+      @features << ExampleFeature.new(building)
     end
   end
+
+  def path()
+    @path
+  end
+
+  def features()
+    result = []
+    @features
+  end
+
+  def get_feature_by_id(id)
+    @features.each do |f|
+      if f.id == id
+        return f
+      end
+    end
+    return nil
+  end
+
 end

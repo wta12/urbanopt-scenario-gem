@@ -28,61 +28,53 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require "urbanopt/scenario/scenario_base"
+require "urbanopt/scenario/scenario_datapoint"
+
+require 'csv'
+require 'fileutils'
+
 module URBANopt
   module Scenario
-    class ScenarioBase 
+    class ScenarioRunner
+      
+      # Initialize a ScenarioRunner with root_dir containing Gemfile
+      def initialize(root_dir)
+        @root_dir = root_dir
+      end
+      
+      def root_dir
+        @root_dir
+      end
 
-      def initialize(name, run_dir, feature_file, mapper_files_dir)
-        @name = name
-        @run_dir = run_dir
-        @feature_file = feature_file
-        @mapper_files_dir = mapper_files_dir
-      end
-      
-      # the name of this Scenario
-      def name
-        @name
-      end
-      
-      # the directory to run this Scenario in
-      def run_dir
-        @run_dir
-      end
-      
-      # the Feature File associated with this Scenario
-      def feature_file
-        @feature_file
-      end
-      
-      # return directory containing Simulation Mapper class files
-      def mapper_files_dir
-        @mapper_files_dir
-      end
-      
-      # return an array of ScenarioDatapoint objects
-      def datapoints
-        raise "datapoints not implemented for ScenarioBase, override in your class"
-      end
-      
-      # remove all input and output files for this Scenario
-      def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
+      # Create OSW files for scenario
+      def create_osws(scenario)
+        
+        scenario.clear
+        
+        FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
+        
+        scenario.load_mapper_files
+        
+        osws = []
+        scenario.datapoints.each do |datapoint|
+          osws << datapoint.create_osw
         end
+
+        return osws
       end
       
-      # require all Simulation Mappers in mapper_files_dir
-      def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            puts e.message
-            raise         
-          end
-        end
-      end  
-      
+      # Create and run OSW files for scenario
+      def run_osws(scenario)
+        runner = OpenStudio::Extension::Runner.new(@root_dir)
+
+        osws = create_osws(scenario)
+        
+        failures = runner.run_osws(osws)
+        
+        return failures
+      end
+
     end
   end
 end

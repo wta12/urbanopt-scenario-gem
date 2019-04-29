@@ -28,60 +28,34 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require "openstudio/extension"
+
 module URBANopt
   module Scenario
-    class ScenarioBase 
-
-      def initialize(name, run_dir, feature_file, mapper_files_dir)
-        @name = name
-        @run_dir = run_dir
-        @feature_file = feature_file
-        @mapper_files_dir = mapper_files_dir
+    class Extension < OpenStudio::Extension::Extension
+      
+      def initialize
+        super
+        @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
       end
       
-      # the name of this Scenario
-      def name
-        @name
+      # Return the absolute path of the measures or nil if there is none, can be used when configuring OSWs
+      def measures_dir
+        nil
       end
       
-      # the directory to run this Scenario in
-      def run_dir
-        @run_dir
+      # Relevant files such as weather data, design days, etc.
+      # Return the absolute path of the files or nil if there is none, used when configuring OSWs
+      def files_dir
+        return nil
       end
       
-      # the Feature File associated with this Scenario
-      def feature_file
-        @feature_file
+      # Doc templates are common files like copyright files which are used to update measures and other code
+      # Doc templates will only be applied to measures in the current repository
+      # Return the absolute path of the doc templates dir or nil if there is none
+      def doc_templates_dir
+        return File.absolute_path(File.join(@root_dir, 'doc_templates'))
       end
-      
-      # return directory containing Simulation Mapper class files
-      def mapper_files_dir
-        @mapper_files_dir
-      end
-      
-      # return an array of ScenarioDatapoint objects
-      def datapoints
-        raise "datapoints not implemented for ScenarioBase, override in your class"
-      end
-      
-      # remove all input and output files for this Scenario
-      def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
-      end
-      
-      # require all Simulation Mappers in mapper_files_dir
-      def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            puts e.message
-            raise         
-          end
-        end
-      end  
       
     end
   end

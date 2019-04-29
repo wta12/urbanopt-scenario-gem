@@ -30,7 +30,6 @@
 
 require "urbanopt/scenario/scenario_base"
 require "urbanopt/scenario/scenario_datapoint"
-require "urbanopt/scenario/scenario_post_processor_base"
 
 require 'csv'
 require 'fileutils'
@@ -39,165 +38,24 @@ module URBANopt
   module Scenario
     class ScenarioCSV < ScenarioBase
     
-      attr_accessor :csv_file, :mapper_files_dir, :run_dir, :num_header_rows, :post_processors
-      
-      ##
-      # ScenarioCSV defines a scenario by assigning a Ruby MapperBase to 
-      ##
-      #  @param [String] name Name of this scenario
-      #  @param [String] root_dir Directory that includes Gemfile for gems used in this scenario
-      #  @param [String] csv_file Path to a CSV file that assigns Ruby MapperBase to each feature in the scenario
-      #  @param [String] mapper_files_dir Directory containing Ruby files which define MapperBase used in the scenario 
-      #  @param [String] run_dir Directory that all ScenarioDatapoints will run in and will contain scenario level results
-      def initialize(name, root_dir, csv_file, mapper_files_dir, run_dir)
-        super()
-        @name = name
-        @root_dir = root_dir
+      def initialize(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
+        super(name, run_dir, feature_file, mapper_files_dir)
         
         @csv_file = csv_file
-        @mapper_files_dir = mapper_files_dir
-        @run_dir = run_dir
-        
-        @instance_lock = Mutex.new
-        @datapoints = nil
-        
-        @post_processors = [ScenarioPostProcessorBase.new]
-        
-        @num_header_rows = 0
-        
-        load_mapper_files
+        @num_header_rows = num_header_rows
       end
       
-      ##
-      # Delete all content in the run_dir
-      ##
-      def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
+      def csv_file
+        @csv_file
       end
       
-      ##
-      # Remove all folders in run_dir that do not correspond to a datapoint
-      ##
-      #  @return [Array] Array of removed directories
-      def clean
-        dirs = run_dirs
-        
-        result = []
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          # don't delete files, only delete directories
-          next if !File.directory?(f)
-          
-          if f[-1] != '/'
-            f += '/'
-          end
-          
-          if !dirs.include?(f)
-            puts "Removing '#{f}', not in [#{dirs.join(',')}]"
-            FileUtils.rm_rf(f)
-            result << f
-          end
-        end
-        return result
-      end      
-      
-      ##
-      # Require all Ruby files in the mapper_files_dir
-      ##
-      def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            puts e.message
-            raise         
-          end
-        end
+      def num_header_rows
+        @num_header_rows
       end
       
-      ##
-      # Return array of ScenarioDatapoints, will read from CSV if not already read
-      ##
-      #  @return [Array] Array of ScenarioDatapoints
       def datapoints
-        @instance_lock.synchronize do
-          if @datapoints.nil?
-            @datapoints = read_csv
-          end
-        end
-        return @datapoints
-      end
-      
-      ##
-      # Create OSWs for all out of date datapoints, if you need to create all OSWS call clear first
-      ##
-      #  @return [Array] Array of newly created datapoint OSWs
-      def create_osws
         
-        FileUtils.mkdir_p(@run_dir) if !File.exists?(@run_dir)
-        
-        osws = []
-        datapoints.each do |datapoint|
-          if datapoint.out_of_date?
-            osws << datapoint.create_osw
-          end
-        end
-
-        return osws
-      end
-      
-      ##
-      # Return run directories for all ScenarioDatapoints
-      ##
-      #  @return [Array] Array of run directories
-      def run_dirs
-
-        result = []
-        datapoints.each do |datapoint|
-          result << datapoint.run_dir
-        end
-
-        return result
-      end
-      
-      ##
-      # Runs all out of date datapoints, if you want to run all datapoints call clear first
-      ##
-      #  @return [Array] Array of failed simulations
-      def run
-        runner = OpenStudio::Extension::Runner.new(@root_dir)
-
-        osws = create_osws
-        
-        failures = runner.run_osws(osws)
-        
-        return failures
-      end
-      
-      ##
-      # Run all registered post processors
-      ##
-      def post_process
-
-        # loop over all post processors
-        post_processors.each do |pp|
-          pp.set_scenario(self)
-          pp.run
-          pp.save
-        end
-        
-      end
-      
-      private
-      
-      ##
-      # Parse the CSV file and return array of ScenarioDatapoints
-      ##
-      #  @return [Array] Array of ScenarioDatapoints
-      def read_csv
-        
-        # DLM: TODO use HeaderConverters
+        # DLM: TODO use HeaderConverters from CSV module
         
         rows_skipped = 0
         result = []
@@ -214,14 +72,17 @@ module URBANopt
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
           
-          datapoint = ScenarioDatapoint.new(self, feature_id, feature_name, mapper_class)
+          datapoint = ScenarioDatapoint.new(self)
+          datapoint.feature_id = feature_id
+          datapoint.feature_name = feature_name
+          datapoint.mapper_class = mapper_class
           
           result << datapoint
         end
         
         return result
       end
-      
+
     end
   end
 end
