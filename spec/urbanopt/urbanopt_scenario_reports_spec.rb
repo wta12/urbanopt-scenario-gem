@@ -40,6 +40,11 @@ RSpec.describe URBANopt::Scenario::Reports do
     timesteps_per_hour = 4
     simulation_status = 'Complete'
     feature_report_1 = URBANopt::Scenario::Reports::FeatureReport.new(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
+    feature_report_1.program.site_area = 10000
+    feature_report_1.program.floor_area = 1000
+    feature_report_1.program.conditioned_area = 1000
+    feature_report_1.program.unconditioned_area = 0
+    feature_report_1.program.footprint_area = 1100
 
     id = 'feature_2'
     name = 'Feature 2'
@@ -48,7 +53,12 @@ RSpec.describe URBANopt::Scenario::Reports do
     timesteps_per_hour = 4
     simulation_status = 'Complete'
     feature_report_2 = URBANopt::Scenario::Reports::FeatureReport.new(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
-
+    feature_report_2.program.site_area = 10000
+    feature_report_2.program.floor_area = 1000
+    feature_report_2.program.conditioned_area = 1000
+    feature_report_2.program.unconditioned_area = 0
+    feature_report_2.program.footprint_area = 1100
+    
     id = 'scenario_1'
     name = 'Scenario 1'
     directory_name = 'scenario_1' 
@@ -75,6 +85,11 @@ RSpec.describe URBANopt::Scenario::Reports do
     expect(scenario_report.number_of_complete_simulations).to eq(2)
     expect(scenario_report.number_of_failed_simulations).to eq(0)
     
+    expect(scenario_report.program.site_area).to eq(20000)
+    expect(scenario_report.program.floor_area).to eq(2000)
+    expect(scenario_report.program.conditioned_area).to eq(2000)
+    expect(scenario_report.program.unconditioned_area).to eq(0)
+    expect(scenario_report.program.footprint_area).to eq(2200)
     
   end
 
