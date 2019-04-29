@@ -28,10 +28,28 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
-require "urbanopt/scenario/scenario_csv"
-require "urbanopt/scenario/scenario_post_processor_base"
-require "urbanopt/scenario/reports"
+require "openstudio/extension"
+
+module URBANopt
+  module Scenario
+    module Reports
+      class ConstructionCosts 
+
+        # perform initialization functions
+        def initialize()
+
+        end
+        
+        def to_hash
+          result = {}
+          return result
+        end
+        
+        def add_construction_costs(construction_costs)
+        
+        end
+        
+      end
+    end
+  end
+end

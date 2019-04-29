@@ -28,10 +28,27 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
-require "urbanopt/scenario/scenario_csv"
-require "urbanopt/scenario/scenario_post_processor_base"
-require "urbanopt/scenario/reports"
+require "openstudio/extension"
+
+module URBANopt
+  module Scenario
+    module Reports
+      class ReportingPeriods 
+
+        # perform initialization functions
+        def initialize()
+        end
+        
+        def to_hash
+          result = {}
+          return result
+        end
+        
+        def add_reporting_periods(reporting_periods)
+        
+        end
+        
+      end
+    end
+  end
+end

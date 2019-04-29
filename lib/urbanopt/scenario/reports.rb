@@ -28,10 +28,8 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
-require "urbanopt/scenario/scenario_csv"
-require "urbanopt/scenario/scenario_post_processor_base"
-require "urbanopt/scenario/reports"
+require "urbanopt/scenario/reports/scenario_report"
+require "urbanopt/scenario/reports/feature_report"
+require "urbanopt/scenario/reports/program"
+require "urbanopt/scenario/reports/construction_costs"
+require "urbanopt/scenario/reports/reporting_periods"

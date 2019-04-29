@@ -28,10 +28,55 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/version"
-require "urbanopt/scenario/mapper_base"
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
-require "urbanopt/scenario/scenario_csv"
-require "urbanopt/scenario/scenario_post_processor_base"
-require "urbanopt/scenario/reports"
+require "urbanopt/scenario/reports/program"
+require "urbanopt/scenario/reports/construction_costs"
+require "urbanopt/scenario/reports/reporting_periods"
+
+module URBANopt
+  module Scenario
+    module Reports
+      class FeatureReport 
+        attr_reader :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :program, :construction_costs, :reporting_periods
+        
+        # perform initialization functions
+        def initialize(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
+          @id = id
+          @name = name
+          @directory_name = directory_name
+          @feature_type = feature_type
+          @timesteps_per_hour = timesteps_per_hour
+          @simulation_status = simulation_status
+          @program = Program.new
+          @construction_costs = ConstructionCosts.new
+          @reporting_periods = ReportingPeriods.new          
+        end
+        
+        def save(path)
+          hash = {}
+          hash[:feature] = self.to_hash
+
+          File.open(path, 'w') do |file|
+            file.puts JSON::fast_generate(hash)
+          end
+          
+          return true
+        end
+        
+        def to_hash
+          result = {}
+          result[:id] = @id
+          result[:name] = @name
+          result[:directory_name] = @directory_name
+          result[:feature_type] = @feature_type
+          result[:timesteps_per_hour] = @timesteps_per_hour
+          result[:simulation_status] = @simulation_status
+          result[:program] = @program.to_hash
+          result[:construction_costs] = @construction_costs.to_hash
+          result[:reporting_periods] = @reporting_periods.to_hash
+          return result
+        end
+       
+      end
+    end
+  end
+end

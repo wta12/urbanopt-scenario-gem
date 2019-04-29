@@ -24,11 +24,23 @@
 				"name": {
 					"type": "string"
 				},
-				"simulation": {
-					"$ref": "#/definitions/Simulation"
+				"directory_name": {
+					"type": "string"
 				},
-				"location": {
-					"$ref": "#/definitions/Location"
+				"timesteps_per_hour": {
+					"$ref": "#/definitions/TimestepsPerHour"
+				},
+				"number_of_not_started_simulations": {
+					"type": "number"
+				},
+				"number_of_started_simulations": {
+					"type": "number"
+				},
+				"number_of_complete_simulations": {
+					"type": "number"
+				},
+				"number_of_failed_simulations": {
+					"type": "number"
 				},
 				"program": {
 					"$ref": "#/definitions/Program"
@@ -45,12 +57,28 @@
 						"$ref": "#/definitions/ReportingPeriod"
 					}
 				}
-			}
+			},
+			"required": [
+				"id",
+				"name",
+				"directory_name",
+				"timesteps_per_hour",
+				"number_of_not_started_simulations",
+				"number_of_started_simulations",
+				"number_of_complete_simulations",
+				"number_of_failed_simulations"
+			]
 		},
 		"Feature": {
 			"type": "object",
 			"properties": {
 				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"directory_name": {
 					"type": "string"
 				},
 				"feature_type": {
@@ -60,12 +88,6 @@
 						"District System",
 						"Transformer"
 					]
-				},
-				"name": {
-					"type": "string"
-				},
-				"directory_name": {
-					"type": "string"
 				},
 				"timesteps_per_hour": {
 					"$ref": "#/definitions/TimestepsPerHour"
@@ -126,27 +148,15 @@
 						"$ref": "#/definitions/ReportingPeriod"
 					}
 				}
-			}
-		},
-		"Simulation": {
-			"type": "object",
-			"properties": {
-				"timesteps_per_hour": {
-					"$ref": "#/definitions/TimestepsPerHour"
-				},
-				"number_of_not_started_simulations": {
-					"type": "number"
-				},
-				"number_of_started_simulations1": {
-					"type": "number"
-				},
-				"number_of_complete_simulations": {
-					"type": "number"
-				},
-				"number_of_failed_simulations": {
-					"type": "number"
-				}
-			}
+			},
+			"required": [
+				"id",
+				"name",
+				"directory_name",
+				"feature_type",
+				"timesteps_per_hour",
+				"simulation_status"
+			]
 		},
 		"ReportingPeriod": {
 			"description": "Non-overlapping reporting periods",

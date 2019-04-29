@@ -48,62 +48,6 @@ module URBANopt
 
       end
 
-#####rawad try
-
-#print files in each run_directory
-      Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/1"
-      files = Dir.glob("*")
-      puts "\n Datapoint 1 \n #{files}"
-      Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/2"
-      files = Dir.glob("*")
-      puts "\n Datapoint 2 \n #{files}"
-      Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/3"
-      files = Dir.glob("*")
-      puts "\n Datapoint 3 \n #{files}"
-
-      # CSV.foreach ("C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/1/eplusssz.csv") do |row|
-      #    puts row
-      #  end
-
-
-
-#####another method
-      #### Copy csv files to a new directory and chnage there names
-      # Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario"
-      # puts Dir.pwd
-      # FileUtils.mkdir_p 'scenario_results'
-      # Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/scenario_results"
-
-##### csv post process method ..should go in the "save" method
-
-    Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario"
-    puts Dir.pwd
-
-       # Get input files
-       input_files = Dir.glob("**/*.csv")
-
-       # Collect/combine headers
-       all_headers = input_files.reduce([]) do |all_headers, file|
-         header_line = File.open(file, &:gets)     # grab first line
-         all_headers | CSV.parse_line(header_line) # parse headers and merge with known ones
-       end
-
-       # Write combined file
-       CSV.open("scenario_results.csv", "w") do |out|
-         # Write all headers
-         out << all_headers
-
-         # Write rows from each file
-         input_files.each do |file|
-           CSV.foreach(file, headers: true) do |row|
-             out << all_headers.map { |header| row[header] }
-           end
-         end
-       end
-
-##### rawad trial ends
-
-
       ##
       # Assign the scenario to this result
       ##
@@ -152,11 +96,6 @@ module URBANopt
           file << "{\"Results\": 1}"
         end
 
-
-
-
-        #assign directory
-        Dir.chdir"C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario"
         # Get input files
         input_files = Dir.glob("**/*.csv")
         #input_files = Dir["C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/**/*eplusssz.csv"]
