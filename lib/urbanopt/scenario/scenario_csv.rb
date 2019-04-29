@@ -72,11 +72,8 @@ module URBANopt
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
           
-          datapoint = ScenarioDatapoint.new(self)
-          datapoint.feature_id = feature_id
-          datapoint.feature_name = feature_name
-          datapoint.mapper_class = mapper_class
-          
+          datapoint = ScenarioDatapoint.new(self, feature_id, feature_name, mapper_class)
+
           result << datapoint
         end
         

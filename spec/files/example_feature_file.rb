@@ -42,6 +42,10 @@ class ExampleFeature < URBANopt::Core::Feature
   def area
     @json[:area]
   end
+  
+  def feature_type
+    'Building'
+  end  
 end
 
 # Simple example of a FeatureFile

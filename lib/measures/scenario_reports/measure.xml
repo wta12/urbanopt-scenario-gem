@@ -1,44 +1,38 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <error>D:/urbanopt-scenario-gem/lib/measures/scenario_reports/measure.rb:672: syntax error, unexpected keyword_end, expecting end-of-input
-  end #end the run method&#xd;
-     ^</error>
-  <name>datapoint_reports</name>
+  <name>scenario_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>92f11083-490f-4478-bb69-7af41ccbe9e3</version_id>
-  <version_modified>20190429T225547Z</version_modified>
+  <version_id>75f65390-085f-4966-884c-6d3a49c983ba</version_id>
+  <version_modified>20190429T233928Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
-  <class_name>DatapointReports</class_name>
-  <display_name>DatapointReports</display_name>
-  <description>Updates Datapoint in CityDB with simulation results</description>
+  <class_name>ScenarioReports</class_name>
+  <display_name>ScenarioReports</display_name>
+  <description>Writes feature.json file used by URBANopt Scenario Default Post Processor</description>
   <modeler_description></modeler_description>
   <arguments>
     <argument>
-      <name>city_db_url</name>
-      <display_name>City Database Url</display_name>
-      <description>Url of the City Database</description>
+      <name>id</name>
+      <display_name>Unique identifier</display_name>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value></default_value>
+      <default_value>1</default_value>
     </argument>
     <argument>
-      <name>project_id</name>
-      <display_name>Project ID</display_name>
-      <description>Project ID to generate reports for.</description>
+      <name>name</name>
+      <display_name>Human readable name</display_name>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>name</default_value>
     </argument>
     <argument>
-      <name>datapoint_id</name>
-      <display_name>Datapoint ID</display_name>
-      <description>Datapoint ID to generate reports for.</description>
+      <name>feature_type</name>
+      <display_name>URBANopt Feature Type</display_name>
       <type>String</type>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>0</default_value>
+      <default_value>Building</default_value>
     </argument>
   </arguments>
   <outputs/>
@@ -72,12 +66,6 @@
       <checksum>BDF687C1</checksum>
     </file>
     <file>
-      <filename>scenario_reports_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9B87AA1B</checksum>
-    </file>
-    <file>
       <filename>LICENSE.md</filename>
       <filetype>md</filetype>
       <usage_type>license</usage_type>
@@ -90,10 +78,10 @@
       <checksum>703C9964</checksum>
     </file>
     <file>
-      <filename>README.md</filename>
-      <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>0B68E96D</checksum>
+      <filename>scenario_reports_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CE5C9355</checksum>
     </file>
     <file>
       <version>
@@ -104,7 +92,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>667AA9D3</checksum>
+      <checksum>3B6D0BCD</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>5A54D5D3</checksum>
     </file>
   </files>
 </measure>

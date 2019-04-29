@@ -1,10 +1,34 @@
-######################################################################
-#  Copyright © 2016-2017 the Alliance for Sustainable Energy, LLC, All Rights Reserved
-#
-#  This computer software was produced by Alliance for Sustainable Energy, LLC under Contract No. DE-AC36-08GO28308 with the U.S. Department of Energy. For 5 years from the date permission to assert copyright was obtained, the Government is granted for itself and others acting on its behalf a nonexclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, and perform publicly and display publicly, by or on behalf of the Government. There is provision for the possible extension of the term of this license. Subsequent to that period or any extension granted, the Government is granted for itself and others acting on its behalf a nonexclusive, paid-up, irrevocable worldwide license in this software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so. The specific term of the license can be identified by inquiry made to Contractor or DOE. NEITHER ALLIANCE FOR SUSTAINABLE ENERGY, LLC, THE UNITED STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY DATA, APPARATUS, PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS.
-######################################################################
+#*********************************************************************************
+# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other 
+# contributors. All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification, 
+# are permitted provided that the following conditions are met:
+# 
+# Redistributions of source code must retain the above copyright notice, this list 
+# of conditions and the following disclaimer.
+# 
+# Redistributions in binary form must reproduce the above copyright notice, this 
+# list of conditions and the following disclaimer in the documentation and/or other 
+# materials provided with the distribution.
+# 
+# Neither the name of the copyright holder nor the names of its contributors may be 
+# used to endorse or promote products derived from this software without specific 
+# prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+# OF THE POSSIBILITY OF SUCH DAMAGE.
+#*********************************************************************************
 
-require 'urbanopt/scenario/reports/FeatureReport'
+require 'urbanopt/scenario/reports/feature_report'
 
 #start the measure
 class ScenarioReports < OpenStudio::Measure::ReportingMeasure
@@ -28,17 +52,20 @@ class ScenarioReports < OpenStudio::Measure::ReportingMeasure
   def arguments()
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    id = OpenStudio::Ruleset::OSArgument::makeStringArgument('id', true)
+    id = OpenStudio::Ruleset::OSArgument::makeStringArgument('id', false)
     id.setDisplayName('Unique identifier')
     id.setDefaultValue('1')
-
-    name = OpenStudio::Ruleset::OSArgument::makeStringArgument('name', true)
+    args << id
+    
+    name = OpenStudio::Ruleset::OSArgument::makeStringArgument('name', false)
     name.setDisplayName('Human readable name')
     name.setDefaultValue('name')
+    args << name
     
-    feature_type = OpenStudio::Ruleset::OSArgument::makeStringArgument('feature_type', true)
+    feature_type = OpenStudio::Ruleset::OSArgument::makeStringArgument('feature_type', false)
     feature_type.setDisplayName('URBANopt Feature Type')
     feature_type.setDefaultValue('Building')
+    args << feature_type
     
     return args
   end
@@ -104,7 +131,7 @@ class ScenarioReports < OpenStudio::Measure::ReportingMeasure
   
 
   #define what happens when the measure is run
-  def run(runner, user_argument)
+  def run(runner, user_arguments)
     super(runner, user_arguments)
 
     #use the built-in error checking
@@ -171,7 +198,7 @@ class ScenarioReports < OpenStudio::Measure::ReportingMeasure
     # footprint_area
     # DLM: we can attach footprint_area to the building as an additional property, until then use floor_area
     # DLM: measures like the GeoJSON to OSM measure can set this value
-    feature_report.program.footprint_area = floor_area
+    feature_report.program.footprint_area = convert_units(floor_area, 'm^2', 'ft^2')
 
     # ###########################################################################
     # # Other queries of interest
@@ -806,9 +833,8 @@ class ScenarioReports < OpenStudio::Measure::ReportingMeasure
     #closing the sql file
     sql_file.close
 
-      File.open('feature.json', 'w') do |file|
-        file << JSON::pretty_generate(results)
-      end
+    # save the feature report
+    feature_report.save('feature.json') 
 
     #reporting final condition
     runner.registerFinalCondition("Scenario Feature Report generated successfully.")

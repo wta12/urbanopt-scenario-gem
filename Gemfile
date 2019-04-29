@@ -3,7 +3,7 @@ source "http://rubygems.org"
 # Specify your gem's dependencies in urbanopt-geojson.gemspec
 gemspec
 
-allow_local = false
+allow_local = true
 
 if allow_local && File.exists?('../OpenStudio-extension-gem')
   # gem 'openstudio-extension', github: 'NREL/OpenStudio-extension-gem', branch: 'develop'

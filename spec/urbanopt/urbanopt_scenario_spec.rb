@@ -61,8 +61,6 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.run_dir).to eq(run_dir)
     expect(scenario.num_header_rows).to eq(1)
     
-    scenario.clean
-    
     # Rawad: set clear_results to be false if you want the tests to run faster
     clear_results = true
     scenario.clear if clear_results 
@@ -90,11 +88,9 @@ RSpec.describe URBANopt::Scenario do
       expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
     end
     
-    failures = scenario.run
-    
     expect(failures).to be_empty
     
-    scenario_result = scenario.post_process
+    #scenario_result = scenario_runner.post_process
     
     # TODO: Rawad, add test assertions on scenario_result
   end

@@ -30,11 +30,14 @@
 			"measure_dir_name": "create_typical_building_from_model",
 			"arguments": {
 
-      },{
-				"measure_dir_name": "scenario_reports",
-				"arguments": {
-	
-	      }
+      }
+    },{
+      "measure_dir_name": "scenario_reports",
+      "arguments": {
+        "id": null,
+        "name": null,
+        "feature_type": null
+      }
 		}
 	],
 	"name": null,
