@@ -40,13 +40,13 @@ module URBANopt
     module Reports
       class ScenarioReport 
         
-        attr_reader :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :program, :construction_costs, :reporting_periods, :features
-        
         # perform initialization functions
-        def initialize(id, name, directory_name)
-          @id = id
-          @name = name
-          @directory_name = directory_name
+        def initialize(scenario)
+          @scenario = scenario
+          
+          @id = scenario.name
+          @name = scenario.name
+          @directory_name = scenario.run_dir
           @timesteps_per_hour = nil # unknown
           @number_of_not_started_simulations = 0
           @number_of_started_simulations = 0
@@ -58,7 +58,10 @@ module URBANopt
           @features = []
         end
         
-        def save(path)
+        def save()
+        
+          path = File.join(@scenario.run_dir, 'scenario.json')
+          
           hash = {}
           hash[:scenario] = self.to_hash
           hash[:features] = []
@@ -95,7 +98,7 @@ module URBANopt
           return result
         end
         
-        def add_feature(feature)
+        def add_feature_report(feature)
           
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature.timesteps_per_hour

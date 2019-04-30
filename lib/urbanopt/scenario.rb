@@ -28,16 +28,15 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'urbanopt/scenario/version'
 require 'urbanopt/scenario/extension'
-
-require 'urbanopt/scenario/simulation_mapper_base'
+require 'urbanopt/scenario/reports'
 require 'urbanopt/scenario/scenario_base'
 require 'urbanopt/scenario/scenario_csv'
-require 'urbanopt/scenario/simulation_file_base'
-require 'urbanopt/scenario/simulation_file_osw'
-require 'urbanopt/scenario/scenario_runner_base'
-require 'urbanopt/scenario/scenario_runner_osw'
 require 'urbanopt/scenario/scenario_post_processor_base'
 require 'urbanopt/scenario/scenario_post_processor_default'
-require 'urbanopt/scenario/reports'
+require 'urbanopt/scenario/scenario_runner_base'
+require 'urbanopt/scenario/scenario_runner_osw'
+require 'urbanopt/scenario/simulation_dir_base'
+require 'urbanopt/scenario/simulation_dir_osw'
+require 'urbanopt/scenario/simulation_mapper_base'
+require 'urbanopt/scenario/version'

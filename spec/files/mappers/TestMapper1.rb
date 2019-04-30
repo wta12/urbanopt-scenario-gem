@@ -36,7 +36,7 @@ require 'json'
 
 module URBANopt
   module Scenario
-    class TestMapper1 < MapperBase
+    class TestMapper1 < SimulationMapperBase
     
       # class level variables
       @@instance_lock = Mutex.new
@@ -64,20 +64,24 @@ module URBANopt
         end
       end
       
-      def create_osw(scenario, feature_id, feature_name)
-       
-        # get the feature from the scenario's feature_file
-        feature_file = scenario.feature_file
-        feature = feature_file.get_feature_by_id(feature_id)
+      def create_osw(scenario, features, feature_names)
         
-        raise "Cannot find feature '#{feature_id}' in '#{scenario.geometry_file}'" if feature.nil?
+        if features.size != 1
+          raise "TestMapper1 currently cannot simulate more than one feature"
+        end
+        feature = features[0]
+        
+        feature_name = feature.name
+        if feature_names.size == 1
+          feature_name = feature_names[0]
+        end
         
         # deep clone of @@osw before we configure it
         osw = Marshal.load(Marshal.dump(@@osw))
         
         # now we have the feature, we can look up its properties and set arguments in the OSW
         OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature.area)
-        OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'id', feature_id)
+        OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'id', feature.id)
         OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'name', feature_name)
         OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'feature_type', feature.feature_type)
         

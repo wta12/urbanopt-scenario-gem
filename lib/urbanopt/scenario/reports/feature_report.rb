@@ -39,40 +39,38 @@ module URBANopt
         attr_reader :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :program, :construction_costs, :reporting_periods
         
         # perform initialization functions
-        def initialize(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
-          @id = id
-          @name = name
-          @directory_name = directory_name
-          @feature_type = feature_type
-          @timesteps_per_hour = timesteps_per_hour
-          @simulation_status = simulation_status
-          @program = Program.new
-          @construction_costs = ConstructionCosts.new
-          @reporting_periods = ReportingPeriods.new          
+        def initialize(simulation_dir, feature, feature_name)
+          @simulation_dir = simulation_dir
+
+          @id = feature.id
+          @name = feature_name
+          @directory_name = simulation_dir.run_dir
+          @feature_type = feature.feature_type
+          @timesteps_per_hour = 1 # todo
+          @simulation_status = simulation_dir.simulation_status
+          @program = Program.new()
+          @construction_costs = ConstructionCosts.new()
+          @reporting_periods = ReportingPeriods.new()        
         end
         
-        # create a FeatureReport from a datapoint
-        def self.from_datapoint(datapoint)
-
-          puts "FeatureReport::from_datapoint"
-          puts "feature_id = #{datapoint.feature_id}"
-          puts "feature_name = #{datapoint.feature_name}"
-          puts "feature_type = #{datapoint.feature_type}"
-          puts "out_of_date? = #{datapoint.out_of_date?}"
-          puts "run_dir = #{datapoint.run_dir}"
-
-          out_osw = nil
-          if File.exists?(File.join(datapoint.run_dir, 'out.osw'))
-            File.open(File.join(datapoint.run_dir, 'out.osw'), 'r') do |f|
-              out_osw = JSON::parse(f.read, symbolize_names: true)
-            end
+        # Returns Array of FeatureReport from a simulation_dir
+        def self.from_simulation_dir(simulation_dir)
+        
+          features = simulation_dir.features
+          if features.size != 1
+            raise "FeatureReport cannot support multiple features per OSW"
           end
-          puts "out_osw = #{out_osw}"
+          feature = features[0]
+          feature_name = simulation_dir.feature_names[0]
           
-          
+          result = []
+          result << FeatureReport.new(simulation_dir, feature, feature_name)
+          return result
         end
         
-        def save(path)
+        def save
+          path = File.join(@simulation_dir.run_dir, 'feature.json')
+        
           hash = {}
           hash[:feature] = self.to_hash
 

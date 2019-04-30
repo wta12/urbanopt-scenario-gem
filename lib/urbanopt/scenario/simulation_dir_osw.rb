@@ -81,6 +81,19 @@ module URBANopt
       end
       
       ##
+      # Return the input OSW 
+      ##
+      def in_osw
+        result = nil
+        if File.exists?(in_osw_path)
+          File.open(in_osw_path, 'r') do |f|
+            result = JSON::parse(f.read, symbolize_names: true)
+          end
+        end
+        return result
+      end
+      
+      ##
       # Return the started.job path
       ##
       def started_job_path
@@ -106,6 +119,19 @@ module URBANopt
       ##
       def out_osw_path
         return File.join(run_dir, 'out.osw')
+      end
+      
+      ##
+      # Return the output OSW 
+      ##
+      def out_osw
+        result = nil
+        if File.exists?(out_osw_path)
+          File.open(out_osw_path, 'r') do |f|
+            result = JSON::parse(f.read, symbolize_names: true)
+          end
+        end
+        return result
       end
       
       ##
