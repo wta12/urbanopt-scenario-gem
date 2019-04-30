@@ -35,7 +35,8 @@ module URBANopt
       attr_reader :scenario, :feature_id, :feature_name, :mapper_class
       
       ##
-      # ScenarioDatapoint represents the simulation of a feature in a given scenario
+      # ScenarioDatapoint is an agnostic description of the simulation of a Feature in a Scenario
+      # A Simulation Mapper will map the 
       ##
       #  @param [ScenarioBase] scenario Scenario containing this ScenarioDatapoint
       #  @param [String] feature_id Unique id of the feature for this ScenarioDatapoint

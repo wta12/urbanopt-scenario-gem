@@ -33,34 +33,34 @@ module URBANopt
     class ScenarioPostProcessorBase
 
       ##
-      # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
+      # ScenarioPostProcessorBase post-processes a Scenario to create scenario level results
       ##
       def initialize()
 
       end
 
       ##
-      # Run the post processor on this scenario
+      # Run the post processor on this Scenario
       ##
       def run(scenario)
-        # this run method adds all the datapoints, you can extend it to do more custom stuff
-        scenario.datapoints.each do |datapoint|
-          add_datapoint(datapoint)
+        # this run method adds all the simulation_files, you can extend it to do more custom stuff
+        scenario.simulation_files.each do |simulation_file|
+          add_simulation_file(simulation_file)
         end
       end
 
       ##
-      # Add results from a datapoint to this result
+      # Add results from a simulation_file to this result
       ##
-      def add_datapoint(datapoint)
-        raise 'ScenarioPostProcessorBase::add_datapoint not implemented, override in your class'
+      def add_simulation_file(simulation_file)
+        raise 'add_simulation_file not implemented for ScenarioPostProcessorBase, override in your class'
       end
 
       ##
       # Save scenario result
       ##
       def save
-        raise 'ScenarioPostProcessorBase::save not implemented, override in your class'
+        raise 'save not implemented for ScenarioPostProcessorBase, override in your class'
       end
       
     end

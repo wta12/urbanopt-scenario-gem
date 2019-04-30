@@ -28,22 +28,36 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
-
 module URBANopt
   module Scenario
-    class MapperBase 
+    class ScenarioRunnerBase
       
-      # perform initialization functions
-      def initialize
-
+      ## 
+      # ScenarioRunnerBase is the agnostic interface for a class which can create and run SimulationFiles 
+      ##
+      def initialize()
       end
       
-      # create osw file given a ScenarioBase object, feature_id, and feature_name
-      def create_osw(scenario, feature_id, feature_name)
-        raise "create_osw not implemented for MapperBase, override in your class"
+      ##
+      # Create all SimulationFiles for Scenario
+      ##
+      #  @param [ScenarioBase] scenario Scenario to create SimulationFiles for
+      #  @param [Bool] force_clear Clear Scenario before creating SimulationFiles
+      #  @return [Array] Returns array of all SimulationFiles, even those created previously, for Scenario
+      def create_simulation_files(scenario, force_clear = false)
+        raise "create_input_files is not implemented for ScenarioRunnerBase, override in your class"
       end
       
+      ##
+      # Create and run all SimulationFiles for Scenario
+      ##
+      #  @param [ScenarioBase] scenario Scenario to create and run SimulationFiles for
+      #  @param [Bool] force_clear Clear Scenario before creating SimulationFiles
+      #  @return [Array] Returns array of all SimulationFiles, even those created previously, for Scenario
+      def run(scenario, force_clear = false)
+        raise "run is not implemented for ScenarioRunnerBase, override in your class"
+      end
+     
     end
   end
 end

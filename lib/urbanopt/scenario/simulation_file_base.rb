@@ -30,55 +30,68 @@
 
 module URBANopt
   module Scenario
-    class ScenarioBase 
-
+    class SimulationFileBase 
+    
       ##
-      # ScenarioBase is a simulation method agnostic description of a Scenario
-      # Each ScenarioBase has a name, root directory, run directory, and an input feature file
+      # SimulationFile is the agnostic representation of input files for simulation
       ##
-      #  @param [String] name Human readable scenario name
-      #  @param [String] root_dir Root directory for the scenario, contains Gemfile describing dependencies
-      #  @param [String] run_dir Directory for simulation of this scenario, deleting run directory clears the scenario
-      #  @param [URBANopt::Core::FeatureFile] feature_file FeatureFile containing features to simulate
-      def initialize(name, root_dir, run_dir, feature_file)
-        @name = name
-        @root_dir = root_dir
-        @run_dir = run_dir
-        @feature_file = feature_file
+      #  @param [ScenarioBase] scenario Scenario containing this SimulationFileBase
+      #  @param [Array] features Array of Features this SimulationFile represents
+      #  @param [Array] feature_names Array of scenario specific names for these Features
+      def initialize(scenario, features, feature_names)
+        @scenario = scenario
+        @features = features
+        @feature_names = feature_names
       end
       
-      # Name of this Scenario
-      def name
-        @name
+      def scenario
+        @scenario 
       end
       
-      # Root directory containing Gemfile
-      def root_dir
-        @root_dir
+      def features
+        @features 
       end
       
-      # Directory to run this Scenario in
+      def feature_names
+        @feature_names
+      end
+      
+      ##
+      # Return the directory that this simulation will run in
+      ##
       def run_dir
-        @run_dir
+        raise "run_dir is not implemented for SimulationFileBase, override in your class"
       end
       
-      # @return [URBANopt::Core::FeatureFile] FeatureFile associated with this Scenario
-      def feature_file
-        @feature_file
+      ##
+      # Return true if the simulation is out of date (input files newer than results), false otherwise.  
+      # Non-existant simulation input files are out of date.
+      ##
+      def out_of_date?
+        raise "out_of_date? is not implemented for SimulationFileBase, override in your class"
       end
       
-      # Array of SimulationFile objects
-      def simulation_files
-        raise "simulation_files not implemented for ScenarioBase, override in your class"
+      ## 
+      #  Returns simulation status one of {'Not Started', 'Started', 'Complete', 'Failed'}
+      ##
+      def simulation_status
+        raise "simulation_status is not implemented for SimulationFileBase, override in your class"
       end
       
-      # Remove all simulation input and output files by removing this Scenario's run_dir
+      ##
+      # Clear the directory that this simulation runs in
+      ##
       def clear
-        Dir.glob(File.join(@run_dir, '/*')).each do |f|
-          FileUtils.rm_rf(f)
-        end
+        raise "clear is not implemented for SimulationFileBase, override in your class"
       end
       
+      ##
+      # Create run directory and generate simulation inputs, all previous contents of directory are removed
+      ##
+      def create_input_files
+        raise "create_input_files is not implemented for SimulationFileBase, override in your class"
+      end
+
     end
   end
 end

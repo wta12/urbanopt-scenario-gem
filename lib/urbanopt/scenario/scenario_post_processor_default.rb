@@ -28,48 +28,74 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
+require 'urbanopt/scenario/scenario_post_processor_base'
+require 'urbanopt/scenario/reports'
 
 require 'csv'
+require 'json'
 require 'fileutils'
 
 module URBANopt
   module Scenario
-    class ScenarioRunner
-      
-      # Initialize a ScenarioRunner 
+    class ScenarioDefaultPostProcessor < ScenarioPostProcessorBase
+    
+      ##
+      # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
+      ##
       def initialize()
+        super
+      end
+      
+      
+      ##
+      # Add results from a simulation_file to this result
+      ##
+      def add_simulation_file(simulation_file)
+        feature_report = URBANopt::Scenario::Reports::FeatureReport::from_simulation_file(simulation_file)
+        feature_report.save
+        
+        @scenario_result.add_feature_report(feature_report)
+        
+        return feature_report
       end
 
-      # Create OSW files for scenario
-      def create_osws(scenario, force_clear)
+      ##
+      # Save scenario result
+      ##
+      def save
+        @scenario_result.save
         
-        FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
+        return @scenario_result
         
-        scenario.load_mapper_files
-        
-        osws = []
-        scenario.datapoints.each do |datapoint|
-          if force_clear || datapoint.out_of_date?
-            osws << datapoint.create_osw
-          end
+        # TODO: Rawad, save the timeseries data to a CSV and the summary data to JSON
+
+        File.open( File.join(@scenario.run_dir, 'scenario_out.json'), 'w') do |file|
+          file << "{\"Results\": 1}"
         end
 
-        return osws
-      end
-      
-      # Create and run OSW files for scenario
-      def run_osws(scenario, force)
-        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
+        # Get input files
+        input_files = Dir.glob("**/*.csv")
+        #input_files = Dir["C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/**/*eplusssz.csv"]
 
-        osws = create_osws(scenario)
-        
-        failures = runner.run_osws(osws)
-        
-        return failures
+        # Collect/combine headers
+        all_headers = input_files.reduce([]) do |all_headers, file|
+          header_line = File.open(file, &:gets)     # grab first line
+          all_headers | CSV.parse_line(header_line) # parse headers and merge with known ones
+        end
+
+        File.open( File.join(@scenario.run_dir, 'scenario_timeseries.csv'), 'w') do |file|
+          # Write all headers
+          file << all_headers
+
+          # Write rows from each file
+          input_files.each do |file|
+            CSV.foreach(file, headers: true) do |row|
+              file << all_headers.map { |header| row[header] }
+            end
+          end
+        end
       end
-      
+
     end
   end
 end

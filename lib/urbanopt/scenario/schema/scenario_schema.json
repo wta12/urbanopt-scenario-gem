@@ -3,22 +3,22 @@
 	"description": "Comment describing your JSON Schema",
 	"type": "object",
 	"properties": {
-		"scenario": {
-			"$ref": "#/definitions/Scenario"
+		"scenario_report": {
+			"$ref": "#/definitions/ScenarioReport"
 		},
-		"features": {
+		"feature_reports": {
 			"description": "features of each data point in the scenario",
 			"type": "array",
 			"items": {
-				"$ref": "#/definitions/Feature"
+				"$ref": "#/definitions/FeatureReport"
 			}
 		}
 	},
 	"required": [
-		"scenario"
+		"scenario_report"
 	],
 	"definitions": {
-		"Scenario": {
+		"ScenarioReport": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -49,16 +49,10 @@
 					"$ref": "#/definitions/Program"
 				},
 				"construction_costs": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ConstructionCost"
-					}
+					"$ref": "#/definitions/ConstructionCosts"
 				},
 				"reporting_periods": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ReportingPeriod"
-					}
+					"$ref": "#/definitions/ReportingPeriods"
 				}
 			},
 			"required": [
@@ -73,7 +67,7 @@
 				"program"
 			]
 		},
-		"Feature": {
+		"FeatureReport": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -112,45 +106,13 @@
 					"$ref": "#/definitions/Program"
 				},
 				"design_parameters": {
-					"type": "object",
-					"properties": {
-						"district_cooling_chilled_water_rate": {
-							"type": "number"
-						},
-						"district_cooling_mass_flow_rate": {
-							"type": "number"
-						},
-						"district_cooling_inlet_temperature": {
-							"type": "number"
-						},
-						"district_cooling_outlet_temperature": {
-							"type": "number"
-						},
-						"district_heating_hot_water_rate": {
-							"type": "number"
-						},
-						"district_heating_mass_flow_rate": {
-							"type": "number"
-						},
-						"district_heating_inlet_temperature": {
-							"type": "number"
-						},
-						"district_heating_outlet_temperature": {
-							"type": "number"
-						}
-					}
+					"$ref": "#/definitions/DesignParameters"
 				},
 				"construction_costs": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ConstructionCost"
-					}
+					"$ref": "#/definitions/ConstructionCosts"
 				},
 				"reporting_periods": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ReportingPeriod"
-					}
+					"$ref": "#/definitions/ReportingPeriods"
 				}
 			},
 			"required": [
@@ -161,6 +123,12 @@
 				"timesteps_per_hour",
 				"simulation_status"
 			]
+		},
+		"ReportingPeriods": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/ReportingPeriod"
+			}
 		},
 		"ReportingPeriod": {
 			"description": "Non-overlapping reporting periods",
@@ -359,6 +327,12 @@
 					"description": "(hrs)",
 					"type": "number"
 				}
+			}
+		},
+		"ConstructionCosts": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/ConstructionCost"
 			}
 		},
 		"ConstructionCost": {
@@ -698,6 +672,35 @@
 				"maximum_occupancy",
 				"floor_area"
 			]
+		},
+		"DesignParameters": {
+			"type": "object",
+			"properties": {
+				"district_cooling_chilled_water_rate": {
+					"type": "number"
+				},
+				"district_cooling_mass_flow_rate": {
+					"type": "number"
+				},
+				"district_cooling_inlet_temperature": {
+					"type": "number"
+				},
+				"district_cooling_outlet_temperature": {
+					"type": "number"
+				},
+				"district_heating_hot_water_rate": {
+					"type": "number"
+				},
+				"district_heating_mass_flow_rate": {
+					"type": "number"
+				},
+				"district_heating_inlet_temperature": {
+					"type": "number"
+				},
+				"district_heating_outlet_temperature": {
+					"type": "number"
+				}
+			}
 		}
 	}
 }

@@ -28,16 +28,20 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'urbanopt/scenario/version'
-require 'urbanopt/scenario/extension'
+module URBANopt
+  module Scenario
+    class SimulationMapperBase 
+      
+      # perform initialization functions
+      def initialize
 
-require 'urbanopt/scenario/simulation_mapper_base'
-require 'urbanopt/scenario/scenario_base'
-require 'urbanopt/scenario/scenario_csv'
-require 'urbanopt/scenario/simulation_file_base'
-require 'urbanopt/scenario/simulation_file_osw'
-require 'urbanopt/scenario/scenario_runner_base'
-require 'urbanopt/scenario/scenario_runner_osw'
-require 'urbanopt/scenario/scenario_post_processor_base'
-require 'urbanopt/scenario/scenario_post_processor_default'
-require 'urbanopt/scenario/reports'
+      end
+      
+      # create osw file given a ScenarioBase object, feature_id, and feature_name
+      def create_osw(scenario, feature_id, feature_name)
+        raise "create_osw not implemented for SimulationMapperBase, override in your class"
+      end
+      
+    end
+  end
+end

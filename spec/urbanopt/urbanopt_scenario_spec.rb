@@ -67,33 +67,49 @@ RSpec.describe URBANopt::Scenario do
     clear_results = false
     scenario.clear if clear_results 
     
-    datapoints = scenario.datapoints
-    expect(datapoints.size).to eq(3)
-    expect(datapoints[0].feature_id).to eq('1')
-    expect(datapoints[0].feature_name).to eq('Building 1')
-    expect(datapoints[0].mapper_class).to eq('URBANopt::Scenario::TestMapper1')
-    expect(datapoints[0].run_dir).to eq(File.join(run_dir, '1/'))
+    simulation_files = scenario.simulation_files
+    expect(simulation_files.size).to eq(3)
+    expect(simulation_files[0].features.size).to eq(1)
+    expect(simulation_files[0].feature_names.size).to eq(1)
+    expect(simulation_files[0].features[0].id).to eq('1')
+    expect(simulation_files[0].feature_names[0]).to eq('Building 1')
+    expect(simulation_files[0].mapper_class).to eq('URBANopt::Scenario::TestMapper1')
+    expect(simulation_files[0].run_dir).to eq(File.join(run_dir, '1/'))
     
     if clear_results
-      expect(File.exists?(datapoints[0].run_dir)).to be false
+      expect(File.exists?(simulation_files[0].run_dir)).to be false
+      expect(File.exists?(simulation_files[1].run_dir)).to be true
+      expect(File.exists?(simulation_files[2].run_dir)).to be true
     end
     
-    # create a ScenarioRunner to run the ScenarioCSV
-    scenario_runner = URBANopt::Scenario::ScenarioRunner.new
+    # create a ScenarioRunnerOSW to run the ScenarioCSV
+    scenario_runner = URBANopt::Scenario::ScenarioRunnerOSW.new
     
-    osws = scenario_runner.create_osws(scenario, clear_results)
+    scenario_runner.create_simulation_files(scenario, clear_results)
+    expect(File.exists?(simulation_files[0].run_dir)).to be true
+    expect(File.exists?(simulation_files[1].run_dir)).to be true
+    expect(File.exists?(simulation_files[2].run_dir)).to be true
     
-    failures = scenario_runner.run_osws(scenario, clear_results)
+    simulation_files = scenario_runner.run(scenario)
     if clear_results
       expect(osws.size).to eq(3)
       expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
+      expect(osws[1]).to eq(File.join(run_dir, '2/in.osw'))
+      expect(osws[2]).to eq(File.join(run_dir, '3/in.osw'))
+    end
+    
+    failures = []
+    simulation_files.each do |simulation_file|
+      if simulation_file.simulation_status != 'Complete'
+        failures << simulation_file
+      end
     end
     
     expect(failures).to be_empty
     
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new
-    scenario_result = default_post_processor.run(scenario)
-    scenario_result.save
+    #scenario_result = default_post_processor.run(scenario)
+    #scenario_result.save
     
     # TODO: Rawad, add test assertions on scenario_result
   end
