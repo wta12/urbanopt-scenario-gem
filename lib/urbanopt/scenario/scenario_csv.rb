@@ -38,8 +38,8 @@ module URBANopt
   module Scenario
     class ScenarioCSV < ScenarioBase
     
-      def initialize(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
-        super(name, run_dir, feature_file, mapper_files_dir)
+      def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
+        super(name, root_dir, run_dir, feature_file, mapper_files_dir)
         
         @csv_file = csv_file
         @num_header_rows = num_header_rows

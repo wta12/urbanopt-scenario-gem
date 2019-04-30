@@ -32,8 +32,10 @@ module URBANopt
   module Scenario
     class ScenarioBase 
 
-      def initialize(name, run_dir, feature_file, mapper_files_dir)
+      
+      def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir)
         @name = name
+        @root_dir = root_dir
         @run_dir = run_dir
         @feature_file = feature_file
         @mapper_files_dir = mapper_files_dir
@@ -42,6 +44,11 @@ module URBANopt
       # the name of this Scenario
       def name
         @name
+      end
+      
+      # the root directory containing Gemfile
+      def root_dir
+        @root_dir
       end
       
       # the directory to run this Scenario in

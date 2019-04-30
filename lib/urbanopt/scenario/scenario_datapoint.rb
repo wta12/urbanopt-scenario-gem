@@ -32,7 +32,7 @@ module URBANopt
   module Scenario
     class ScenarioDatapoint 
     
-      attr_accessor :scenario, :feature_id, :feature_name, :mapper_class
+      attr_reader :scenario, :feature_id, :feature_name, :mapper_class
       
       ##
       # ScenarioDatapoint represents the simulation of a feature in a given scenario
@@ -45,7 +45,16 @@ module URBANopt
         @scenario = scenario
         @feature_id = feature_id
         @feature_name = feature_name
+        @feature = scenario.feature_file.get_feature_by_id(feature_id)
         @mapper_class = mapper_class
+      end
+      
+      def feature
+        @feature 
+      end
+      
+      def feature_type
+        @feature.feature_type
       end
       
       ##
@@ -109,8 +118,8 @@ module URBANopt
         # array of files that this datapoint depends on
         dependencies = []
         
-        # depends on the geometry file
-        dependencies << scenario.geometry_file
+        # depends on the feature file
+        dependencies << scenario.feature_file.path
         
         # depends on the csv file
         dependencies << scenario.csv_file
@@ -133,6 +142,8 @@ module URBANopt
               puts "File '#{f}' is newer than '#{out_osw}', datapoint out of date"
               return true
             end
+          else
+            puts "Dependency file '#{f}' does not exist"
           end
         end
         

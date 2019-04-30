@@ -38,19 +38,12 @@ module URBANopt
   module Scenario
     class ScenarioRunner
       
-      # Initialize a ScenarioRunner with root_dir containing Gemfile
-      def initialize(root_dir)
-        @root_dir = root_dir
-      end
-      
-      def root_dir
-        @root_dir
+      # Initialize a ScenarioRunner 
+      def initialize()
       end
 
       # Create OSW files for scenario
-      def create_osws(scenario)
-        
-        scenario.clear
+      def create_osws(scenario, force_clear)
         
         FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
         
@@ -58,15 +51,17 @@ module URBANopt
         
         osws = []
         scenario.datapoints.each do |datapoint|
-          osws << datapoint.create_osw
+          if force_clear || datapoint.out_of_date?
+            osws << datapoint.create_osw
+          end
         end
 
         return osws
       end
       
       # Create and run OSW files for scenario
-      def run_osws(scenario)
-        runner = OpenStudio::Extension::Runner.new(@root_dir)
+      def run_osws(scenario, force)
+        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
 
         osws = create_osws(scenario)
         
@@ -74,7 +69,7 @@ module URBANopt
         
         return failures
       end
-
+      
     end
   end
 end

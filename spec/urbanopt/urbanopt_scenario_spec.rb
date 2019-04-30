@@ -54,15 +54,17 @@ RSpec.describe URBANopt::Scenario do
     expect(feature_file.get_feature_by_id('4')).to be_nil
     
     # create a new ScenarioCSV, we could create many of these in a project
-    scenario = URBANopt::Scenario::ScenarioCSV.new(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
+    scenario = URBANopt::Scenario::ScenarioCSV.new(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
     expect(scenario.name).to eq(name)
-    expect(scenario.csv_file).to eq(csv_file)
-    expect(scenario.mapper_files_dir).to eq(mapper_files_dir)
+    expect(scenario.root_dir).to eq(root_dir)
     expect(scenario.run_dir).to eq(run_dir)
+    expect(scenario.feature_file.path).to eq(feature_file.path)
+    expect(scenario.mapper_files_dir).to eq(mapper_files_dir)
+    expect(scenario.csv_file).to eq(csv_file)
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = true
+    clear_results = false
     scenario.clear if clear_results 
     
     datapoints = scenario.datapoints
@@ -77,12 +79,11 @@ RSpec.describe URBANopt::Scenario do
     end
     
     # create a ScenarioRunner to run the ScenarioCSV
-    scenario_runner = URBANopt::Scenario::ScenarioRunner.new(root_dir)
-    expect(scenario_runner.root_dir).to eq(root_dir)
+    scenario_runner = URBANopt::Scenario::ScenarioRunner.new
     
-    osws = scenario_runner.create_osws(scenario)
+    osws = scenario_runner.create_osws(scenario, clear_results)
     
-    failures = scenario_runner.run_osws(scenario)
+    failures = scenario_runner.run_osws(scenario, clear_results)
     if clear_results
       expect(osws.size).to eq(3)
       expect(osws[0]).to eq(File.join(run_dir, '1/in.osw'))
@@ -90,7 +91,9 @@ RSpec.describe URBANopt::Scenario do
     
     expect(failures).to be_empty
     
-    #scenario_result = scenario_runner.post_process
+    default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new
+    scenario_result = default_post_processor.run(scenario)
+    scenario_result.save
     
     # TODO: Rawad, add test assertions on scenario_result
   end

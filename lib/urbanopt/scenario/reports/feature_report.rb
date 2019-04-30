@@ -51,12 +51,39 @@ module URBANopt
           @reporting_periods = ReportingPeriods.new          
         end
         
+        # create a FeatureReport from a datapoint
+        def self.from_datapoint(datapoint)
+
+          puts "FeatureReport::from_datapoint"
+          puts "feature_id = #{datapoint.feature_id}"
+          puts "feature_name = #{datapoint.feature_name}"
+          puts "feature_type = #{datapoint.feature_type}"
+          puts "out_of_date? = #{datapoint.out_of_date?}"
+          puts "run_dir = #{datapoint.run_dir}"
+
+          out_osw = nil
+          if File.exists?(File.join(datapoint.run_dir, 'out.osw'))
+            File.open(File.join(datapoint.run_dir, 'out.osw'), 'r') do |f|
+              out_osw = JSON::parse(f.read, symbolize_names: true)
+            end
+          end
+          puts "out_osw = #{out_osw}"
+          
+          
+        end
+        
         def save(path)
           hash = {}
           hash[:feature] = self.to_hash
 
-          File.open(path, 'w') do |file|
-            file.puts JSON::fast_generate(hash)
+          File.open(path, 'w') do |f|
+            f.puts JSON::fast_generate(hash)
+            # make sure data is written to the disk one way or the other
+            begin
+              f.fsync
+            rescue
+              f.flush
+            end
           end
           
           return true

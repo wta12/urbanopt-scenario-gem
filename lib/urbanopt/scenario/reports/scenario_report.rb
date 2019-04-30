@@ -43,11 +43,11 @@ module URBANopt
         attr_reader :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :program, :construction_costs, :reporting_periods, :features
         
         # perform initialization functions
-        def initialize(id, name, directory_name, timesteps_per_hour)
+        def initialize(id, name, directory_name)
           @id = id
           @name = name
           @directory_name = directory_name
-          @timesteps_per_hour = timesteps_per_hour
+          @timesteps_per_hour = nil # unknown
           @number_of_not_started_simulations = 0
           @number_of_started_simulations = 0
           @number_of_complete_simulations = 0
@@ -66,8 +66,14 @@ module URBANopt
             hash[:features] << feature.to_hash
           end
           
-          File.open(path, 'w') do |file|
-            file.puts JSON::fast_generate(hash)
+          File.open(path, 'w') do |f|
+            f.puts JSON::fast_generate(hash)
+            # make sure data is written to the disk one way or the other
+            begin
+              f.fsync
+            rescue
+              f.flush
+            end
           end
           
           return true
@@ -91,9 +97,13 @@ module URBANopt
         
         def add_feature(feature)
           
-          # check that this feature is simulated with required timesteps per hour
-          if feature.timesteps_per_hour != @timesteps_per_hour
-            raise "Feature timesteps_per_hour = '#{feature.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
+          if @timesteps_per_hour.nil?
+            @timesteps_per_hour = feature.timesteps_per_hour
+          else
+            # check that this feature was simulated with required timesteps per hour
+            if feature.timesteps_per_hour != @timesteps_per_hour
+              raise "Feature timesteps_per_hour = '#{feature.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
+            end
           end
           
           # check that we have not already added this feature

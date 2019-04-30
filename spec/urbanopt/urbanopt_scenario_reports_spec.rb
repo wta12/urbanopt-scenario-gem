@@ -62,10 +62,10 @@ RSpec.describe URBANopt::Scenario::Reports do
     id = 'scenario_1'
     name = 'Scenario 1'
     directory_name = 'scenario_1' 
-    timesteps_per_hour = 4
     simulation_status = 'Complete'
-    scenario_report = URBANopt::Scenario::Reports::ScenarioReport.new(id, name, directory_name, timesteps_per_hour)
+    scenario_report = URBANopt::Scenario::Reports::ScenarioReport.new(id, name, directory_name)
     expect(scenario_report.features.size).to eq(0)
+    expect(scenario_report.timesteps_per_hour).to be_nil
     expect(scenario_report.number_of_not_started_simulations).to eq(0)
     expect(scenario_report.number_of_started_simulations).to eq(0)
     expect(scenario_report.number_of_complete_simulations).to eq(0)
@@ -73,6 +73,7 @@ RSpec.describe URBANopt::Scenario::Reports do
     
     scenario_report.add_feature(feature_report_1)
     expect(scenario_report.features.size).to eq(1)
+    expect(scenario_report.timesteps_per_hour).to eq(4)
     expect(scenario_report.number_of_not_started_simulations).to eq(0)
     expect(scenario_report.number_of_started_simulations).to eq(0)
     expect(scenario_report.number_of_complete_simulations).to eq(1)
@@ -80,6 +81,7 @@ RSpec.describe URBANopt::Scenario::Reports do
     
     scenario_report.add_feature(feature_report_2)
     expect(scenario_report.features.size).to eq(2)
+    expect(scenario_report.timesteps_per_hour).to eq(4)
     expect(scenario_report.number_of_not_started_simulations).to eq(0)
     expect(scenario_report.number_of_started_simulations).to eq(0)
     expect(scenario_report.number_of_complete_simulations).to eq(2)
