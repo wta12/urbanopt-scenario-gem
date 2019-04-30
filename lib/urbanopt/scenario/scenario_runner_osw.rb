@@ -45,9 +45,9 @@ module URBANopt
       ##
       # Create all OSWs for Scenario
       ##
-      #  @param [ScenarioBase] scenario Scenario to create SimulationFiles for
-      #  @param [Bool] force_clear Clear Scenario before creating SimulationFiles
-      #  @return [Array] Returns array of all SimulationFiles, even those created previously, for Scenario
+      #  @param [ScenarioBase] scenario Scenario to create simulation input files for
+      #  @param [Bool] force_clear Clear Scenario before creating simulation input files
+      #  @return [Array] Returns array of all SimulationDirs, even those created previously, for Scenario
       def create_simulation_files(scenario, force_clear = false)
         
         if force_clear
@@ -56,15 +56,15 @@ module URBANopt
         
         FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
         
-        simulation_files = scenario.simulation_files
+        simulation_dirs = scenario.simulation_dirs
         
-        simulation_files.each do |simulation_file|
-          if simulation_file.out_of_date?
-            simulation_file.create_input_files
+        simulation_dirs.each do |simulation_dir|
+          if simulation_dir.out_of_date?
+            simulation_dir.create_input_files
           end
         end
 
-        return simulation_files
+        return simulation_dirs
       end
       
       ##
@@ -76,21 +76,21 @@ module URBANopt
       def run(scenario, force_clear = false)
         runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
 
-        simulation_files = create_simulation_files(scenario, force_clear)
+        simulation_dirs = create_simulation_files(scenario, force_clear)
         
         osws = []
-        simulation_files.each do |simulation_file|
-          if !simulation_file.is_a?(SimulationFileOSW)
-            raise "ScenarioRunnerOSW does not know how to run #{simulation_file.class}"
+        simulation_dirs.each do |simulation_dir|
+          if !simulation_dir.is_a?(SimulationDirOSW)
+            raise "ScenarioRunnerOSW does not know how to run #{simulation_dir.class}"
           end
-          if simulation_file.out_of_date?
-            osws << simulation_file.in_osw_path
+          if simulation_dir.out_of_date?
+            osws << simulation_dir.in_osw_path
           end
         end
         
         failures = runner.run_osws(osws)
         
-        return simulation_files
+        return simulation_dirs
       end
       
     end

@@ -37,8 +37,8 @@ module URBANopt
 
       end
       
-      # create osw file given a ScenarioBase object, feature_id, and feature_name
-      def create_osw(scenario, feature_id, feature_name)
+      # create osw file given a ScenarioBase object, features, and feature_names
+      def create_osw(scenario, features, feature_names)
         raise "create_osw not implemented for SimulationMapperBase, override in your class"
       end
       

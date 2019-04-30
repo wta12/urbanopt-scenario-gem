@@ -67,9 +67,9 @@ module URBANopt
         @feature_file
       end
       
-      # Array of SimulationFile objects
-      def simulation_files
-        raise "simulation_files not implemented for ScenarioBase, override in your class"
+      # Array of SimulationDirBase objects
+      def simulation_dirs
+        raise "simulation_dirs not implemented for ScenarioBase, override in your class"
       end
       
       # Remove all simulation input and output files by removing this Scenario's run_dir

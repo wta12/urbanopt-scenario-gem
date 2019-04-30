@@ -28,26 +28,26 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/simulation_file_base"
+require "urbanopt/scenario/simulation_dir_base"
 
 module URBANopt
   module Scenario
-    class SimulationFileOSW < SimulationFileBase
+    class SimulationDirOSW < SimulationDirBase
       
       ##
-      # SimulationFileOSW creates OSW files to simulate a variety of features
+      # SimulationDirOSW creates a OSW file to simulate features, a SimulationMapperBase is invoked to translate features to OSW
       ##
       #  @param [ScenarioBase] scenario Scenario containing this SimulationFileBase
       #  @param [Array] features Array of Features this SimulationFile represents
       #  @param [Array] feature_names Array of scenario specific names for these Features
-      #  @param [String] mapper_class Name of Ruby class used to translate feature to simulation OSW
+      #  @param [String] mapper_class Name of class derived frmo SimulationMapperBase used to translate feature to simulation OSW
       def initialize(scenario, features, feature_names, mapper_class)
         super(scenario, features, feature_names)
         
         if features.size != 1
-          raise "Cannot simulate more than one feature"
+          raise "SimulationDirOSW currently cannot simulate more than one feature"
         end
-        
+
         @feature = features[0]
         @feature_id = @feature.id
         
@@ -197,7 +197,7 @@ module URBANopt
       # The simulation OSW is created by evaluating the mapper_class's create_osw method
       ##
       def create_input_files
-        osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
+        osw = eval("#{@mapper_class}.new.create_osw(scenario, features, feature_names)")
         dir = run_dir
         FileUtils.rm_rf(dir) if File.exists?(dir)
         FileUtils.mkdir_p(dir) if !File.exists?(dir)

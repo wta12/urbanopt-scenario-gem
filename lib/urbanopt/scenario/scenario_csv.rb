@@ -29,7 +29,7 @@
 #*********************************************************************************
 
 require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/simulation_file_osw"
+require "urbanopt/scenario/simulation_dir_osw"
 
 require 'csv'
 require 'fileutils'
@@ -55,6 +55,8 @@ module URBANopt
         @mapper_files_dir = mapper_files_dir
         @csv_file = csv_file
         @num_header_rows = num_header_rows
+        
+        load_mapper_files
       end
       
       # Path to CSV file
@@ -84,7 +86,7 @@ module URBANopt
         end
       end  
 
-      def simulation_files
+      def simulation_dirs
         
         # DLM: TODO use HeaderConverters from CSV module
         
@@ -110,9 +112,9 @@ module URBANopt
           feature_names = []
           feature_names << feature_name
           
-          simulation_file = SimulationFileOSW.new(self, features, feature_names, mapper_class)
+          simulation_dir = SimulationDirOSW.new(self, features, feature_names, mapper_class)
 
-          result << simulation_file
+          result << simulation_dir
         end
         
         return result

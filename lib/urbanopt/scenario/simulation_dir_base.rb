@@ -30,13 +30,13 @@
 
 module URBANopt
   module Scenario
-    class SimulationFileBase 
+    class SimulationDirBase 
     
       ##
-      # SimulationFile is the agnostic representation of input files for simulation
+      # SimulationDirBase is the agnostic representation of a directory of simulation input files
       ##
-      #  @param [ScenarioBase] scenario Scenario containing this SimulationFileBase
-      #  @param [Array] features Array of Features this SimulationFile represents
+      #  @param [ScenarioBase] scenario Scenario containing this SimulationDirBase
+      #  @param [Array] features Array of Features that this SimulationDirBase represents
       #  @param [Array] feature_names Array of scenario specific names for these Features
       def initialize(scenario, features, feature_names)
         @scenario = scenario
