@@ -33,65 +33,64 @@ require_relative '../spec_helper'
 RSpec.describe URBANopt::Scenario::DefaultReports do
   
   it 'can construct a scenario report' do
-    # id = 'feature_1'
-    # name = 'Feature 1'
-    # directory_name = 'feature_1' 
-    # feature_type = 'Building'
-    # timesteps_per_hour = 4
-    # simulation_status = 'Complete'
-    # feature_report_1 = URBANopt::Scenario::Reports::FeatureReport.new(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
-    # feature_report_1.program.site_area = 10000
-    # feature_report_1.program.floor_area = 1000
-    # feature_report_1.program.conditioned_area = 1000
-    # feature_report_1.program.unconditioned_area = 0
-    # feature_report_1.program.footprint_area = 1100
 
-    # id = 'feature_2'
-    # name = 'Feature 2'
-    # directory_name = 'feature_2' 
-    # feature_type = 'Building'
-    # timesteps_per_hour = 4
-    # simulation_status = 'Complete'
-    # feature_report_2 = URBANopt::Scenario::Reports::FeatureReport.new(id, name, directory_name, feature_type, timesteps_per_hour, simulation_status)
-    # feature_report_2.program.site_area = 10000
-    # feature_report_2.program.floor_area = 1000
-    # feature_report_2.program.conditioned_area = 1000
-    # feature_report_2.program.unconditioned_area = 0
-    # feature_report_2.program.footprint_area = 1100
+    feature_report_1 = URBANopt::Scenario::DefaultReports::FeatureReport.new
+    feature_report_1.id = 'feature_1'
+    feature_report_1.name = 'Feature 1'
+    feature_report_1.directory_name = 'feature_1' 
+    feature_report_1.feature_type = 'Building'
+    feature_report_1.timesteps_per_hour = 4
+    feature_report_1.simulation_status = 'Complete'
+    feature_report_1.program.site_area = 10000
+    feature_report_1.program.floor_area = 1000
+    feature_report_1.program.conditioned_area = 1000
+    feature_report_1.program.unconditioned_area = 0
+    feature_report_1.program.footprint_area = 1100
+
+    feature_report_2 = URBANopt::Scenario::DefaultReports::FeatureReport.new
+    feature_report_2.id = 'feature_2'
+    feature_report_2.name = 'Feature 2'
+    feature_report_2.directory_name = 'feature_2' 
+    feature_report_2.feature_type = 'Building'
+    feature_report_2.timesteps_per_hour = 4
+    feature_report_2.simulation_status = 'Complete'
+    feature_report_2.program.site_area = 10000
+    feature_report_2.program.floor_area = 1000
+    feature_report_2.program.conditioned_area = 1000
+    feature_report_2.program.unconditioned_area = 0
+    feature_report_2.program.footprint_area = 1100
+
+    scenario = URBANopt::Scenario::ScenarioBase.new('scenario_1', 'Scenario 1', 'scenario_1', nil)
+    scenario_report = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
     
-    # id = 'scenario_1'
-    # name = 'Scenario 1'
-    # directory_name = 'scenario_1' 
-    # simulation_status = 'Complete'
-    # scenario_report = URBANopt::Scenario::Reports::ScenarioReport.new(id, name, directory_name)
-    # expect(scenario_report.features.size).to eq(0)
-    # expect(scenario_report.timesteps_per_hour).to be_nil
-    # expect(scenario_report.number_of_not_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_complete_simulations).to eq(0)
-    # expect(scenario_report.number_of_failed_simulations).to eq(0)
+    expect(scenario_report.feature_reports.size).to eq(0)
+    expect(scenario_report.timesteps_per_hour).to be_nil
+    expect(scenario_report.number_of_not_started_simulations).to eq(0)
+    expect(scenario_report.number_of_started_simulations).to eq(0)
+    expect(scenario_report.number_of_complete_simulations).to eq(0)
+    expect(scenario_report.number_of_failed_simulations).to eq(0)
     
-    # scenario_report.add_feature(feature_report_1)
-    # expect(scenario_report.features.size).to eq(1)
-    # expect(scenario_report.timesteps_per_hour).to eq(4)
-    # expect(scenario_report.number_of_not_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_complete_simulations).to eq(1)
-    # expect(scenario_report.number_of_failed_simulations).to eq(0)
+    scenario_report.add_feature_report(feature_report_1)
+    expect(scenario_report.feature_reports.size).to eq(1)
+    expect(scenario_report.timesteps_per_hour).to eq(4)
+    expect(scenario_report.number_of_not_started_simulations).to eq(0)
+    expect(scenario_report.number_of_started_simulations).to eq(0)
+    expect(scenario_report.number_of_complete_simulations).to eq(1)
+    expect(scenario_report.number_of_failed_simulations).to eq(0)
     
-    # scenario_report.add_feature(feature_report_2)
-    # expect(scenario_report.features.size).to eq(2)
-    # expect(scenario_report.timesteps_per_hour).to eq(4)
-    # expect(scenario_report.number_of_not_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_started_simulations).to eq(0)
-    # expect(scenario_report.number_of_complete_simulations).to eq(2)
-    # expect(scenario_report.number_of_failed_simulations).to eq(0)
+    scenario_report.add_feature_report(feature_report_2)
+    expect(scenario_report.feature_reports.size).to eq(2)
+    expect(scenario_report.timesteps_per_hour).to eq(4)
+    expect(scenario_report.number_of_not_started_simulations).to eq(0)
+    expect(scenario_report.number_of_started_simulations).to eq(0)
+    expect(scenario_report.number_of_complete_simulations).to eq(2)
+    expect(scenario_report.number_of_failed_simulations).to eq(0)
     
-    # expect(scenario_report.program.site_area).to eq(20000)
-    # expect(scenario_report.program.floor_area).to eq(2000)
-    # expect(scenario_report.program.conditioned_area).to eq(2000)
-    # expect(scenario_report.program.unconditioned_area).to eq(0)
-    # expect(scenario_report.program.footprint_area).to eq(2200)
+    expect(scenario_report.program.site_area).to eq(20000)
+    expect(scenario_report.program.floor_area).to eq(2000)
+    expect(scenario_report.program.conditioned_area).to eq(2000)
+    expect(scenario_report.program.unconditioned_area).to eq(0)
+    expect(scenario_report.program.footprint_area).to eq(2200)
     
   end
 

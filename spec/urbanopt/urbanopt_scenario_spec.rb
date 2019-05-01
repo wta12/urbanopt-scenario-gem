@@ -100,6 +100,9 @@ RSpec.describe URBANopt::Scenario do
     
     failures = []
     simulation_dirs.each do |simulation_dir|
+      run_dir = simulation_dir.run_dir
+      simulation_status = simulation_dir.simulation_status
+      puts "run_dir = #{run_dir}, simulation_status = #{simulation_status}"
       if simulation_dir.simulation_status != 'Complete'
         failures << simulation_dir
       end

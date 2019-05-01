@@ -2,13 +2,13 @@
 
 ###### (Automatically generated documentation)
 
-# ScenarioReports
+# DefaultFeatureReports
 
 ## Description
-Writes feature.json file used by URBANopt Scenario Default Post Processor
+Writes default_feature_reports.json file used by URBANopt Scenario Default Post Processor
 
 ## Modeler Description
-
+This measure only allows for one feature_report per simulation. If multiple features are simulated in a single simulation, a new measure must be written to disaggregate simulation results to multiple features.
 
 ## Measure Type
 ReportingMeasure
@@ -19,17 +19,17 @@ ReportingMeasure
 ## Arguments
 
 
-### Unique identifier
+### Feature unique identifier
 
-**Name:** id,
+**Name:** feature_id,
 **Type:** String,
 **Units:** ,
 **Required:** false,
 **Model Dependent:** false
 
-### Human readable name
+### Feature scenario specific name
 
-**Name:** name,
+**Name:** feature_name,
 **Type:** String,
 **Units:** ,
 **Required:** false,

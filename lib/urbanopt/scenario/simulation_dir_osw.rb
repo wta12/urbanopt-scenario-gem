@@ -174,7 +174,7 @@ module URBANopt
         dependencies << File.join(scenario.root_dir, 'Gemfile')
         dependencies << File.join(scenario.root_dir, 'Gemfile.lock')
         
-        # todo, depends on all the measures?
+        # todo, read in the in.osw and depend on all the measures
         
         # check if out of date
         dependencies.each do |f|

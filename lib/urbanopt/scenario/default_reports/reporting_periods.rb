@@ -36,7 +36,7 @@ module URBANopt
       class ReportingPeriods 
 
         # perform initialization functions
-        def initialize()
+        def initialize(hash = {})
         end
         
         def to_hash

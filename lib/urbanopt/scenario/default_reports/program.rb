@@ -38,40 +38,43 @@ module URBANopt
         attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area
         
         # perform initialization functions
-        def initialize(program_json = nil)
-          @site_area = 0
-          @floor_area = 0
-          @conditioned_area = 0
-          @unconditioned_area = 0
-          @footprint_area = 0
-          
-          if program_json
-            @site_area = program_json[:site_area] if program_json[:site_area]
-            @floor_area = program_json[:floor_area] if program_json[:floor_area]
-            @conditioned_area = program_json[:conditioned_area] if program_json[:conditioned_area]
-            @unconditioned_area = program_json[:unconditioned_area] if program_json[:unconditioned_area]
-            @footprint_area = program_json[:footprint_area] if program_json[:footprint_area]
-          end
+        def initialize(hash = {})
+          hash.delete_if {|k, v| v.nil?}
+          hash = defaults.merge(hash)
+
+          @site_area = hash[:site_area]
+          @floor_area = hash[:floor_area]
+          @conditioned_area = hash[:conditioned_area]
+          @unconditioned_area = hash[:unconditioned_area]
+          @footprint_area = hash[:footprint_area]
+        end
+        
+        def defaults
+          hash = {}
+          hash[:site_area] = 0
+          hash[:floor_area] = 0
+          hash[:conditioned_area] = 0
+          hash[:unconditioned_area] = 0
+          hash[:footprint_area] = 0
+          return hash
         end
         
         def to_hash
           result = {}
-          result[:site_area] = site_area
-          result[:floor_area] = floor_area
-          result[:conditioned_area] = conditioned_area
-          result[:unconditioned_area] = unconditioned_area
-          result[:footprint_area] = footprint_area
+          result[:site_area] = @site_area if @site_area
+          result[:floor_area] = @floor_area if @floor_area
+          result[:conditioned_area] = @conditioned_area if @conditioned_area
+          result[:unconditioned_area] = @unconditioned_area if @unconditioned_area
+          result[:footprint_area] = @footprint_area if @footprint_area
           return result
         end
         
         def add_program(other)
-          puts "@floor_area = #{@floor_area}, other.floor_area = #{other.floor_area}"
           @site_area += other.site_area
           @floor_area += other.floor_area
           @conditioned_area += other.conditioned_area
           @unconditioned_area += other.unconditioned_area
           @footprint_area += other.footprint_area
-          puts "@floor_area = #{@floor_area}"
         end
        
       end

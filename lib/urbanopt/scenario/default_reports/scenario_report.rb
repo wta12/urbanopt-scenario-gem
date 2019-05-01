@@ -45,7 +45,8 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :program, :construction_costs, :reporting_periods, :feature_reports
+          
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
         ##

@@ -81,9 +81,9 @@ module URBANopt
         
         # now we have the feature, we can look up its properties and set arguments in the OSW
         OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature.area)
-        OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'id', feature.id)
-        OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'name', feature_name)
-        OpenStudio::Extension.set_measure_argument(osw, 'scenario_reports', 'feature_type', feature.feature_type)
+        OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_id', feature.id)
+        OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_name', feature_name)
+        OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_type', feature.feature_type)
         
         osw[:name] = feature_name
         osw[:description] = feature_name

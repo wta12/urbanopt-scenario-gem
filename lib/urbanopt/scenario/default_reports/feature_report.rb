@@ -39,104 +39,96 @@ module URBANopt
     module DefaultReports
     
       ## 
-      # FeatureReport can generate two types of reports from a simulation_dir.  
-      # The simulation must be via OSW and include the 'scenario_reports' measure.
-      # The first is a JSON format saved to 'default_feature_report.json'.
-      # The second is a CSV format saved to 'default_feature_report.csv'.
+      # FeatureReport generate two types of reports in a simulation_dir.  
+      # The 'default_feature_reports' measure writes a 'default_feature_reports.json' file containing 
+      # information on all features in the simulation.  It also writes a 'default_feature_reports.csv'
+      # containing timeseries data for all features in the simulation.
+      # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport 
-        attr_reader :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :program, :construction_costs, :reporting_periods
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :program, :construction_costs, :reporting_periods
         
         ##
-        # Each FeatureReport object corresponds to a single FeatureReport.
-        # Multiple Features can be simulated together in a single simulation directory.
-        # The FeatureReport object may have to disaggregate simulation results to get results for the requested feature only.
+        # Each FeatureReport object corresponds to a single Feature.
         ##
-        #  @param [SimulationDirOSW] simulation_dir A simulation directory from an OSW simulation, must include 'scenario_reports' measure
-        #  @param [URBANopt::Core::Feature] feature The single feature that this FeatureReport corresponds to
-        #  @param [String] feature_name The scenario specific name assigned to this Feature
-        def initialize(simulation_dir, feature, feature_name)
-          @simulation_dir = simulation_dir
+        #  @param [Hash] hash A hash which may contain a deserialized feature_report
+        def initialize(hash = {})
+          hash.delete_if {|k, v| v.nil?}
+          hash = defaults.merge(hash)
           
-          @id = feature.id
-          @name = feature_name
-          @directory_name = simulation_dir.run_dir
-          @feature_type = feature.feature_type
-          @simulation_status = simulation_dir.simulation_status
-          
-          @scenario_reports_json = nil
-          @scenario_reports_csv = nil
-            
-          if @simulation_status == 'Complete'
-            out_osw = simulation_dir.out_osw
-            
-            # read in the scenario reports JSON and CSV
-
-            Dir.glob(File.join(@simulation_dir.run_dir, '*_scenario_reports/')).each do |dir|
-              scenario_reports_json_path = File.join(dir, 'feature.json')
-              if File.exists?(scenario_reports_json_path)
-                File.open(scenario_reports_json_path, 'r') do |file|
-                  @scenario_reports_json = JSON.parse(file.read, symbolize_names: true)
-                end
-              end
-              scenario_reports_csv_path = File.join(dir, 'feature.csv')
-              if File.exists?(scenario_reports_csv_path)
-                @scenario_reports_csv = scenario_reports_csv_path
-              end              
-            end
-            
-            if @scenario_reports_json.nil?
-              puts "Could not find scenario_reports output in '#{@directory_name}'"
-              @simulation_status = 'Failed'
-              return self
-            end
-
-            @timesteps_per_hour = @scenario_reports_json[:feature][:timesteps_per_hour]
-            
-            @program = Program.new(@scenario_reports_json[:feature][:program])
-            @construction_costs = ConstructionCosts.new()
-            @reporting_periods = ReportingPeriods.new()       
-          end
+          @id = hash[:id]
+          @name = hash[:name]
+          @directory_name = hash[:directory_name]
+          @feature_type = hash[:feature_type]
+          @simulation_status = hash[:simulation_status]
+          @program = Program.new(hash[:program])
+          @construction_costs = ConstructionCosts.new(hash[:construction_costs])
+          @reporting_periods = ReportingPeriods.new (hash[:reporting_periods])
+        end
+        
+        def defaults
+          hash = {}
+          hash[:program] = {}
+          hash[:construction_costs] = {}
+          hash[:reporting_periods] = {}
+          return hash
         end
         
         ##
-        # Return an Array of FeatureReports for the simulation_dir
+        # Return an Array of FeatureReports for the simulation_dir as multiple Features can be simulated together in a single simulation directory.
         ##
-        #  @param [SimulationDirOSW] simulation_dir A simulation directory from an OSW simulation, must include 'scenario_reports' measure
+        #  @param [SimulationDirOSW] simulation_dir A simulation directory from an OSW simulation, must include 'default_feature_reports' measure
         def self.from_simulation_dir(simulation_dir)
-        
+          
+          result = []
+          
+          # simulation dir can include only one feature
           features = simulation_dir.features
           if features.size != 1
             raise "FeatureReport cannot support multiple features per OSW"
           end
-          feature = features[0]
-          feature_name = simulation_dir.feature_names[0]
-          
-          result = []
-          result << FeatureReport.new(simulation_dir, feature, feature_name)
-          return result
-        end
-        
-        ##
-        # Save the 'default_feature_report.json' file
-        ##
-        def save
-          path = File.join(@simulation_dir.run_dir, 'default_feature_report.json')
-        
-          hash = {}
-          hash[:feature] = self.to_hash
 
-          File.open(path, 'w') do |f|
-            f.puts JSON::fast_generate(hash)
-            # make sure data is written to the disk one way or the other
-            begin
-              f.fsync
-            rescue
-              f.flush
+          # read in the reports written by measure
+          default_feature_reports_json = nil
+          default_feature_reports_csv = nil
+          
+          simulation_status = simulation_dir.simulation_status
+          if simulation_status == 'Complete' || simulation_status == 'Failed' 
+            
+            # read in the scenario reports JSON and CSV
+            Dir.glob(File.join(simulation_dir.run_dir, '*_default_feature_reports/')).each do |dir|
+              scenario_reports_json_path = File.join(dir, 'default_feature_reports.json')
+              if File.exists?(scenario_reports_json_path)
+                File.open(scenario_reports_json_path, 'r') do |file|
+                  default_feature_reports_json = JSON.parse(file.read, symbolize_names: true)
+                end
+              end
+              scenario_reports_csv_path = File.join(dir, 'default_feature_reports.csv')
+              if File.exists?(scenario_reports_csv_path)
+                default_feature_reports_csv = scenario_reports_csv_path
+              end              
+            end
+            
+          end
+          
+          # if we loaded the json
+          if default_feature_reports_json && default_feature_reports_json[:feature_reports]
+            default_feature_reports_json[:feature_reports].each do |feature_report|
+              result << FeatureReport.new(feature_report)
+            end
+          else
+            # we did not find a report
+            features.each do |feature|
+              hash = {}
+              hash[:id] = feature.id
+              hash[:name] = feature.name
+              hash[:directory_name] = simulation_dir.run_dir
+              hash[:simulation_status] = simulation_status
+              result << FeatureReport.new(hash)
             end
           end
           
-          return true
+          return result
         end
         
         ##
@@ -144,12 +136,12 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          result[:id] = @id
-          result[:name] = @name
-          result[:directory_name] = @directory_name
-          result[:feature_type] = @feature_type
-          result[:timesteps_per_hour] = @timesteps_per_hour
-          result[:simulation_status] = @simulation_status
+          result[:id] = @id if @id
+          result[:name] = @name if @name
+          result[:directory_name] = @directory_name if @directory_name
+          result[:feature_type] = @feature_type if @feature_type
+          result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
+          result[:simulation_status] = @simulation_status if @simulation_status
           result[:program] = @program.to_hash
           result[:construction_costs] = @construction_costs.to_hash
           result[:reporting_periods] = @reporting_periods.to_hash

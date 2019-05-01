@@ -69,7 +69,6 @@ module URBANopt
         feature_reports = URBANopt::Scenario::DefaultReports::FeatureReport::from_simulation_dir(simulation_dir)
         
         feature_reports.each do |feature_report|
-          feature_report.save
           @scenario_result.add_feature_report(feature_report)
         end
         

@@ -36,7 +36,7 @@ module URBANopt
       class ConstructionCosts 
 
         # perform initialization functions
-        def initialize()
+        def initialize(hash = {})
 
         end
         

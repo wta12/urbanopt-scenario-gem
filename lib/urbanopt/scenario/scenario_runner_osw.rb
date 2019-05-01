@@ -60,6 +60,7 @@ module URBANopt
         
         simulation_dirs.each do |simulation_dir|
           if simulation_dir.out_of_date?
+            puts "simulation_dir #{simulation_dir.run_dir} is out of date, regenerating input files"
             simulation_dir.create_input_files
           end
         end

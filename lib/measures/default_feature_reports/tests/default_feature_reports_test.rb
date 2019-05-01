@@ -37,7 +37,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require 'csv'
 
-class ScenarioReports_Test < MiniTest::Unit::TestCase
+class DefaultFeatureReports_Test < MiniTest::Unit::TestCase
 
   def is_openstudio_2?
     begin
@@ -170,7 +170,7 @@ class ScenarioReports_Test < MiniTest::Unit::TestCase
     model_in_path = "#{File.dirname(__FILE__)}/example_model.osm"
 
     # create an instance of the measure
-    measure = ScenarioReports.new
+    measure = DefaultFeatureReports.new
 
     # create an instance of a runner
     runner = OpenStudio::Ruleset::OSRunner.new
@@ -232,9 +232,9 @@ class ScenarioReports_Test < MiniTest::Unit::TestCase
       Dir.chdir(start_dir)
     end
 
-    # make sure the report file exists
-    #assert(File.exist?("#{run_dir(test_name)}/report.csv"))
-    assert(File.exist?("#{run_dir(test_name)}/feature.json"))
+    # make sure the report files exists
+    assert(File.exist?("#{run_dir(test_name)}/default_feature_reports.json"))
+    assert(File.exist?("#{run_dir(test_name)}/default_feature_reports.csv"))
   end
 
 end
