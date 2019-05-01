@@ -497,6 +497,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     #closing the sql file
     sql_file.close
+    
+    # add csv info to feature_report
+    feature_report.csv_file.path = File.join(Dir.pwd, "default_feature_reports.csv")
+    feature_report.csv_file.first_report_datetime = '0'
+    feature_report.csv_file.column_names = final_timeseries_names
 
     # Save the 'default_feature_reports.json' file
     hash = {}    

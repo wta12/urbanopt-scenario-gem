@@ -45,6 +45,9 @@
 				"number_of_failed_simulations": {
 					"type": "number"
 				},
+				"csv_file": {
+					"$ref": "#/definitions/CSVFile"
+				},
 				"program": {
 					"$ref": "#/definitions/Program"
 				},
@@ -98,6 +101,9 @@
 						"Complete",
 						"Failed"
 					]
+				},
+				"csv_file": {
+					"$ref": "#/definitions/CSVFile"
 				},
 				"location": {
 					"$ref": "#/definitions/Location"
@@ -701,6 +707,28 @@
 					"type": "number"
 				}
 			}
+		},
+		"CSVFile": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				},
+				"first_report_datetime": {
+					"type": "string"
+				},
+				"column_names": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"path",
+				"first_report_datetime",
+				"column_names"
+			]
 		}
 	}
 }

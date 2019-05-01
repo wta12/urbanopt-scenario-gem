@@ -28,8 +28,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/default_reports/program"
 require "urbanopt/scenario/default_reports/construction_costs"
+require "urbanopt/scenario/default_reports/csv_file"
+require "urbanopt/scenario/default_reports/program"
 require "urbanopt/scenario/default_reports/reporting_periods"
 
 require 'json'
@@ -46,7 +47,7 @@ module URBANopt
       # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport 
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :program, :construction_costs, :reporting_periods
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :csv_file, :program, :construction_costs, :reporting_periods
         
         ##
         # Each FeatureReport object corresponds to a single Feature.
@@ -61,6 +62,7 @@ module URBANopt
           @directory_name = hash[:directory_name]
           @feature_type = hash[:feature_type]
           @simulation_status = hash[:simulation_status]
+          @csv_file = CSVFile.new(hash[:csv_file])
           @program = Program.new(hash[:program])
           @construction_costs = ConstructionCosts.new(hash[:construction_costs])
           @reporting_periods = ReportingPeriods.new (hash[:reporting_periods])
@@ -68,6 +70,7 @@ module URBANopt
         
         def defaults
           hash = {}
+          hash[:csv_file] = {}
           hash[:program] = {}
           hash[:construction_costs] = {}
           hash[:reporting_periods] = {}
@@ -142,6 +145,7 @@ module URBANopt
           result[:feature_type] = @feature_type if @feature_type
           result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
           result[:simulation_status] = @simulation_status if @simulation_status
+          result[:csv_file] = @csv_file.to_hash
           result[:program] = @program.to_hash
           result[:construction_costs] = @construction_costs.to_hash
           result[:reporting_periods] = @reporting_periods.to_hash

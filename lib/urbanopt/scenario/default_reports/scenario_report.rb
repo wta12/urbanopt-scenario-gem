@@ -28,9 +28,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require 'urbanopt/scenario/default_reports/construction_costs'
+require 'urbanopt/scenario/default_reports/csv_file'
 require 'urbanopt/scenario/default_reports/feature_report'
 require 'urbanopt/scenario/default_reports/program'
-require 'urbanopt/scenario/default_reports/construction_costs'
 require 'urbanopt/scenario/default_reports/reporting_periods'
 
 require 'json'
@@ -45,7 +46,7 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :program, :construction_costs, :reporting_periods, :feature_reports
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :csv_file, :program, :construction_costs, :reporting_periods, :feature_reports
           
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
@@ -62,6 +63,7 @@ module URBANopt
           @number_of_started_simulations = 0
           @number_of_complete_simulations = 0
           @number_of_failed_simulations = 0
+          @csv_file = CSVFile.new
           @program = Program.new
           @construction_costs = ConstructionCosts.new
           @reporting_periods = ReportingPeriods.new
@@ -108,6 +110,7 @@ module URBANopt
           result[:number_of_started_simulations] = @number_of_started_simulations
           result[:number_of_complete_simulations] = @number_of_complete_simulations
           result[:number_of_failed_simulations] = @number_of_failed_simulations
+          result[:csv_file] = @csv_file.to_hash
           result[:program] = @program.to_hash
           result[:construction_costs] = @construction_costs.to_hash
           result[:reporting_periods] = @reporting_periods.to_hash
