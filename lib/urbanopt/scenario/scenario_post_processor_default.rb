@@ -81,35 +81,7 @@ module URBANopt
       def save
         @scenario_result.save
         
-        return @scenario_result
-        
-        # TODO: Rawad, save the timeseries data to a CSV and the summary data to JSON
-
-        File.open( File.join(@scenario.run_dir, 'scenario_out.json'), 'w') do |file|
-          file << "{\"Results\": 1}"
-        end
-
-        # Get input files
-        input_files = Dir.glob("**/*.csv")
-        #input_files = Dir["C:/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/**/*eplusssz.csv"]
-
-        # Collect/combine headers
-        all_headers = input_files.reduce([]) do |all_headers, file|
-          header_line = File.open(file, &:gets)     # grab first line
-          all_headers | CSV.parse_line(header_line) # parse headers and merge with known ones
-        end
-
-        File.open( File.join(@scenario.run_dir, 'scenario_timeseries.csv'), 'w') do |file|
-          # Write all headers
-          file << all_headers
-
-          # Write rows from each file
-          input_files.each do |file|
-            CSV.foreach(file, headers: true) do |row|
-              file << all_headers.map { |header| row[header] }
-            end
-          end
-        end
+        return @scenario_result  
       end
 
     end

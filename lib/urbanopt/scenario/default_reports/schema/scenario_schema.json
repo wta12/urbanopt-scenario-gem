@@ -45,8 +45,8 @@
 				"number_of_failed_simulations": {
 					"type": "number"
 				},
-				"csv_file": {
-					"$ref": "#/definitions/CSVFile"
+				"timeseries_csv": {
+					"$ref": "#/definitions/TimeseriesCSV"
 				},
 				"program": {
 					"$ref": "#/definitions/Program"
@@ -102,8 +102,8 @@
 						"Failed"
 					]
 				},
-				"csv_file": {
-					"$ref": "#/definitions/CSVFile"
+				"timeseries_csv": {
+					"$ref": "#/definitions/TimeseriesCSV"
 				},
 				"location": {
 					"$ref": "#/definitions/Location"
@@ -708,7 +708,7 @@
 				}
 			}
 		},
-		"CSVFile": {
+		"TimeseriesCSV": {
 			"type": "object",
 			"properties": {
 				"path": {

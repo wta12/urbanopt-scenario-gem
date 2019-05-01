@@ -28,12 +28,12 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'json'
+require 'csv'
 
 module URBANopt
   module Scenario
     module DefaultReports
-      class CSVFile 
+      class TimeseriesCSV 
         
         attr_accessor :path, :first_report_datetime, :column_names
         
@@ -47,7 +47,8 @@ module URBANopt
           @column_names = hash[:column_names]
           
           # hash of column_name to array of values, does not get serialized to hash
-          @csv_data = {}
+          @mutex = Mutex.new
+          @data = nil
         end
         
         def defaults
@@ -64,10 +65,91 @@ module URBANopt
           return result
         end
         
-        def add_csv_file(other)
-          if @first_report_datetime != other.first_report_datetime
-            raise "first_report_datetime #{@first_report_datetime} does not match other.first_report_datetime #{other.first_report_datetime}"
+        def load_data
+          @mutex.synchronize do
+            if @data.nil?
+              @data = {}
+              @column_names = []
+              CSV.foreach(@path) do |row|
+                if @column_names.empty?
+                  @column_names = row
+                  @column_names.each do |column_name|
+                    @data[column_name] = []
+                  end
+                else
+                  row.each_with_index do |value, i|
+                    @data[@column_names[i]] << value.to_f
+                  end
+                end
+              end
+              #puts "@column_names = #{@column_names}"
+              #puts "@data = #{@data}"
+            end
           end
+        end
+        
+        def get_data(column_name)
+          load_data
+          return @data[column_name]
+        end
+        
+        def save_data(path)
+          File.open(path, 'w') do |f|
+            f.puts @column_names.join(',')
+            n = @data[@column_names[0]].size
+            
+            (0..n).each do |i|
+              line = []
+              @column_names.each do |column_name|
+                line << @data[column_name][i]
+              end
+              f.puts line.join(',')
+            end
+            # make sure data is written to the disk one way or the other
+            begin
+              f.fsync
+            rescue
+              f.flush
+            end
+          end
+            
+        end
+        
+        def add_timeseries_csv(other)
+          
+          if @first_report_datetime.nil?
+            @first_report_datetime = other.first_report_datetime
+          end
+        
+          if @first_report_datetime != other.first_report_datetime
+            raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{other.first_report_datetime}'"
+          end
+          
+          # merge the column names
+          @column_names = @column_names.concat(other.column_names).uniq
+          
+          # merge the data
+          other.column_names.each do |column_name|
+            new_values = other.get_data(column_name)
+            
+            if @data.nil?
+              @data = {}
+            end
+            
+            current_values = @data[column_name]
+            if current_values
+              if current_values.size != new_values.size
+                raise "Values of different sizes in add_timeseries_csv"
+              end
+              new_values.each_with_index do |value, i|
+                new_values[i] = value + current_values[i]
+              end
+              @data[column_name] = new_values
+            else
+              @data[column_name] = new_values
+            end
+          end
+          
         end
        
       end

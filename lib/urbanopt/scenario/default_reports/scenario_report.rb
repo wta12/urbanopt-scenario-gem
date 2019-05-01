@@ -29,10 +29,10 @@
 #*********************************************************************************
 
 require 'urbanopt/scenario/default_reports/construction_costs'
-require 'urbanopt/scenario/default_reports/csv_file'
 require 'urbanopt/scenario/default_reports/feature_report'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_periods'
+require 'urbanopt/scenario/default_reports/timeseries_csv'
 
 require 'json'
 
@@ -46,7 +46,7 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :csv_file, :program, :construction_costs, :reporting_periods, :feature_reports
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :program, :construction_costs, :reporting_periods, :feature_reports
           
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
@@ -63,7 +63,7 @@ module URBANopt
           @number_of_started_simulations = 0
           @number_of_complete_simulations = 0
           @number_of_failed_simulations = 0
-          @csv_file = CSVFile.new
+          @timeseries_csv = TimeseriesCSV.new
           @program = Program.new
           @construction_costs = ConstructionCosts.new
           @reporting_periods = ReportingPeriods.new
@@ -93,6 +93,9 @@ module URBANopt
               f.flush
             end
           end
+ 
+          # save the csv data
+          timeseries_csv.save_data(File.join(@scenario.run_dir, 'default_scenario_report.csv'))
           
           return true
         end
@@ -110,7 +113,7 @@ module URBANopt
           result[:number_of_started_simulations] = @number_of_started_simulations
           result[:number_of_complete_simulations] = @number_of_complete_simulations
           result[:number_of_failed_simulations] = @number_of_failed_simulations
-          result[:csv_file] = @csv_file.to_hash
+          result[:timeseries_csv] = @timeseries_csv.to_hash
           result[:program] = @program.to_hash
           result[:construction_costs] = @construction_costs.to_hash
           result[:reporting_periods] = @reporting_periods.to_hash
@@ -148,6 +151,9 @@ module URBANopt
           else 
             raise "Unknown feature_report simulation_status = '#{feature_report.simulation_status}'"
           end
+          
+          # merge timeseries_csv information
+          @timeseries_csv.add_timeseries_csv(feature_report.timeseries_csv)
           
           # merge program information
           @program.add_program(feature_report.program)
