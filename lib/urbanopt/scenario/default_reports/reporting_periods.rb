@@ -28,12 +28,12 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
+require 'json'
 
 module URBANopt
   module Scenario
-    module Reports
-      class ConstructionCost 
+    module DefaultReports
+      class ReportingPeriods 
 
         # perform initialization functions
         def initialize()
@@ -43,7 +43,11 @@ module URBANopt
           result = {}
           return result
         end
-       
+        
+        def add_reporting_periods(reporting_periods)
+        
+        end
+        
       end
     end
   end

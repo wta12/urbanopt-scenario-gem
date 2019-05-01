@@ -28,42 +28,27 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
+require 'json'
 
 module URBANopt
   module Scenario
-    module Reports
-      class Program 
-        
-        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area
-        
+    module DefaultReports
+      class ConstructionCosts 
+
         # perform initialization functions
         def initialize()
-          @site_area = 0
-          @floor_area = 0
-          @conditioned_area = 0
-          @unconditioned_area = 0
-          @footprint_area = 0
+
         end
         
         def to_hash
           result = {}
-          result[:site_area] = site_area
-          result[:floor_area] = floor_area
-          result[:conditioned_area] = conditioned_area
-          result[:unconditioned_area] = unconditioned_area
-          result[:footprint_area] = footprint_area
           return result
         end
         
-        def add_program(other)
-          @site_area += other.site_area
-          @floor_area += other.floor_area
-          @conditioned_area += other.conditioned_area
-          @unconditioned_area += other.unconditioned_area
-          @footprint_area += other.footprint_area
+        def add_construction_costs(construction_costs)
+        
         end
-       
+        
       end
     end
   end

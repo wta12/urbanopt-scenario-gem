@@ -28,8 +28,53 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/reports/scenario_report"
-require "urbanopt/scenario/reports/feature_report"
-require "urbanopt/scenario/reports/program"
-require "urbanopt/scenario/reports/construction_costs"
-require "urbanopt/scenario/reports/reporting_periods"
+require 'json'
+
+module URBANopt
+  module Scenario
+    module DefaultReports
+      class Program 
+        
+        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area
+        
+        # perform initialization functions
+        def initialize(program_json = nil)
+          @site_area = 0
+          @floor_area = 0
+          @conditioned_area = 0
+          @unconditioned_area = 0
+          @footprint_area = 0
+          
+          if program_json
+            @site_area = program_json[:site_area] if program_json[:site_area]
+            @floor_area = program_json[:floor_area] if program_json[:floor_area]
+            @conditioned_area = program_json[:conditioned_area] if program_json[:conditioned_area]
+            @unconditioned_area = program_json[:unconditioned_area] if program_json[:unconditioned_area]
+            @footprint_area = program_json[:footprint_area] if program_json[:footprint_area]
+          end
+        end
+        
+        def to_hash
+          result = {}
+          result[:site_area] = site_area
+          result[:floor_area] = floor_area
+          result[:conditioned_area] = conditioned_area
+          result[:unconditioned_area] = unconditioned_area
+          result[:footprint_area] = footprint_area
+          return result
+        end
+        
+        def add_program(other)
+          puts "@floor_area = #{@floor_area}, other.floor_area = #{other.floor_area}"
+          @site_area += other.site_area
+          @floor_area += other.floor_area
+          @conditioned_area += other.conditioned_area
+          @unconditioned_area += other.unconditioned_area
+          @footprint_area += other.footprint_area
+          puts "@floor_area = #{@floor_area}"
+        end
+       
+      end
+    end
+  end
+end

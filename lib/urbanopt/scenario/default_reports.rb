@@ -28,27 +28,8 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
-
-module URBANopt
-  module Scenario
-    module Reports
-      class ReportingPeriods 
-
-        # perform initialization functions
-        def initialize()
-        end
-        
-        def to_hash
-          result = {}
-          return result
-        end
-        
-        def add_reporting_periods(reporting_periods)
-        
-        end
-        
-      end
-    end
-  end
-end
+require "urbanopt/scenario/default_reports/scenario_report"
+require "urbanopt/scenario/default_reports/feature_report"
+require "urbanopt/scenario/default_reports/program"
+require "urbanopt/scenario/default_reports/construction_costs"
+require "urbanopt/scenario/default_reports/reporting_periods"

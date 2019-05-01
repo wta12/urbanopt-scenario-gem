@@ -28,19 +28,28 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'urbanopt/scenario/reports/feature_report'
-require 'urbanopt/scenario/reports/program'
-require 'urbanopt/scenario/reports/construction_costs'
-require 'urbanopt/scenario/reports/reporting_periods'
+require 'urbanopt/scenario/default_reports/feature_report'
+require 'urbanopt/scenario/default_reports/program'
+require 'urbanopt/scenario/default_reports/construction_costs'
+require 'urbanopt/scenario/default_reports/reporting_periods'
 
 require 'json'
 
 module URBANopt
   module Scenario
-    module Reports
+    module DefaultReports
+    
+      ## 
+      # ScenarioReport can generate two types of reports from a scenario. 
+      # The first is a JSON format saved to 'default_scenario_report.json'.
+      # The second is a CSV format saved to 'default_scenario_report.csv'.
+      ##
       class ScenarioReport 
         
-        # perform initialization functions
+        ##
+        # Each ScenarioReport object corresponds to a single Scenario.
+        ##
+        #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(scenario)
           @scenario = scenario
           
@@ -55,18 +64,21 @@ module URBANopt
           @program = Program.new
           @construction_costs = ConstructionCosts.new
           @reporting_periods = ReportingPeriods.new
-          @features = []
+          @feature_reports = []
         end
         
+        ##
+        # Save the 'default_feature_report.json' and 'default_scenario_report.csv' files
+        ##
         def save()
         
-          path = File.join(@scenario.run_dir, 'scenario.json')
+          path = File.join(@scenario.run_dir, 'default_scenario_report.json')
           
           hash = {}
-          hash[:scenario] = self.to_hash
-          hash[:features] = []
-          @features.each do |feature|
-            hash[:features] << feature.to_hash
+          hash[:scenario_report] = self.to_hash
+          hash[:feature_reports] = []
+          @feature_reports.each do |feature_report|
+            hash[:feature_reports] << feature_report.to_hash
           end
           
           File.open(path, 'w') do |f|
@@ -82,6 +94,9 @@ module URBANopt
           return true
         end
         
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
           result = {}
           result[:id] = @id
@@ -98,49 +113,49 @@ module URBANopt
           return result
         end
         
-        def add_feature_report(feature)
+        def add_feature_report(feature_report)
           
           if @timesteps_per_hour.nil?
-            @timesteps_per_hour = feature.timesteps_per_hour
+            @timesteps_per_hour = feature_report.timesteps_per_hour
           else
-            # check that this feature was simulated with required timesteps per hour
-            if feature.timesteps_per_hour != @timesteps_per_hour
-              raise "Feature timesteps_per_hour = '#{feature.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
+            # check that this feature_report was simulated with required timesteps per hour
+            if feature_report.timesteps_per_hour != @timesteps_per_hour
+              raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
             end
           end
           
           # check that we have not already added this feature
-          id = feature.id
-          @features.each do |existing_feature|
-            if existing_feature.id == id
-              raise "Feature with id = '#{id}' has already been added"
+          id = feature_report.id
+          @feature_reports.each do |existing_feature_report|
+            if existing_feature_report.id == id
+              raise "FeatureReport with id = '#{id}' has already been added"
             end
           end
           
           # check feature simulation status
-          if feature.simulation_status == 'Not Started'
+          if feature_report.simulation_status == 'Not Started'
             @number_of_not_started_simulations +=1 
-          elsif feature.simulation_status == 'Started'
+          elsif feature_report.simulation_status == 'Started'
             @number_of_started_simulations +=1 
-          elsif feature.simulation_status == 'Complete'
+          elsif feature_report.simulation_status == 'Complete'
             @number_of_complete_simulations +=1 
-          elsif feature.simulation_status == 'Failed'
+          elsif feature_report.simulation_status == 'Failed'
             @number_of_failed_simulations +=1 
           else 
-            raise "Unknown feature simulation_status = '#{feature.simulation_status}'"
+            raise "Unknown feature_report simulation_status = '#{feature_report.simulation_status}'"
           end
           
           # merge program information
-          @program.add_program(feature.program)
+          @program.add_program(feature_report.program)
           
           # merge construction costs information
-          @construction_costs.add_construction_costs(feature.construction_costs)
+          @construction_costs.add_construction_costs(feature_report.construction_costs)
           
           # merge reporting periods information
-          @reporting_periods.add_reporting_periods(feature.reporting_periods)
+          @reporting_periods.add_reporting_periods(feature_report.reporting_periods)
           
-          # add feature
-          @features << feature
+          # add feature_report
+          @feature_reports << feature_report
         end
         
        

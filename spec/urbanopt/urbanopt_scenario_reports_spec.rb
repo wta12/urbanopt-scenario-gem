@@ -30,7 +30,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe URBANopt::Scenario::Reports do
+RSpec.describe URBANopt::Scenario::DefaultReports do
   
   it 'can construct a scenario report' do
     # id = 'feature_1'

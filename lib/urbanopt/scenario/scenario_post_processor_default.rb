@@ -29,7 +29,7 @@
 #*********************************************************************************
 
 require 'urbanopt/scenario/scenario_post_processor_base'
-require 'urbanopt/scenario/reports'
+require 'urbanopt/scenario/default_reports'
 
 require 'csv'
 require 'json'
@@ -45,14 +45,14 @@ module URBANopt
       def initialize(scenario)
         super(scenario)
         
-        @scenario_result = URBANopt::Scenario::Reports::ScenarioReport.new(scenario)
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
       end
       
       ##
       # Run the post processor on this Scenario
       ##
       def run
-        @scenario_result = URBANopt::Scenario::Reports::ScenarioReport.new(scenario)
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
       
         # this run method adds all the simulation_dirs, you can extend it to do more custom stuff
         scenario.simulation_dirs.each do |simulation_dir|
@@ -66,7 +66,7 @@ module URBANopt
       # Add results from a simulation_dir to this result
       ##
       def add_simulation_dir(simulation_dir)
-        feature_reports = URBANopt::Scenario::Reports::FeatureReport::from_simulation_dir(simulation_dir)
+        feature_reports = URBANopt::Scenario::DefaultReports::FeatureReport::from_simulation_dir(simulation_dir)
         
         feature_reports.each do |feature_report|
           feature_report.save
