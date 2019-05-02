@@ -39,4 +39,10 @@ require "urbanopt/scenario"
 rake_task = OpenStudio::Extension::RakeTask.new
 rake_task.set_extension_class(URBANopt::Scenario::Extension)
 
+task :clear_all do
+  Dir.glob(File.join(File.dirname(__FILE__), '/spec/test/example_scenario/*')).each do |f|
+    FileUtils.rm_rf(f)
+  end
+end
+
 task :default => :spec
