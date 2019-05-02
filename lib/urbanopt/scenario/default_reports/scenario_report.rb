@@ -85,7 +85,7 @@ module URBANopt
           end
           
           File.open(path, 'w') do |f|
-            f.puts JSON::fast_generate(hash)
+            f.puts JSON::pretty_generate(hash)
             # make sure data is written to the disk one way or the other
             begin
               f.fsync

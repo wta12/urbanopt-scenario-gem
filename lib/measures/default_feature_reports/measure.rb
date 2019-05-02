@@ -509,7 +509,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     hash[:feature_reports] << feature_report.to_hash
 
     File.open('default_feature_reports.json', 'w') do |f|
-      f.puts JSON::fast_generate(hash)
+      f.puts JSON::pretty_generate(hash)
       # make sure data is written to the disk one way or the other
       begin
         f.fsync

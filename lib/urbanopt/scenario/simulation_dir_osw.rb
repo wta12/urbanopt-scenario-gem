@@ -141,20 +141,24 @@ module URBANopt
       def out_of_date?
       
         if !File.exists?(run_dir)
+          puts "run_dir '#{run_dir}' does not exist, simulation dir '#{run_dir}' out of date"
           return true
         end
         
         if !File.exists?(finished_job_path)
+          puts "finished_job_path '#{finished_job_path}' does not exist, simulation dir '#{run_dir}' out of date"
           return true
         end
         
         if !File.exists?(out_osw_path)
+          puts "out_osw_path '#{out_osw_path}' does not exist, simulation dir '#{run_dir}' out of date"
           return true
         end
         out_osw_time = File.mtime(out_osw_path)
         
-        # array of files that this datapoint depends on
+        # array of files that this simulation dir depends on
         dependencies = []
+        out_of_date_files = []
         
         # depends on the in.osw
         dependencies << in_osw_path
@@ -180,12 +184,16 @@ module URBANopt
         dependencies.each do |f|
           if File.exists?(f)
             if File.mtime(f) > out_osw_time
-              puts "File '#{f}' is newer than '#{out_osw}', datapoint out of date"
-              return true
+              out_of_date_files << f
             end
           else
             puts "Dependency file '#{f}' does not exist"
           end
+        end
+        
+        if !out_of_date_files.empty?
+          puts "Files [#{out_of_date_files.join(',')}] are newer than '#{out_osw_path}', simulation dir '#{run_dir}' out of date"
+          return true
         end
         
         return false
@@ -214,8 +222,10 @@ module URBANopt
       ##
       def clear
         dir = run_dir
-        FileUtils.rm_rf(dir) if File.exists?(dir)
         FileUtils.mkdir_p(dir) if !File.exists?(dir)
+        Dir.glob(File.join(dir, '/*')).each do |f|
+          FileUtils.rm_rf(f)
+        end
       end
       
       ##
@@ -223,10 +233,10 @@ module URBANopt
       # The simulation OSW is created by evaluating the mapper_class's create_osw method
       ##
       def create_input_files
-        osw = eval("#{@mapper_class}.new.create_osw(scenario, features, feature_names)")
+        clear
+        
         dir = run_dir
-        FileUtils.rm_rf(dir) if File.exists?(dir)
-        FileUtils.mkdir_p(dir) if !File.exists?(dir)
+        osw = eval("#{@mapper_class}.new.create_osw(scenario, features, feature_names)")
         osw_path = File.join(dir, 'in.osw')
         File.open(osw_path, 'w') do |f|
           f << JSON.pretty_generate(osw) 
