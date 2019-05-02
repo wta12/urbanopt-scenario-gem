@@ -28,42 +28,56 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
+require 'json'
 
 module URBANopt
   module Scenario
-    class ScenarioDatapoint 
-    
-      attr_accessor :scenario, :feature_id, :feature_name, :mapper_class
-      
-      def initialize(scenario)
-        @scenario = scenario
-      end
-      
-      def run_dir
-        raise "Feature ID not set" if @feature_id.nil?
-        raise "Scenario run dir not set" if @scenario.run_dir.nil?
-        return File.join(@scenario.run_dir, @feature_id + '/')
-      end
-      
-      def create_osw
-        osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
-        dir = run_dir
-        FileUtils.rm_rf(dir) if File.exists?(dir)
-        FileUtils.mkdir_p(dir) if !File.exists?(dir)
-        osw_path = File.join(dir, 'in.osw')
-        File.open(osw_path, 'w') do |f|
-          f << JSON.pretty_generate(osw) 
-          # make sure data is written to the disk one way or the other
-          begin
-            f.fsync
-          rescue
-            f.flush
-          end
+    module DefaultReports
+      class Program 
+        
+        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area
+        
+        # perform initialization functions
+        def initialize(hash = {})
+          hash.delete_if {|k, v| v.nil?}
+          hash = defaults.merge(hash)
+
+          @site_area = hash[:site_area]
+          @floor_area = hash[:floor_area]
+          @conditioned_area = hash[:conditioned_area]
+          @unconditioned_area = hash[:unconditioned_area]
+          @footprint_area = hash[:footprint_area]
         end
-        return osw_path
+        
+        def defaults
+          hash = {}
+          hash[:site_area] = 0
+          hash[:floor_area] = 0
+          hash[:conditioned_area] = 0
+          hash[:unconditioned_area] = 0
+          hash[:footprint_area] = 0
+          return hash
+        end
+        
+        def to_hash
+          result = {}
+          result[:site_area] = @site_area if @site_area
+          result[:floor_area] = @floor_area if @floor_area
+          result[:conditioned_area] = @conditioned_area if @conditioned_area
+          result[:unconditioned_area] = @unconditioned_area if @unconditioned_area
+          result[:footprint_area] = @footprint_area if @footprint_area
+          return result
+        end
+        
+        def add_program(other)
+          @site_area += other.site_area
+          @floor_area += other.floor_area
+          @conditioned_area += other.conditioned_area
+          @unconditioned_area += other.unconditioned_area
+          @footprint_area += other.footprint_area
+        end
+       
       end
-      
     end
   end
 end

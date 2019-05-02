@@ -29,7 +29,7 @@
 #*********************************************************************************
 
 require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
+require "urbanopt/scenario/simulation_dir_osw"
 
 require 'csv'
 require 'fileutils'
@@ -38,22 +38,55 @@ module URBANopt
   module Scenario
     class ScenarioCSV < ScenarioBase
     
-      def initialize(name, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
-        super(name, run_dir, feature_file, mapper_files_dir)
+      ##
+      # ScenarioCSV is a ScenarioBase which assigns a Simulation Mapper to each Feature in a FeatureFile using a simple CSV format
+      # The CSV file has three columns 1) feature_id, 2) feature_name, and 3) mapper_class_name.  There is one row for each Feature.
+      ##
+      #  @param [String] name Human readable scenario name
+      #  @param [String] root_dir Root directory for the scenario, contains Gemfile describing dependencies
+      #  @param [String] run_dir Directory for simulation of this scenario, deleting run directory clears the scenario
+      #  @param [URBANopt::Core::FeatureFile] feature_file FeatureFile containing features to simulate  
+      #  @param [String] mapper_files_dir Directory containing all mapper class files containing MapperBase definitions
+      #  @param [String] csv_file Path to CSV file assigning a MapperBase class to each feature in feature_file
+      #  @param [String] num_header_rows Number of header rows to skip in CSV file  
+      def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
+        super(name, root_dir, run_dir, feature_file)
         
+        @mapper_files_dir = mapper_files_dir
         @csv_file = csv_file
         @num_header_rows = num_header_rows
+        
+        load_mapper_files
       end
       
+      # Path to CSV file
       def csv_file
         @csv_file
       end
       
+      # Number of header rows to skip in CSV file
       def num_header_rows
         @num_header_rows
       end
+            
+      # Directory containing all mapper class files
+      def mapper_files_dir
+        @mapper_files_dir
+      end
       
-      def datapoints
+      # Require all simulation mappers in mapper_files_dir
+      def load_mapper_files
+        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
+          begin
+            require(f)
+          rescue LoadError => e
+            puts e.message
+            raise         
+          end
+        end
+      end  
+
+      def simulation_dirs
         
         # DLM: TODO use HeaderConverters from CSV module
         
@@ -72,12 +105,16 @@ module URBANopt
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
           
-          datapoint = ScenarioDatapoint.new(self)
-          datapoint.feature_id = feature_id
-          datapoint.feature_name = feature_name
-          datapoint.mapper_class = mapper_class
+          features = []
+          feature = feature_file.get_feature_by_id(feature_id)
+          features << feature
           
-          result << datapoint
+          feature_names = []
+          feature_names << feature_name
+          
+          simulation_dir = SimulationDirOSW.new(self, features, feature_names, mapper_class)
+
+          result << simulation_dir
         end
         
         return result

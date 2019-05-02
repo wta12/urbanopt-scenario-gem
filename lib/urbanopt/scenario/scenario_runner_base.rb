@@ -28,21 +28,36 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
-
-RSpec::Core::RakeTask.new(:spec)
-
-# Load in the rake tasks from the base extension gem
-require "openstudio/extension/rake_task"
-require "urbanopt/scenario"
-rake_task = OpenStudio::Extension::RakeTask.new
-rake_task.set_extension_class(URBANopt::Scenario::Extension)
-
-task :clear_all do
-  Dir.glob(File.join(File.dirname(__FILE__), '/spec/test/example_scenario/*')).each do |f|
-    FileUtils.rm_rf(f)
+module URBANopt
+  module Scenario
+    class ScenarioRunnerBase
+      
+      ## 
+      # ScenarioRunnerBase is the agnostic interface for a class which can create and run SimulationFiles 
+      ##
+      def initialize()
+      end
+      
+      ##
+      # Create all SimulationDirs for Scenario
+      ##
+      #  @param [ScenarioBase] scenario Scenario to create simulation input files for scenario
+      #  @param [Bool] force_clear Clear Scenario before creating simulation input files
+      #  @return [Array] Returns array of all SimulationDirs, even those created previously, for Scenario
+      def create_simulation_files(scenario, force_clear = false)
+        raise "create_input_files is not implemented for ScenarioRunnerBase, override in your class"
+      end
+      
+      ##
+      # Create and run all SimulationFiles for Scenario
+      ##
+      #  @param [ScenarioBase] scenario Scenario to create and run simulation input files for
+      #  @param [Bool] force_clear Clear Scenario before creating simulation input files
+      #  @return [Array] Returns array of all SimulationDirs, even those created previously, for Scenario
+      def run(scenario, force_clear = false)
+        raise "run is not implemented for ScenarioRunnerBase, override in your class"
+      end
+     
+    end
   end
 end
-
-task :default => :spec

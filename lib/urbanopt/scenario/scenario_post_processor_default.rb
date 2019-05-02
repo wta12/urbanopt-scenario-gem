@@ -28,51 +28,60 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/scenario_base"
-require "urbanopt/scenario/scenario_datapoint"
+require 'urbanopt/scenario/scenario_post_processor_base'
+require 'urbanopt/scenario/default_reports'
 
 require 'csv'
+require 'json'
 require 'fileutils'
 
 module URBANopt
   module Scenario
-    class ScenarioRunner
-      
-      # Initialize a ScenarioRunner with root_dir containing Gemfile
-      def initialize(root_dir)
-        @root_dir = root_dir
+    class ScenarioDefaultPostProcessor < ScenarioPostProcessorBase
+    
+      ##
+      # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
+      ##
+      def initialize(scenario)
+        super(scenario)
+        
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
       end
       
-      def root_dir
-        @root_dir
-      end
-
-      # Create OSW files for scenario
-      def create_osws(scenario)
-        
-        scenario.clear
-        
-        FileUtils.mkdir_p(scenario.run_dir) if !File.exists?(scenario.run_dir)
-        
-        scenario.load_mapper_files
-        
-        osws = []
-        scenario.datapoints.each do |datapoint|
-          osws << datapoint.create_osw
+      ##
+      # Run the post processor on this Scenario
+      ##
+      def run
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
+      
+        # this run method adds all the simulation_dirs, you can extend it to do more custom stuff
+        scenario.simulation_dirs.each do |simulation_dir|
+          add_simulation_dir(simulation_dir)
         end
-
-        return osws
+        
+        return @scenario_result
       end
       
-      # Create and run OSW files for scenario
-      def run_osws(scenario)
-        runner = OpenStudio::Extension::Runner.new(@root_dir)
+      ##
+      # Add results from a simulation_dir to this result
+      ##
+      def add_simulation_dir(simulation_dir)
+        feature_reports = URBANopt::Scenario::DefaultReports::FeatureReport::from_simulation_dir(simulation_dir)
+        
+        feature_reports.each do |feature_report|
+          @scenario_result.add_feature_report(feature_report)
+        end
+        
+        return feature_reports
+      end
 
-        osws = create_osws(scenario)
+      ##
+      # Save scenario result
+      ##
+      def save
+        @scenario_result.save
         
-        failures = runner.run_osws(osws)
-        
-        return failures
+        return @scenario_result  
       end
 
     end

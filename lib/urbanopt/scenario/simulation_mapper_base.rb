@@ -28,21 +28,20 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+module URBANopt
+  module Scenario
+    class SimulationMapperBase 
+      
+      # perform initialization functions
+      def initialize
 
-RSpec::Core::RakeTask.new(:spec)
-
-# Load in the rake tasks from the base extension gem
-require "openstudio/extension/rake_task"
-require "urbanopt/scenario"
-rake_task = OpenStudio::Extension::RakeTask.new
-rake_task.set_extension_class(URBANopt::Scenario::Extension)
-
-task :clear_all do
-  Dir.glob(File.join(File.dirname(__FILE__), '/spec/test/example_scenario/*')).each do |f|
-    FileUtils.rm_rf(f)
+      end
+      
+      # create osw file given a ScenarioBase object, features, and feature_names
+      def create_osw(scenario, features, feature_names)
+        raise "create_osw not implemented for SimulationMapperBase, override in your class"
+      end
+      
+    end
   end
 end
-
-task :default => :spec

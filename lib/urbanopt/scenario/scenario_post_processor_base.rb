@@ -28,20 +28,40 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "openstudio/extension"
-
 module URBANopt
   module Scenario
-    class MapperBase 
-      
-      # perform initialization functions
-      def initialize
+    class ScenarioPostProcessorBase
 
+      ##
+      # ScenarioPostProcessorBase post-processes a Scenario to create scenario level results
+      ##
+      def initialize(scenario)
+        @scenario = scenario
       end
       
-      # create osw file given a ScenarioBase object, feature_id, and feature_name
-      def create_osw(scenario, feature_id, feature_name)
-        raise "create_osw not implemented for MapperBase, override in your class"
+      def scenario
+        @scenario
+      end
+
+      ##
+      # Run the post processor on this Scenario
+      ##
+      def run
+        raise 'run not implemented for ScenarioPostProcessorBase, override in your class'
+      end
+
+      ##
+      # Add results from a simulation_dir to this result
+      ##
+      def add_simulation_dir(simulation_dir)
+        raise 'add_simulation_dir not implemented for ScenarioPostProcessorBase, override in your class'
+      end
+
+      ##
+      # Save scenario result
+      ##
+      def save
+        raise 'save not implemented for ScenarioPostProcessorBase, override in your class'
       end
       
     end
