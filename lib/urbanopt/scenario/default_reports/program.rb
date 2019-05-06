@@ -35,7 +35,7 @@ module URBANopt
     module DefaultReports
       class Program 
         
-        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area
+        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area, :maximum_roof_height, :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces, :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories, :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :window_area, :wall_area, :roof_area, :orientation, :aspect_ratio  
         
         # perform initialization functions
         def initialize(hash = {})
@@ -47,6 +47,25 @@ module URBANopt
           @conditioned_area = hash[:conditioned_area]
           @unconditioned_area = hash[:unconditioned_area]
           @footprint_area = hash[:footprint_area]
+          @maximum_roof_height = hash[:maximum_roof_height]
+          @maximum_number_of_stories = hash[:maximum_number_of_stories]
+          @maximum_number_of_parking_stories_above_ground = hash[:maximum_number_of_parking_stories_above_ground]
+          @parking_area = hash[:parking_area]
+          @number_of_parking_spaces = hash[:number_of_parking_spaces]
+          @number_of_parking_spaces_charging = hash[:number_of_parking_spaces_charging]
+          @parking_footprint_area = hash[:parking_footprint_area]
+          @maximum_parking_height = hash[:maximum_parking_height]
+          @maximum_number_of_parking_stories = hash[:maximum_number_of_parking_stories]
+          @maximum_number_of_parking_stories_above_ground = hash[:maximum_number_of_parking_stories_above_ground]
+          @number_of_residential_units = hash[:number_of_residential_units]
+          @building_types = hash[:building_types]
+          @window_area = hash[:window_area]
+          @wall_area = hash[:wall_area]
+          @roof_area = hash[:roof_area]
+          @orientation = hash[:orientation]
+          @aspect_ratio = hash[:aspect_ratio]
+
+
         end
         
         def defaults
@@ -56,6 +75,23 @@ module URBANopt
           hash[:conditioned_area] = 0
           hash[:unconditioned_area] = 0
           hash[:footprint_area] = 0
+          hash[:maximum_roof_height] = 0
+          hash[:maximum_number_of_stories] = 0
+          hash[:maximum_number_of_parking_stories_above_ground] = 0
+          hash[:parking_area] = 0
+          hash[:number_of_parking_spaces] = 0
+          hash[:number_of_parking_spaces_charging] = 0
+          hash[:parking_footprint_area] = 0
+          hash[:maximum_parking_height] = 0
+          hash[:maximum_number_of_parking_stories] = 0
+          hash[:maximum_number_of_parking_stories_above_ground] = 0
+          hash[:number_of_residential_units] = 0
+          hash[:building_types] = {:building_type => 0, :maximum_occupancy => 0, :floor_area => 0}
+          hash[:window_area] = {:north_window_area => 0, :south_window_area => 0, :east_window_area => 0, :west_window_area => 0, :total_window_area => 0}
+          hash[:wall_area] = {:north_wall_area => 0, :south_wall_area => 0, :east_wall_area => 0, :west_wall_area => 0, :total_wall_area => 0}
+          hash[:roof_area] = {:equipment_roof_area => 0, :photovoltaic_roof_area => 0, :available_roof_area => 0, :total_roof_area => 0}
+          hash[:orientation] = 0
+          hash[:aspect_ratio] = 0
           return hash
         end
         
@@ -66,6 +102,23 @@ module URBANopt
           result[:conditioned_area] = @conditioned_area if @conditioned_area
           result[:unconditioned_area] = @unconditioned_area if @unconditioned_area
           result[:footprint_area] = @footprint_area if @footprint_area
+          result[:maximum_roof_height] = @maximum_roof_height if @maximum_roof_height
+          result[:maximum_number_of_stories] = @maximum_number_of_stories if @maximum_number_of_stories
+          result[:maximum_number_of_parking_stories_above_ground] = @maximum_number_of_parking_stories_above_ground if @maximum_number_of_parking_stories_above_ground 
+          result[:parking_area] = @parking_area if @parking_area 
+          result[:number_of_parking_spaces] = @number_of_parking_spaces if @number_of_parking_spaces
+          result[:number_of_parking_spaces_charging] = @number_of_parking_spaces_charging if @number_of_parking_spaces_charging
+          result[:parking_footprint_area] = @parking_footprint_area if @parking_footprint_area
+          result[:maximum_parking_height] = @maximum_parking_height if @maximum_parking_height
+          result[:maximum_number_of_parking_stories] = @maximum_number_of_parking_stories if @maximum_number_of_parking_stories
+          result[:maximum_number_of_parking_stories_above_ground] = @maximum_number_of_parking_stories_above_ground if @maximum_number_of_parking_stories_above_ground
+          result[:number_of_residential_units] = @number_of_residential_units if @number_of_residential_units
+          result[:building_types] = @building_types if @building_types 
+          result[:window_area] = @window_area if @window_area
+          result[:wall_area] = @wall_area if @wall_area
+          result[:roof_area] = @roof_area if @roof_area 
+          result[:orientation] = @orientation if @orientation
+          result[:aspect_ratio] = @aspect_ratio if @aspect_ratio 
           return result
         end
         
@@ -75,6 +128,8 @@ module URBANopt
           @conditioned_area += other.conditioned_area
           @unconditioned_area += other.unconditioned_area
           @footprint_area += other.footprint_area
+          @maximum_roof_height += other.maximum_roof_height
+
         end
        
       end
