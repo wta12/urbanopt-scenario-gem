@@ -28,9 +28,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/default_reports/construction_costs"
+require "urbanopt/scenario/default_reports/construction_cost"
 require "urbanopt/scenario/default_reports/program"
-require "urbanopt/scenario/default_reports/reporting_periods"
+require "urbanopt/scenario/default_reports/reporting_period"
 require "urbanopt/scenario/default_reports/timeseries_csv"
 
 require 'json'
@@ -64,16 +64,16 @@ module URBANopt
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @program = Program.new(hash[:program])
-          @construction_costs = ConstructionCosts.new(hash[:construction_costs])
-          @reporting_periods = ReportingPeriods.new (hash[:reporting_periods])
+          @construction_costs = hash[:construction_costs]
+          @reporting_periods = hash[:reporting_periods]
         end
         
         def defaults
           hash = {}
           hash[:timeseries_csv] = {}
           hash[:program] = {}
-          hash[:construction_costs] = {}
-          hash[:reporting_periods] = {}
+          hash[:construction_costs] = []
+          hash[:reporting_periods] = []
           return hash
         end
         
@@ -147,8 +147,13 @@ module URBANopt
           result[:simulation_status] = @simulation_status if @simulation_status
           result[:timeseries_csv] = @timeseries_csv.to_hash
           result[:program] = @program.to_hash
-          result[:construction_costs] = @construction_costs.to_hash
-          result[:reporting_periods] = @reporting_periods.to_hash
+          
+          result[:construction_costs] = []
+          @construction_costs.each{|cc| result[:construction_costs] << cc.to_hash}
+          
+          result[:reporting_periods] = []
+          @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
+          
           return result
         end
        

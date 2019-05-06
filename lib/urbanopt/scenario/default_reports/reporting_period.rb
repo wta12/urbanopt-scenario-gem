@@ -37,13 +37,37 @@ module URBANopt
 
         # perform initialization functions
         def initialize(hash = {})
+          hash.delete_if {|k, v| v.nil?}
+          hash = defaults.merge(hash)
+          
+        end
+                
+        def defaults
+          hash = {}
+          return hash
         end
         
         def to_hash
           result = {}
           return result
         end
-       
+        
+        def self.merge_reporting_period(existing_period, new_period)
+          result = existing_period
+          
+          # TODO: merge existing period with new period
+          
+          return result
+        end
+        
+        def self.merge_reporting_periods(existing_periods, new_periods)
+          result = existing_periods
+          
+          # TODO: match new periods to existing periods and call merge_reporting_period
+          
+          return result
+        end
+        
       end
     end
   end

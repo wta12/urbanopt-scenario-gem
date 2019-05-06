@@ -37,13 +37,37 @@ module URBANopt
 
         # perform initialization functions
         def initialize(hash = {})
+          hash.delete_if {|k, v| v.nil?}
+          hash = defaults.merge(hash)
+          
+        end
+        
+        def defaults
+          hash = {}
+          return hash
         end
         
         def to_hash
           result = {}
           return result
         end
-       
+        
+        def self.merge_construction_cost(existing_cost, new_cost)
+          result = existing_cost
+          
+          # TODO: merge existing cost with new cost
+          
+          return result
+        end
+        
+        def self.merge_construction_costs(existing_costs, new_costs)
+          result = existing_costs
+          
+          # TODO: match new costs to existing costs and call merge_construction_cost
+          
+          return result
+        end
+        
       end
     end
   end

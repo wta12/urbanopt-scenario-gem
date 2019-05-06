@@ -29,10 +29,8 @@
 #*********************************************************************************
 
 require "urbanopt/scenario/default_reports/construction_cost"
-require "urbanopt/scenario/default_reports/construction_costs"
 require "urbanopt/scenario/default_reports/feature_report"
 require "urbanopt/scenario/default_reports/program"
 require "urbanopt/scenario/default_reports/reporting_period"
-require "urbanopt/scenario/default_reports/reporting_periods"
 require "urbanopt/scenario/default_reports/scenario_report"
 require "urbanopt/scenario/default_reports/timeseries_csv"
