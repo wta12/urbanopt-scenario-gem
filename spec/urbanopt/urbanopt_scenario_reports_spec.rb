@@ -94,4 +94,23 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     
   end
 
+  it 'can merge construction costs together' do
+
+    existing_costs = []
+    new_costs = []
+   
+    new_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({:category => "Construction", :item_name => "wall", :unit_cost => 1, 
+    :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
+    new_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({:category => "Construction", :item_name => "roof", :unit_cost => 1, 
+    :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
+     
+    existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({:category => "Construction", :item_name => "wall", :unit_cost => 1, 
+    :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
+    existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({ :category => "HVACComponent", :item_name => "hvac", :unit_cost => 1,
+    :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
+    
+    URBANopt::Scenario::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs) 
+    
+  end
+
 end
