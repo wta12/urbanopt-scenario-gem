@@ -35,37 +35,84 @@ module URBANopt
     module DefaultReports
       class ConstructionCost 
 
+        attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost
+
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
+
+          @category = hash[:category]
+          @item_name = hash[:item_name]
+          @unit_cost = hash[:unit_cost]
+          @cost_units = hash[:cost_units]
+          @item_quantity = hash[:item_quantity]
+          @total_cost = hash[:total_cost]
           
         end
         
         def defaults
           hash = {}
+          hash[:category] = 0
+          hash[:item_name] = 0
+          hash[:unit_cost] = 0
+          hash[:cost_units] = 0
+          hash[:item_quantity] = 0
+          hash[:total_cost] = 0
+          
+
           return hash
         end
+
         
         def to_hash
           result = {}
+          result[:category] = @category if @category
+          result[:item_name] = @item_name if @item_name
+          result[:unit_cost] = @unit_cost if @unit_cost
+          result[:cost_units] = @cost_units if @cost_units
+          result[:item_quantity] = @item_quantity if @item_quantity
+          result[:total_cost] = @total_cost if @total_cost
           return result
         end
         
         def self.merge_construction_cost(existing_cost, new_cost)
-          result = existing_cost
-          
-          # TODO: merge existing cost with new cost
-          
-          return result
+          # modify the existing_cost by adding the :total_cost and :item_quantity
+          existing_cost.total_cost += new_cost.total_cost
+          existing_cost.item_quantity += new_cost.item_quantity
+          return existing_cost
         end
         
         def self.merge_construction_costs(existing_costs, new_costs)
-          result = existing_costs
+             
+          puts "existing_costs = #{existing_costs}"
+          puts "new_costs = #{new_costs}"
+
+          item_name_list = []
+          item_name_list = existing_costs.collect {|x| x.item_name}
+      
+          new_costs.each do |x_new|
+              
+            if item_name_list.include?(x_new.item_name)
+                  
+              # when looping over the new_cost item_names find the index of the item_name_list with the same item name            
+              id = item_name_list.find_index(x_new.item_name)# the order of the item_name_list is the same as the order of the existing_cost hash-array
+                    
+              # modify the existing_cost array by adding the :total_cost and :item_quantity when looping
+              existing_costs[id] = merge_construction_cost(existing_costs[id], x_new)
+      
+            else
+
+              #insert the new hash in to the array 
+              existing_costs << x_new
+
+            end
+            puts "final cost = #{existing_costs}"
+                 
+          end
           
-          # TODO: match new costs to existing costs and call merge_construction_cost
+          return existing_costs
           
-          return result
         end
         
       end
