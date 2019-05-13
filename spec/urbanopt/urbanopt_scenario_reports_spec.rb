@@ -113,4 +113,27 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     
   end
 
+  it 'can merge reporting periods together' do
+
+    existing_periods = []
+    new_periods = []
+    
+    existing_periods << {id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
+    existing_periods << {id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
+
+    new_periods << {id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
+    new_periods << {id: 7, name: "February", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
+    
+    URBANopt::Scenario::DefaultReports::ReportingPeriod.merge_reporting_periods(existing_periods, new_periods)
+    
+  end
+
 end
