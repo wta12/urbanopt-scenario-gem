@@ -74,9 +74,11 @@
 			"type": "object",
 			"properties": {
 				"id": {
+					"description": "Id refers to the id of a building/feature",
 					"type": "string"
 				},
 				"name": {
+					"description": "name refers to the name of the feature (eg. Building 1, tranformer 5)",
 					"type": "string"
 				},
 				"directory_name": {
@@ -141,9 +143,11 @@
 			"type": "object",
 			"properties": {
 				"id": {
+					"description": "Id refers to the id of the reporting period",
 					"type": "string"
 				},
 				"name": {
+					"description": "name refers to the name of the reporting period(eg. Annual, January)",
 					"type": "string"
 				},
 				"multiplier": {
