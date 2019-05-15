@@ -157,74 +157,102 @@ module URBANopt
         
         def self.merge_reporting_period(existing_period, new_period)
                             
-          # modify the existing_period by summing up the results
-          existing_period.total_site_energy += new_period.total_site_energy
-          existing_period.total_source_energy += new_period.total_source_energy
-          existing_period.net_site_energy += new_period.net_site_energy
-          existing_period.net_source_energy += new_period.net_source_energy
-          existing_period.net_utility_cost += new_period.net_utility_cost
-          existing_period.electricity += new_period.electricity
-          existing_period.natural_gas += new_period.natural_gas
-          existing_period.additional_fuel += new_period.additional_fuel
-          existing_period.district_cooling += new_period.district_cooling
-          existing_period.district_heating += new_period.district_heating
-          existing_period.water += new_period.water
-          existing_period.electricity_produced += new_period.electricity_produced
-          existing_period.heating += new_period.heating
-          existing_period.cooling += new_period.cooling
-          existing_period.interior_lighting += new_period.interior_lighting
-          existing_period.exterior_lighting += new_period.exterior_lighting
-          existing_period.interior_equipment += new_period.interior_equipment
-          existing_period.exterior_equipment += new_period.exterior_equipment
-          existing_period.fans += new_period.fans
-          existing_period.pumps += new_period.pumps
-          existing_period.heat_rejection += new_period.heat_rejection
-          existing_period.humidification += new_period.humidification
-          existing_period.heat_recovery += new_period.heat_recovery
-          existing_period.water_systems += new_period.water_systems
-          existing_period.refrigeration += new_period.refrigeration
-          existing_period.generators += new_period.generators
-          existing_period.photovoltaic += new_period.photovoltaic
-          existing_period.usage_cost += new_period.usage_cost
-          existing_period.demand_cost += new_period.demand_cost
-          existing_period.time_setpoint_not_met_during_occupied_cooling += new_period.time_setpoint_not_met_during_occupied_cooling
-          existing_period.time_setpoint_not_met_during_occupied_heating += new_period.time_setpoint_not_met_during_occupied_heating
-          existing_period.time_setpoint_not_met_during_occupied_heating += new_period.time_setpoint_not_met_during_occupied_heating
-          existing_period.time_setpoint_not_met_during_occupied_hours += new_period.time_setpoint_not_met_during_occupied_hours         
-                             
+          # modify the existing_period by summing up the results ; # sum results only if they exist
+          
+          ##### trying a faster way###########
+          # existing_period.each do |key, value|
+          #   existing_period[key] += new_period[value]
+          #   value do |k,v|
+          #     existing_period[k] += new_period[k]
+          #   end
+          # end
+          #####################################
+
+          if existing_period.include?(:total_site_energy) then existing_period[:total_site_energy] += new_period[:total_site_energy] end
+          if existing_period.include?(:total_source_energy) then existing_period[:total_source_energy] += new_period[:total_source_energy] end
+          if existing_period.include?(:net_source_energy) then existing_period[:net_source_energy] += new_period[:net_source_energy] end
+          if existing_period.include?(:net_utility_cost) then existing_period[:net_utility_cost] += new_period[:net_utility_cost] end
+          if existing_period.include?(:electricity) then existing_period[:electricity] += new_period[:electricity] end
+          if existing_period.include?(:natural_gas) then existing_period[:natural_gas] += new_period[:natural_gas] end
+          if existing_period.include?(:additional_fuel) then existing_period[:additional_fuel] += new_period[:additional_fuel] end
+          if existing_period.include?(:district_cooling) then existing_period[:district_cooling] += new_period[:district_cooling] end
+          if existing_period.include?(:district_heating) then existing_period[:district_heating] += new_period[:district_heating] end
+          if existing_period.include?(:water) then existing_period[:water] += new_period[:water] end
+          if existing_period.include?(:electricity_produced) then existing_period.electricity_produced += new_period.electricity_produced end
+          if existing_period[:end_uses][:electricity].include?(:heating) then existing_period[:end_uses][:electricity][:heating] += new_period[:end_uses][:electricity][:heating] end
+          if existing_period[:end_uses][:electricity].include?(:cooling) then existing_period[:end_uses][:electricity][:cooling] += new_period[:end_uses][:electricity][:cooling] end
+          if existing_period[:end_uses][:electricity].include?(:interior_lighting) then existing_period[:end_uses][:electricity][:interior_lighting] += new_period[:end_uses][:electricity][:interior_lighting] end
+          if existing_period[:end_uses][:electricity].include?(:exterior_lighting) then existing_period[:end_uses][:electricity][:exterior_lighting] += new_period[:end_uses][:electricity][:exterior_lighting] end
+          if existing_period[:end_uses][:electricity].include?(:interior_equipment) then existing_period[:end_uses][:electricity][:interior_equipment] += new_period[:end_uses][:electricity][:interior_equipment] end
+          if existing_period[:end_uses][:electricity].include?(:exterior_equipment) then existing_period[:end_uses][:electricity][:exterior_equipment] += new_period[:end_uses][:electricity][:exterior_equipment] end
+          if existing_period[:end_uses][:electricity].include?(:fans) then existing_period[:end_uses][:electricity][:fans] += new_period[:end_uses][:electricity][:fans] end
+          if existing_period[:end_uses][:electricity].include?(:pumps) then existing_period[:end_uses][:electricity][:pumps] += new_period[:end_uses][:electricity][:pumps] end
+          if existing_period[:end_uses][:electricity].include?(:heat_rejection) then existing_period[:end_uses][:electricity][:heat_rejection] += new_period[:end_uses][:electricity][:heat_rejection] end
+          if existing_period[:end_uses][:electricity].include?(:humidification) then existing_period[:end_uses][:electricity][:humidification] += new_period[:end_uses][:electricity][:humidification] end
+          if existing_period[:end_uses][:electricity].include?(:heat_recovery) then existing_period[:end_uses][:electricity][:heat_recovery] += new_period[:end_uses][:electricity][:heat_recovery] end
+          if existing_period[:end_uses][:electricity].include?(:water_systems) then existing_period[:end_uses][:electricity][:water_systems] += new_period[:end_uses][:electricity][:water_systems] end
+          if existing_period[:end_uses][:electricity].include?(:refrigeration) then existing_period[:end_uses][:electricity][:refrigeration] += new_period[:end_uses][:electricity][:refrigeration] end
+          if existing_period[:end_uses][:electricity].include?(:generators) then existing_period[:end_uses][:electricity][:generators] += new_period[:end_uses][:electricity][:generators] end
+    
+          #####need to add for other fuel types 
+
+          # existing_period.photovoltaic += new_period.photovoltaic
+          # existing_period.usage_cost += new_period.usage_cost
+          # existing_period.demand_cost += new_period.demand_cost 
+
+                         
           return existing_period
+         
         end
         
         def self.merge_reporting_periods(existing_periods, new_periods)
                     
           # TODO: match new periods to existing periods and call merge_reporting_period
-          #puts "existing_periods = #{existing_periods.name}"
-          #puts "new_periods = #{new_periods.name}"
 
-          id_list = []
-          id_list = existing_periods.collect {|x| x.id}
-      
+          # existing_periods = []
+          # new_periods = []
+
+          id_list_existing = []
+          id_list_new = []
+          id_list_existing = existing_periods.collect {|x| x[:id]}
+          id_list_new = new_periods.collect {|x| x[:id]}
+
+          puts "\nexisting periods ids: #{id_list_new}"
+          puts "new periods ids: #{id_list_new}"
+
+          puts "\nexisting periods: #{existing_periods}"
+          puts "\nnew periods: #{new_periods}"
+
           new_periods.each do |x_new|
-              
-            if id_list.include?(x_new.id)
+           
+            if id_list_existing == id_list_new
                   
               # when looping over the new_periods ids find the index of the id_list with the same id            
-              index = id_list.find_index(x_new.id)
+              index = id_list_existing.find_index(x_new[:id])
                     
-              # modify the existing_periods by merging the new periods
+              # modify the existing_periods by merging the new periods results
               existing_periods[index] = merge_reporting_period(existing_periods[index], x_new)
-      
+              
+              # if existing periods are empty, take the new periods
+            elsif existing_periods.empty?
+
+              existing_periods = new_periods
+              
+              # if existing periods are empty, take the new periods
             else
-              #insert the new hash in to the array 
-              existing_periods << x_new
+              
+              raise "cannot merge different reporting periods"
 
             end
 
-            puts "final periods = #{existing_periods}"
-             
-            return existing_periods
-        
+            
+
           end
+          
+          puts "\nfinal periods = #{existing_periods}"
+          
+          return existing_periods
+
         end
       end
     end
