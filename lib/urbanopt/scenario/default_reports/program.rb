@@ -128,7 +128,7 @@ module URBANopt
           @conditioned_area += other.conditioned_area
           @unconditioned_area += other.unconditioned_area
           @footprint_area += other.footprint_area
-          @maximum_roof_height += other.maximum_roof_height
+          @maximum_roof_height += [@maximum_roof_height, other.maximum_roof_height].max
 
         end
        
