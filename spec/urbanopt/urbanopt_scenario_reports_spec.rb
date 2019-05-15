@@ -109,7 +109,32 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({ :category => "HVACComponent", :item_name => "hvac", :unit_cost => 1,
     :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
     
-    URBANopt::Scenario::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs) 
+  
+    construction_cost = URBANopt::Scenario::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs)
+    
+    if construction_cost[0].item_name == "wall"
+      expect(construction_cost[0].category).to eq("Construction")
+      expect(construction_cost[0].unit_cost).to eq(1)
+      expect(construction_cost[0].cost_units).to eq("CostPerEach")
+      expect(construction_cost[0].item_quantity).to eq(2)
+      expect(construction_cost[0].total_cost).to eq(2)
+    end
+    
+    if construction_cost[1].item_name == "hvac"
+      expect(construction_cost[1].category).to eq("HVACComponent")
+      expect(construction_cost[1].unit_cost).to eq(1)
+      expect(construction_cost[1].cost_units).to eq("CostPerEach")
+      expect(construction_cost[1].item_quantity).to eq(1)
+      expect(construction_cost[1].total_cost).to eq(1)
+    end 
+
+    if construction_cost[2].item_name == "roof"
+      expect(construction_cost[2].category).to eq("Construction")
+      expect(construction_cost[2].unit_cost).to eq(1)
+      expect(construction_cost[2].cost_units).to eq("CostPerEach")
+      expect(construction_cost[2].item_quantity).to eq(1)
+      expect(construction_cost[2].total_cost).to eq(1)  
+    end
     
   end
 
@@ -118,22 +143,32 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_periods = []
     new_periods = []
     
-    existing_periods << {id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    existing_periods << {
+    id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
-    existing_periods << {id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 } }
+    }
+    existing_periods << {
+    id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
-
-    new_periods << {id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
-    end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
-    new_periods << {id: 7, name: "February", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
-    end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1} } }
+    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 } } 
+    }
     
+    new_periods << {
+    id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1 } }
+    }
+    new_periods << {id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
+    end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
+    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1} }
+    }
+    
+
     URBANopt::Scenario::DefaultReports::ReportingPeriod.merge_reporting_periods(existing_periods, new_periods)
     
+    puts existing_periods
+
   end
 
 end
