@@ -80,6 +80,19 @@ module URBANopt
           # modify the existing_cost by adding the :total_cost and :item_quantity
           existing_cost.total_cost += new_cost.total_cost
           existing_cost.item_quantity += new_cost.item_quantity
+
+          if existing_cost.category != new_cost.category
+            raise "Cannot merge existing cost of category \"#{existing_cost.category}\" with new cost of category \"#{new_cost.category}\"."
+          end
+
+          if existing_cost.cost_units != new_cost.cost_units
+            raise "Cannot merge existing cost with cost units \"#{existing_cost.cost_units}\" with new cost with cost units \"#{new_cost.cost_units}\". "
+          end
+
+          if existing_cost.unit_cost != new_cost.unit_cost
+            raise "Cannot merge existing cost with unit cost \"#{existing_cost.unit_cost}\" with new cost with unit cost \"#{new_cost.unit_cost}\"; identical items should have identical unit cost."
+          end
+          
           return existing_cost
         end
         
