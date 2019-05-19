@@ -49,7 +49,7 @@ module URBANopt
           @footprint_area = hash[:footprint_area]
           @maximum_roof_height = hash[:maximum_roof_height]
           @maximum_number_of_stories = hash[:maximum_number_of_stories]
-          @maximum_number_of_parking_stories_above_ground = hash[:maximum_number_of_parking_stories_above_ground]
+          @maximum_number_of_stories_above_ground = hash[:maximum_number_of_stories_above_ground]
           @parking_area = hash[:parking_area]
           @number_of_parking_spaces = hash[:number_of_parking_spaces]
           @number_of_parking_spaces_charging = hash[:number_of_parking_spaces_charging]
@@ -77,7 +77,7 @@ module URBANopt
           hash[:footprint_area] = 0
           hash[:maximum_roof_height] = 0
           hash[:maximum_number_of_stories] = 0
-          hash[:maximum_number_of_parking_stories_above_ground] = 0
+          hash[:maximum_number_of_stories_above_ground] = 0
           hash[:parking_area] = 0
           hash[:number_of_parking_spaces] = 0
           hash[:number_of_parking_spaces_charging] = 0
@@ -104,7 +104,7 @@ module URBANopt
           result[:footprint_area] = @footprint_area if @footprint_area
           result[:maximum_roof_height] = @maximum_roof_height if @maximum_roof_height
           result[:maximum_number_of_stories] = @maximum_number_of_stories if @maximum_number_of_stories
-          result[:maximum_number_of_parking_stories_above_ground] = @maximum_number_of_parking_stories_above_ground if @maximum_number_of_parking_stories_above_ground 
+          result[:maximum_number_of_stories_above_ground] = @maximum_number_of_stories_above_ground if @maximum_number_of_parking_stories_above_ground 
           result[:parking_area] = @parking_area if @parking_area 
           result[:number_of_parking_spaces] = @number_of_parking_spaces if @number_of_parking_spaces
           result[:number_of_parking_spaces_charging] = @number_of_parking_spaces_charging if @number_of_parking_spaces_charging
