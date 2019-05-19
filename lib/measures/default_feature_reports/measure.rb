@@ -84,6 +84,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Electricity:Facility,Timestep;").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,ElectricityProduced:Facility,Timestep;").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Gas:Facility,Timestep;").get
+    #result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,DistrictCooling:Facility,Timestep;").get
 
     timeseries = ["District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate",
                   "District Cooling Inlet Temperature", "District Cooling Outlet Temperature",
@@ -170,6 +171,20 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     sql_file = sql_file.get
     model.setSqlFile(sql_file)
     
+    # get building
+    building = model.getBuilding
+
+    #get surfaces
+    surfaces = model.getSurfaces
+
+    # get epwFile
+    epwFile = runner.lastEpwFile
+    if epwFile.empty?
+      runner.registerError("Cannot find last epw file.")
+      return false
+    end
+    epwFile = epwFile.get
+    
     # create output report object
     feature_report = URBANopt::Scenario::DefaultReports::FeatureReport.new
     feature_report.id = feature_id
@@ -178,6 +193,30 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.directory_name = workflow.absoluteRunDir
     feature_report.timesteps_per_hour = model.getTimestep.numberOfTimestepsPerHour
     feature_report.simulation_status = 'Complete'
+
+    feature_report.reporting_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new
+
+
+    # latitude
+    latitude = epwFile.latitude
+    puts "latitude = #{latitude}"
+    #latitude = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Latitude' AND ColumnName='Value'")
+    #feature_report.location[:latitude] = latitude
+
+    # longitude
+    longitude = epwFile.longitude
+    puts "longitude = #{longitude}"
+    #longitude = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Longitude' AND ColumnName='Value'")
+    #feature_report.location[:longitude] = longitude
+
+    # surface_elevation
+    #elev = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
+    #feature_report.location[:surfae_elevation] = elev
+
+    #weather_filename
+    # weather_file = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Weather File' AND ColumnName='Value'")
+    #feature_report.location[:weather_file] = weather_file
+
 
     ###########################################################################
     # Program information
@@ -202,6 +241,682 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # DLM: we can attach footprint_area to the building as an additional property, until then use floor_area
     # DLM: measures like the GeoJSON to OSM measure can set this value
     feature_report.program.footprint_area = convert_units(floor_area, 'm^2', 'ft^2')
+
+    # maximum_number_of_stories
+    number_of_stories = building.standardsNumberOfStories.get if building.standardsNumberOfStories.is_initialized
+    number_of_stories ||= 1
+    puts "number of stories = #{number_of_stories}"
+    feature_report.program.maximum_number_of_stories = number_of_stories
+
+    # maximum_roof_height
+    floor_to_floor_height = building.nominalFloortoFloorHeight.to_f ## why floor_to_floor_height = 0 !?
+    puts "floor_to_floor_height = #{floor_to_floor_height}" 
+    maximum_roof_height = number_of_stories * floor_to_floor_height
+    feature_report.program.maximum_roof_height = maximum_roof_height
+
+    # maximum_number_of_stories_above_ground
+    number_of_stories_above_ground = building.standardsNumberOfAboveGroundStories.get if building.standardsNumberOfAboveGroundStories.is_initialized
+    number_of_stories_above_ground ||= 1
+    puts "number_of_stories_above_ground = #{number_of_stories_above_ground}"
+    feature_report.program.maximum_number_of_stories_above_ground = number_of_stories_above_ground
+
+    # maximum_number_of_parking_stories_above_ground
+    ######need to add parking to model
+    # parking_area
+    ######need to add parking to model
+    # number_of_parking_spaces
+    ######need to add parking to model
+
+    # number_of_parking_spaces_charging
+    ######need to add parking to model
+
+    # parking_footprint_area
+    ######need to add parking to model
+
+    # maximum_parking_height
+    ######need to add parking to model
+
+    # maximum_number_of_parking_stories
+    ######need to add parking to model
+
+    # number_of_residential_units
+    number_of_living_units = building.standardsNumberOfLivingUnits.to_i.get if building.standardsNumberOfLivingUnits.is_initialized
+    number_of_living_units ||= 1
+    puts "number_of_residential_units = #{number_of_living_units}"
+    feature_report.program.number_of_residential_units = number_of_living_units
+
+    ### building_types
+    ## building_type
+    #building_type
+    building_type = building.standardsBuildingType.to_s if building.standardsBuildingType.is_initialized
+    building_type ||= nil
+    feature_report.program.building_types[:building_type] = building_type
+    #maximum_occupancy
+    number_of_people = building.numberOfPeople
+    puts "numeber_of_people = #{number_of_people}"
+    feature_report.program.building_types[:maximum_occupancy] = number_of_people
+    #floor_area
+    floor_area = building.floorArea
+    puts "total_floor_area = #{floor_area}"
+    feature_report.program.building_types[:floor_area] = convert_units(floor_area, 'm^2', 'ft^2')
+    
+    ## window_area
+    #north_window_area
+    north_window_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Window Opening Area' AND ColumnName='North (315 to 45 deg)'").to_f
+    feature_report.program.window_area[:north_window_area] = convert_units(north_window_area, 'm^2', 'ft^2')
+    #south_window_area
+    south_window_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Window Opening Area' AND ColumnName='South (135 to 225 deg)'").to_f
+    feature_report.program.window_area[:south_window_area] = convert_units(south_window_area, 'm^2', 'ft^2')
+    #east_window_area
+    east_window_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Window Opening Area' AND ColumnName='East (45 to 135 deg)'").to_f
+    feature_report.program.window_area[:east_window_area] = convert_units(east_window_area, 'm^2', 'ft^2')
+    #west_window_area
+    west_window_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Window Opening Area' AND ColumnName='West (225 to 315 deg)'").to_f
+    feature_report.program.window_area[:west_window_area] = convert_units(west_window_area, 'm^2', 'ft^2')
+    #total_window_area
+    total_window_area = north_window_area + south_window_area + east_window_area + west_window_area
+    feature_report.program.window_area[:total_window_area] = convert_units(total_window_area, 'm^2', 'ft^2')
+
+    ## wall_area
+    #north_wall_area
+    north_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='North (315 to 45 deg)'").to_f
+    feature_report.program.wall_area[:north_wall_area] = convert_units(north_wall_area, 'm^2', 'ft^2')
+    #south_wall_area
+    south_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='South (135 to 225 deg)'").to_f
+    feature_report.program.wall_area[:south_wall_area] = convert_units(south_wall_area, 'm^2', 'ft^2')
+    #east_wall_area
+    east_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='East (45 to 135 deg)'").to_f
+    feature_report.program.wall_area[:east_wall_area] = convert_units(east_wall_area, 'm^2', 'ft^2')
+    #west_wall_area
+    west_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='West (225 to 315 deg)'").to_f
+    feature_report.program.wall_area[:west_wall_area] = convert_units(west_wall_area, 'm^2', 'ft^2')
+    #total_wall_area
+    total_wall_area = north_wall_area + south_wall_area + east_wall_area + west_wall_area
+    feature_report.program.wall_area[:total_wall_area] = convert_units(total_wall_area, 'm^2', 'ft^2')
+
+
+    ##roof_area
+    #equipment_roof_area
+    ######to be added
+    #photovoltaic_roof_area
+
+    #available_roof_area
+    #available_roof_area = total_roof_area - equipment_roof_area
+
+    #total_roof_area
+    total_roof_area = 0.0
+    surfaces.each do |surface|
+      if surface.outsideBoundaryCondition == "Outdoors" and surface.surfaceType == "RoofCeiling"
+        total_roof_area += surface.netArea
+      end
+    end
+    ####another way####
+    #total_roof_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Skylight-Roof Ratio' AND RowName='Gross Roof Area' AND ColumnName='Total'").to_f
+    feature_report.program.roof_area[:total_roof_area] = convert_units(total_roof_area, 'm^2', 'ft^2')
+    puts total_roof_area
+
+    #orientation
+    #to check!   
+    building_rotation = model.getBuilding.northAxis
+    feature_report.program.orientation = building_rotation
+
+    #aspect_ratio
+    north_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='North (315 to 45 deg)'")
+    east_wall_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Window-Wall Ratio' AND RowName='Gross Wall Area' AND ColumnName='East (45 to 135 deg)'")
+    aspect_ratio = north_wall_area / east_wall_area if north_wall_area != 0 && east_wall_area != 0
+    aspect_ratio ||= nil
+    feature_report.program.aspect_ratio = aspect_ratio
+
+   
+    ###########################################################################
+    ### Construction Cost information
+
+    ## category
+    # category = sql_query(runner, sql_file, 'ObjectCountSummary', "TableName=")
+
+
+
+    ## item_name
+
+    # item_name = sql_query(runner, sql_file, )
+
+
+    ## unit_cost
+
+    ## cost_units
+
+    ## item_quantity
+    # if item_name == 'Wall' then
+    #   item_quantity = sql_query(runner, sql_file, 'ObjectCountSummary')
+    # end
+
+    # if item_name == 'Floor' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Roof' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Internal Mass' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Building Detached Shading' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Fixed Detached Shading' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Window' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Door' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Glass Door' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Shading' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Overhang' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Fin' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Tubular Daylighting Device Dome' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # if item_name == 'Tubular Daylight Device Diffuser' then
+    #   item_quantity = sql_query(runner, sql_file, '')
+    # end
+
+    # total_cost
+    #loop over item_name and multiple unit_cost with item_quantity
+    #total_cost = sql_file(runner,sql_file, "Life-Cycle Cost Report", "TableName='Present Value for' AND RowName='Total Site Energy' AND ColumnName='Total Energy'")
+    
+    # ###########################################################################
+    # #### Reporting Periods information
+
+    ### id
+
+    ### name 
+
+    ### multiplier
+
+    ### start_date
+    ## month
+    begin_month = model.getRunPeriod.getBeginMonth
+    feature_report.reporting_periods[0].start_date[:month] = begin_month
+    ## day_of_month
+    begin_day_of_month = model.getRunPeriod.getBeginDayOfMonth
+    feature_report.reporting_periods[0].start_date[:day_of_month] = begin_day_of_month
+    ## year
+    begin_year = model.getYearDescription.calendarYear
+    feature_report.reporting_periods[0].start_date[:year] = begin_year
+   
+
+    ### end_date
+    ## month
+    end_month = model.getRunPeriod.getEndMonth
+    feature_report.reporting_periods[0].end_date[:month] = end_month
+    ## day_of_month
+    end_day_of_month = model.getRunPeriod.getEndDayOfMonth
+    feature_report.reporting_periods[0].end_date[:day_of_month] = end_day_of_month
+    ## year
+    end_year = model.getYearDescription.calendarYear
+    feature_report.reporting_periods[0].end_date[:year] = end_year
+
+
+    
+    ### total_site_energy
+    total_site_energy = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Site and Source Energy' AND RowName='Total Site Energy' AND ColumnName='Total Energy'")
+    #puts "hello"
+    #puts feature_report.reporting_periods[0]
+    #puts feature_report.reporting_periods[0].class
+    feature_report.reporting_periods[0].total_site_energy = convert_units(total_site_energy, 'GJ', 'kBtu')
+    #feature_report.reporting_periods[0].total_site_energy = total_site_energy
+
+    ### total_source_energy
+    total_source_energy = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Site and Source Energy' AND RowName='Total Source Energy' AND ColumnName='Total Energy'")
+    feature_report.reporting_periods[0].total_source_energy = convert_units(total_source_energy, 'GJ', 'kBtu')
+    
+    ### net_site_energy
+    net_site_energy = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Site and Source Energy' AND RowName='Net Site Energy' AND ColumnName='Total Energy'")
+    feature_report.reporting_periods[0].net_site_energy = convert_units(net_site_energy, 'GJ', 'kBtu')
+
+    ### net_source_energy
+    net_source_energy = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Site and Source Energy' AND RowName='Net Source Energy' AND ColumnName='Total Energy'")
+    feature_report.reporting_periods[0].net_source_energy = convert_units(net_source_energy, 'GJ', 'kBtu')
+
+    ### net_utility_cost
+    #should be requested before simulation
+    
+    ### electricity
+    electricity = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].electricity = convert_units(electricity, 'GJ', 'kBtu')
+
+    ### natural_gas
+    natural_gas = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].natural_gas = convert_units(natural_gas, 'GJ', 'kBtu')
+
+    ### additional_fuel
+    additional_fuel = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].additional_fuel = convert_units(additional_fuel, 'GJ', 'kBtu')
+    
+    ### district_cooling
+    district_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].district_cooling = convert_units(district_cooling, 'GJ', 'kBtu')
+
+    ### district_heating
+    district_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].district_heating = convert_units(district_heating, 'GJ', 'kBtu')
+
+    ### water
+    water = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Water'")
+    #feature_report.reporting_periods[0].water = convert_units(water, 'm3', 'ft3')
+    feature_report.reporting_periods[0].water = water
+
+    ### electricity_produced
+    electricity_produced = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Electric Loads Satisfied' AND RowName='Total On-Site and Utility Electric Sources' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].electricity_produced = convert_units(electricity_produced, 'GJ', 'kBtu')
+
+    ### end_uses
+    ## electricity
+      
+    # electricity_heating  
+    electricity_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:heating] = convert_units(electricity_heating, 'GJ', 'kBtu')
+    
+    # electricity_cooling  
+    electricity_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:cooling] = convert_units(electricity_cooling, 'GJ', 'kBtu')
+
+    # electricity_interior_lighting  
+    electricity_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:interior_lighting] = convert_units(electricity_interior_lighting, 'GJ', 'kBtu')
+
+    # electricity_exterior_lighting  
+    electricity_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:exterior_lighting] = convert_units(electricity_exterior_lighting, 'GJ', 'kBtu')
+
+    # electricity_interior_equipment
+    electricity_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:interior_equipment] = convert_units(electricity_interior_equipment, 'GJ', 'kBtu')
+
+    # electricity_exterior_equipment  
+    electricity_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:exterior_equipment] = convert_units(electricity_exterior_equipment, 'GJ', 'kBtu')
+
+    # electricity_fans 
+    electricity_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:fans] = convert_units(electricity_fans, 'GJ', 'kBtu')
+    
+    # electricity_pumps 
+    electricity_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:pumps] = convert_units(electricity_pumps, 'GJ', 'kBtu')
+
+    # electricity_heat_rejection 
+    electricity_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:heat_rejection] = convert_units(electricity_heat_rejection, 'GJ', 'kBtu')
+
+    # electricity_humidification 
+    electricity_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:humidification] = convert_units(electricity_humidification, 'GJ', 'kBtu')
+
+    # electricity_heat_recovery 
+    electricity_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:heat_recovery] = convert_units(electricity_heat_recovery, 'GJ', 'kBtu')
+
+    # electricity_water_systems 
+    electricity_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:water_systems] = convert_units(electricity_water_systems, 'GJ', 'kBtu')
+
+    # electricity_refrigeration
+    electricity_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:refrigeration] = convert_units(electricity_refrigeration, 'GJ', 'kBtu')
+
+    # electricity_generators 
+    electricity_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].end_uses[:electricity][:generators] = convert_units(electricity_generators, 'GJ', 'kBtu')
+
+    
+    
+    ## natural_gas
+     
+    # natural_gas_heating  
+    natural_gas_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:heating] = convert_units(natural_gas_heating, 'GJ', 'kBtu')
+    
+    # natural_gas_cooling  
+    natural_gas_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:cooling] = convert_units(natural_gas_cooling, 'GJ', 'kBtu')
+
+    # natural_gas_interior_lighting  
+    natural_gas_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:interior_lighting] = convert_units(natural_gas_interior_lighting, 'GJ', 'kBtu')
+
+    # natural_gas_exterior_lighting  
+    natural_gas_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:exterior_lighting] = convert_units(natural_gas_exterior_lighting, 'GJ', 'kBtu')
+
+    # natural_gas_interior_equipment
+    natural_gas_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:interior_equipment] = convert_units(natural_gas_interior_equipment, 'GJ', 'kBtu')
+
+    # natural_gas_exterior_equipment  
+    natural_gas_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:exterior_equipment] = convert_units(natural_gas_exterior_equipment, 'GJ', 'kBtu')
+
+    # natural_gas_fans 
+    natural_gas_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:fans] = convert_units(natural_gas_fans, 'GJ', 'kBtu')
+    
+    # natural_gas_pumps 
+    natural_gas_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:pumps] = convert_units(natural_gas_pumps, 'GJ', 'kBtu')
+
+    # natural_gas_heat_rejection 
+    natural_gas_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:heat_rejection] = convert_units(natural_gas_heat_rejection, 'GJ', 'kBtu')
+
+    # natural_gas_humidification 
+    natural_gas_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:humidification] = convert_units(natural_gas_humidification, 'GJ', 'kBtu')
+
+    # natural_gas_heat_recovery 
+    natural_gas_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:heat_recovery] = convert_units(natural_gas_heat_recovery, 'GJ', 'kBtu')
+
+    # natural_gas_water_systems 
+    natural_gas_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:water_systems] = convert_units(natural_gas_water_systems, 'GJ', 'kBtu')
+
+    # natural_gas_refrigeration
+    natural_gas_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:refrigeration] = convert_units(natural_gas_refrigeration, 'GJ', 'kBtu')
+
+    # natural_gas_generators 
+    natural_gas_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='Natural Gas'")
+    feature_report.reporting_periods[0].end_uses[:natural_gas][:generators] = convert_units(natural_gas_generators, 'GJ', 'kBtu')
+
+
+    ## additional_fuel
+     
+    # additional_fuel_heating  
+    additional_fuel_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:heating] = convert_units(additional_fuel_heating, 'GJ', 'kBtu')
+    
+    # additional_fuel_cooling  
+    additional_fuel_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:cooling] = convert_units(additional_fuel_cooling, 'GJ', 'kBtu')
+
+    # additional_fuel_interior_lighting  
+    additional_fuel_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:interior_lighting] = convert_units(additional_fuel_interior_lighting, 'GJ', 'kBtu')
+
+    # additional_fuel_exterior_lighting  
+    additional_fuel_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:exterior_lighting] = convert_units(additional_fuel_exterior_lighting, 'GJ', 'kBtu')
+
+    # additional_fuel_interior_equipment
+    additional_fuel_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:interior_equipment] = convert_units(additional_fuel_interior_equipment, 'GJ', 'kBtu')
+
+    # additional_fuel_exterior_equipment  
+    additional_fuel_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:exterior_equipment] = convert_units(additional_fuel_exterior_equipment, 'GJ', 'kBtu')
+
+    # additional_fuel_fans 
+    additional_fuel_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:fans] = convert_units(additional_fuel_fans, 'GJ', 'kBtu')
+    
+    # additional_fuel_pumps 
+    additional_fuel_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:pumps] = convert_units(additional_fuel_pumps, 'GJ', 'kBtu')
+
+    # additional_fuel_heat_rejection 
+    additional_fuel_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:heat_rejection] = convert_units(additional_fuel_heat_rejection, 'GJ', 'kBtu')
+
+    # additional_fuel_humidification 
+    additional_fuel_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:humidification] = convert_units(additional_fuel_humidification, 'GJ', 'kBtu')
+
+    # additional_fuel_heat_recovery 
+    additional_fuel_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:heat_recovery] = convert_units(additional_fuel_heat_recovery, 'GJ', 'kBtu')
+
+    # additional_fuel_water_systems 
+    additional_fuel_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:water_systems] = convert_units(additional_fuel_water_systems, 'GJ', 'kBtu')
+
+    # additional_fuel_refrigeration
+    additional_fuel_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:refrigeration] = convert_units(additional_fuel_refrigeration, 'GJ', 'kBtu')
+
+    # additional_fuel_generators 
+    additional_fuel_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='Additional Fuel'")
+    feature_report.reporting_periods[0].end_uses[:additional_fuel][:generators] = convert_units(additional_fuel_generators, 'GJ', 'kBtu')
+    
+
+    ## district_cooling
+     
+    # district_cooling_heating  
+    district_cooling_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:heating] = convert_units(district_cooling_heating, 'GJ', 'kBtu')
+    
+    # district_cooling_cooling  
+    district_cooling_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:cooling] = convert_units(district_cooling_cooling, 'GJ', 'kBtu')
+
+    # district_cooling_interior_lighting  
+    district_cooling_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:interior_lighting] = convert_units(district_cooling_interior_lighting, 'GJ', 'kBtu')
+
+    # district_cooling_exterior_lighting  
+    district_cooling_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:exterior_lighting] = convert_units(district_cooling_exterior_lighting, 'GJ', 'kBtu')
+
+    # district_cooling_interior_equipment
+    district_cooling_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:interior_equipment] = convert_units(district_cooling_interior_equipment, 'GJ', 'kBtu')
+
+    # district_cooling_exterior_equipment  
+    district_cooling_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:exterior_equipment] = convert_units(district_cooling_exterior_equipment, 'GJ', 'kBtu')
+
+    # district_cooling_fans 
+    district_cooling_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:fans] = convert_units(district_cooling_fans, 'GJ', 'kBtu')
+    
+    # district_cooling_pumps 
+    district_cooling_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:pumps] = convert_units(district_cooling_pumps, 'GJ', 'kBtu')
+
+    # district_cooling_heat_rejection 
+    district_cooling_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:heat_rejection] = convert_units(district_cooling_heat_rejection, 'GJ', 'kBtu')
+
+    # district_cooling_humidification 
+    district_cooling_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:humidification] = convert_units(district_cooling_humidification, 'GJ', 'kBtu')
+
+    # district_cooling_heat_recovery 
+    district_cooling_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:heat_recovery] = convert_units(district_cooling_heat_recovery, 'GJ', 'kBtu')
+
+    # district_cooling_water_systems 
+    district_cooling_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:water_systems] = convert_units(district_cooling_water_systems, 'GJ', 'kBtu')
+
+    # district_cooling_refrigeration
+    district_cooling_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:refrigeration] = convert_units(district_cooling_refrigeration, 'GJ', 'kBtu')
+
+    # district_cooling_generators 
+    district_cooling_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='District Cooling'")
+    feature_report.reporting_periods[0].end_uses[:district_cooling][:generators] = convert_units(district_cooling_generators, 'GJ', 'kBtu')
+
+
+    ## district_heating
+     
+    # district_heating_heating  
+    district_heating_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:heating] = convert_units(district_heating_heating, 'GJ', 'kBtu')
+    
+    # district_heating_cooling  
+    district_heating_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:cooling] = convert_units(district_heating_cooling, 'GJ', 'kBtu')
+
+    # district_heating_interior_lighting  
+    district_heating_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:interior_lighting] = convert_units(district_heating_interior_lighting, 'GJ', 'kBtu')
+
+    # district_heating_exterior_lighting  
+    district_heating_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:exterior_lighting] = convert_units(district_heating_exterior_lighting, 'GJ', 'kBtu')
+
+    # district_heating_interior_equipment
+    district_heating_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:interior_equipment] = convert_units(district_heating_interior_equipment, 'GJ', 'kBtu')
+
+    # district_heating_exterior_equipment  
+    district_heating_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:exterior_equipment] = convert_units(district_heating_exterior_equipment, 'GJ', 'kBtu')
+
+    # district_heating_fans 
+    district_heating_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:fans] = convert_units(district_heating_fans, 'GJ', 'kBtu')
+    
+    # district_heating_pumps 
+    district_heating_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:pumps] = convert_units(district_heating_pumps, 'GJ', 'kBtu')
+
+    # district_heating_heat_rejection 
+    district_heating_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:heat_rejection] = convert_units(district_heating_heat_rejection, 'GJ', 'kBtu')
+
+    # district_heating_humidification 
+    district_heating_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:humidification] = convert_units(district_heating_humidification, 'GJ', 'kBtu')
+
+    # district_heating_heat_recovery 
+    district_heating_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:heat_recovery] = convert_units(district_heating_heat_recovery, 'GJ', 'kBtu')
+
+    # district_heating_water_systems 
+    district_heating_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:water_systems] = convert_units(district_heating_water_systems, 'GJ', 'kBtu')
+
+    # district_heating_refrigeration
+    district_heating_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:refrigeration] = convert_units(district_heating_refrigeration, 'GJ', 'kBtu')
+
+    # district_heating_generators 
+    district_heating_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='District Heating'")
+    feature_report.reporting_periods[0].end_uses[:district_heating][:generators] = convert_units(district_heating_generators, 'GJ', 'kBtu')
+
+
+    ## water
+     
+    # water_heating  
+    water_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:heating] = convert_units(water_heating, 'GJ', 'kBtu')
+    
+    # water_cooling  
+    water_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:cooling] = convert_units(water_cooling, 'GJ', 'kBtu')
+
+    # water_interior_lighting  
+    water_interior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Lighting' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:interior_lighting] = convert_units(water_interior_lighting, 'GJ', 'kBtu')
+
+    # water_exterior_lighting  
+    water_exterior_lighting = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Lighting' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:exterior_lighting] = convert_units(water_exterior_lighting, 'GJ', 'kBtu')
+
+    # water_interior_equipment
+    water_interior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Interior Equipment' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:interior_equipment] = convert_units(water_interior_equipment, 'GJ', 'kBtu')
+
+    # water_exterior_equipment  
+    water_exterior_equipment = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Exterior Equipment' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:exterior_equipment] = convert_units(water_exterior_equipment, 'GJ', 'kBtu')
+
+    # water_fans 
+    water_fans = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Fans' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:fans] = convert_units(water_fans, 'GJ', 'kBtu')
+    
+    # water_pumps 
+    water_pumps = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Pumps' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:pumps] = convert_units(water_pumps, 'GJ', 'kBtu')
+
+    # water_heat_rejection 
+    water_heat_rejection = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Rejection' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:heat_rejection] = convert_units(water_heat_rejection, 'GJ', 'kBtu')
+
+    # water_humidification 
+    water_humidification = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Humidification' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:humidification] = convert_units(water_humidification, 'GJ', 'kBtu')
+
+    # water_heat_recovery 
+    water_heat_recovery = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heat Recovery' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:heat_recovery] = convert_units(water_heat_recovery, 'GJ', 'kBtu')
+
+    # water_water_systems 
+    water_water_systems = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Water Systems' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:water_systems] = convert_units(water_water_systems, 'GJ', 'kBtu')
+
+    # water_refrigeration
+    water_refrigeration = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Refrigeration' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:refrigeration] = convert_units(water_refrigeration, 'GJ', 'kBtu')
+
+    # water_generators 
+    water_generators = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Generators' AND ColumnName='Water'")
+    feature_report.reporting_periods[0].end_uses[:water][:generators] = convert_units(water_generators, 'GJ', 'kBtu')
+
+    ### energy_production
+    ## electricity_produced
+    # photovoltaic
+    photovoltaic_power = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Electric Loads Satisfied' AND RowName='Photovoltaic Power' AND ColumnName='Electricity'")
+    feature_report.reporting_periods[0].energy_production[:electricity_produced][:photovoltaic] = convert_units(photovoltaic_power, 'GJ', 'kBtu')
+
+    ### utility_costs
+    ## fuel_type
+
+    ## total_cost
+
+    ## usage_cost
+
+    ## demand_cost
+    
+
+    ###comfort_result
+    ## time_setpoint_not_met_during_occupied_cooling
+    time_setpoint_not_met_during_occupied_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Cooling' AND ColumnName='Facility'")
+    feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_cooling] = time_setpoint_not_met_during_occupied_cooling
+
+    ## time_setpoint_not_met_during_occupied_heating
+    time_setpoint_not_met_during_occupied_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Heating' AND ColumnName='Facility'")
+    feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_heating] = time_setpoint_not_met_during_occupied_heating
+
+    ## time_setpoint_not_met_during_occupied_hour
+    time_setpoint_not_met_during_occupied_hours = time_setpoint_not_met_during_occupied_heating + time_setpoint_not_met_during_occupied_cooling
+    feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_hours] = time_setpoint_not_met_during_occupied_hours
+
+
 
     # ###########################################################################
     # # Other queries of interest
