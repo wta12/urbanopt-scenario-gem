@@ -346,7 +346,7 @@ module URBANopt
           id_list_existing = []
           id_list_new = []
           id_list_existing = existing_periods.collect {|x| x[:id]}
-          id_list_new = new_periods.collect {|x,y| x[:id]}
+          id_list_new = new_periods.collect {|x| x[:id]}
 
           puts "\nexisting periods ids: #{id_list_new}"
           puts "new periods ids: #{id_list_new}"
@@ -355,8 +355,6 @@ module URBANopt
           puts "\nnew periods: #{new_periods}"
 
              
-          existing_keys = get_all_keys(existing_periods)
-          new_keys = get_all_keys(new_periods)
           
           if id_list_existing == id_list_new 
                 
@@ -367,18 +365,17 @@ module URBANopt
                 # modify the existing_periods by merging the new periods results
                 existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
               else 
+                #raise and error if the elements (all keys) in the reporting periods are not identical
                 raise "reperting periods with unidentical elements cannot be merged"
               end
             end
-
-            # if existing periods are empty, take the new periods
+            
           elsif existing_periods.empty?
-
-            existing_periods = new_periods
-            
             # if existing periods are empty, take the new periods
+            existing_periods = new_periods
+                       
           else
-            
+            # raise an error if the existing periods are not identical with new periods (cannot have different reporting period ids)
             raise "cannot merge different reporting periods"
 
           end
