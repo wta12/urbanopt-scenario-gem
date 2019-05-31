@@ -97,6 +97,8 @@ module URBANopt
           hash[:energy_production] = {electricity_produced: {photovoltaic: 0, }}
           hash[:utility_costs] = { fuel_type:'', total_cost: 0, usage_cost: 0, demand_cost: 0}
           hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: 0, time_setpoint_not_met_during_occupied_heating: 0, time_setpoint_not_met_during_occupied_hours: 0}
+          hash[:end_uses] = EndUses.new.to_hash
+          
           return hash
         end
         

@@ -537,8 +537,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       
     # electricity_heating  
     electricity_heating = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Heating' AND ColumnName='Electricity'")
-    feature_report.reporting_periods[0].end_uses[:electricity][:heating] = convert_units(electricity_heating, 'GJ', 'kBtu')
-    
+    feature_report.reporting_periods[0].end_uses.electricity.heating = convert_units(electricity_heating, 'GJ', 'kBtu')
+
     # electricity_cooling  
     electricity_cooling = sql_query(runner, sql_file, "AnnualBuildingUtilityPerformanceSummary", "TableName='End Uses' AND RowName='Cooling' AND ColumnName='Electricity'")
     feature_report.reporting_periods[0].end_uses[:electricity][:cooling] = convert_units(electricity_cooling, 'GJ', 'kBtu')

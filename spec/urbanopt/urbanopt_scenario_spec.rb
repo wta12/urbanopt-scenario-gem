@@ -104,11 +104,11 @@ RSpec.describe URBANopt::Scenario do
       simulation_status = simulation_dir.simulation_status
       puts "run_dir = #{run_dir}, simulation_status = #{simulation_status}"
       if simulation_dir.simulation_status != 'Complete'
-        failures << simulation_dir
+        failures << run_dir
       end
     end
     
-    expect(failures).to be_empty
+    expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
     
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
