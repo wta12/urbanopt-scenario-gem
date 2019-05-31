@@ -30,6 +30,15 @@ class EndUse
         hash[:interior_lighting] = 0
         hash[:exterior_lighting] = 0
         hash[:interior_equipment] = 0
+        hash[:exterior_equipment] = 0 
+        hash[:fans] = 0
+        hash[:pumps] = 0
+        hash[:heat_rejection] = 0
+        hash[:humidification] = 0
+        hash[:heat_recovery] = 0
+        hash[:water_systems] = 0
+        hash[:refrigeration] = 0 
+        hash[:generators] = 0
         
         return hash
     end

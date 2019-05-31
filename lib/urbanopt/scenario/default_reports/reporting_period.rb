@@ -159,40 +159,40 @@ module URBANopt
           
           #try to create a class for enduse 
 
-          existing_period[:total_site_energy] += new_period[:total_site_energy] if existing_period.include?(:total_site_energy)
-          existing_period[:total_source_energy] += new_period[:total_source_energy] if existing_period.include?(:total_source_energy)  
-          existing_period[:net_source_energy] += new_period[:net_source_energy] if existing_period.include?(:net_source_energy) 
-          existing_period[:net_utility_cost] += new_period[:net_utility_cost] if existing_period.include?(:net_utility_cost)
-          existing_period[:electricity] += new_period[:electricity] if existing_period.include?(:electricity)
-          existing_period[:natural_gas] += new_period[:natural_gas] if existing_period.include?(:natural_gas)
-          existing_period[:additional_fuel] += new_period[:additional_fuel] if existing_period.include?(:additional_fuel)
-          existing_period[:district_cooling] += new_period[:district_cooling] if existing_period.include?(:district_cooling)
-          existing_period[:district_heating] += new_period[:district_heating] if existing_period.include?(:district_heating)
-          existing_period[:water] += new_period[:water] if existing_period.include?(:water)
-          existing_period[:electricity_produced] += new_period[:electricity_produced] if existing_period.include?(:electricity_produced)
+          existing_period.total_site_energy += new_period.total_site_energy if existing_period.total_site_energy
+          existing_period.total_source_energy += new_period.total_source_energy if existing_period.total_source_energy  
+          existing_period.net_source_energy += new_period.net_source_energy if existing_period.net_source_energy 
+          existing_period.net_utility_cost += new_period.net_utility_cost if existing_period.net_utility_cost
+          existing_period.electricity += new_period.electricity if existing_period.electricity
+          existing_period.natural_gas += new_period.natural_gas if existing_period.natural_gas
+          existing_period.additional_fuel += new_period.additional_fuel if existing_period.additional_fuel
+          existing_period.district_cooling += new_period.district_cooling if existing_period.district_cooling
+          existing_period.district_heating += new_period.district_heating if existing_period.district_heating
+          existing_period.water += new_period.water if existing_period.water
+          existing_period.electricity_produced += new_period.electricity_produced if existing_period.electricity_produced
         
-          if existing_period.include?(:end_uses)
+          
             end_uses = EndUses.new
-            end_uses.merge_end_uses(existing_period, new_period)
-          end
+            end_uses.merge_end_uses(existing_period, new_period) #if existing_period.end_uses
+          
 
-          if existing_period.include?(:energy_production)
-            if existing_periods[:energy_production].include?(:electricity_produced)
-              existing_period[:energy_production][:electricity_produced][:photovoltaic] += new_period[:energy_production][:electricity_produced][:photovoltaic] if existing_period[:energy_production][:electricity_produced].include?(:photovoltaic)
+          if existing_period.energy_production
+            if existing_period.energy_production[:electricity_produced]
+              existing_period.energy_production[:electricity_produced][:electricity_produced] += new_period.energy_production[:electricity_produced][:electricity_produced] if existing_period.energy_production[:electricity_produced][:electricity_produced]
             end
           end
 
-          if existing_period.include?(:utility_costs)
-            existing_period[:utility_costs][:fuel_type] += new_period[:utility_costs][:fuel_type] if existing_period[:utility_costs].include?(:fuel_type)
-            existing_period[:utility_costs][:total_cost] += new_period[:utility_costs][:total_cost] if existing_period[:utility_costs].include?(:total_cost)
-            existing_period[:utility_costs][:usage_cost] += new_period[:utility_costs][:usage_cost] if existing_period[:utility_costs].include?(:usage_cost)
-            existing_period[:utility_costs][:demand_cost] += new_period[:utility_costs][:demand_cost] if existing_period[:utility_costs].include?(:demand_cost)
+          if existing_period.utility_costs
+            existing_period.utility_costs[:fuel_type] += new_period.utility_costs[:fuel_type] if existing_period.utility_costs[:fuel_type]
+            existing_period.utility_costs[:total_cost] += new_period.utility_costs[:total_cost] if existing_period.utility_costs[:total_cost]
+            existing_period.utility_costs[:usage_cost] += new_period.utility_costs[:usage_cost] if existing_period.utility_costs[:usage_cost]
+            existing_period.utility_costs[:demand_cost] += new_period.utility_costs[:demand_cost] if existing_period.utility_costs[:demand_cost]
           end
           
-          if existing_period.include?(:comfort_result)
-            existing_period[:comfort_result][:time_setpoint_not_met_during_occupied_cooling] += new_period[:comfort_result][:time_setpoint_not_met_during_occupied_cooling] if existing_period[:comfort_result].include?(:time_setpoint_not_met_during_occupied_cooling)
-            existing_period[:comfort_result][:time_setpoint_not_met_during_occupied_heating] += new_period[:comfort_result][:time_setpoint_not_met_during_occupied_heating] if existing_period[:comfort_result].include?(:time_setpoint_not_met_during_occupied_heating)
-            existing_period[:comfort_result][:time_setpoint_not_met_during_occupied_hours] += new_period[:comfort_result][:time_setpoint_not_met_during_occupied_hours] if existing_period[:comfort_result].include?(:time_setpoint_not_met_during_occupied_hours)
+          if existing_period.comfort_result
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling]
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating]
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours]
           end         
                          
           return existing_period
@@ -205,8 +205,8 @@ module URBANopt
 
           id_list_existing = []
           id_list_new = []
-          id_list_existing = existing_periods.collect {|x| x[:id]}
-          id_list_new = new_periods.collect {|x| x[:id]}
+          id_list_existing = existing_periods.collect {|x| x.id}
+          id_list_new = new_periods.collect {|x| x.id}
 
           puts "\nexisting periods ids: #{id_list_new}"
           puts "new periods ids: #{id_list_new}"
@@ -214,15 +214,15 @@ module URBANopt
           if id_list_existing == id_list_new 
                 
             existing_periods.each_index do |index|
-              existing_keys = get_all_keys(existing_periods[index])
-              new_keys = get_all_keys(new_periods[index])
-              if new_keys == existing_keys
+              # existing_keys = get_all_keys(existing_periods[index])
+              # new_keys = get_all_keys(new_periods[index])
+              # if new_keys == existing_keys
                 # modify the existing_periods by merging the new periods results
-                existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
-              else 
-                #raise and error if the elements (all keys) in the reporting periods are not identical
-                raise "reperting periods with unidentical elements cannot be merged"
-              end
+            existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
+              # else 
+              #   #raise and error if the elements (all keys) in the reporting periods are not identical
+              #   raise "reperting periods with unidentical elements cannot be merged"
+              # end
             end
             
           elsif existing_periods.empty?
