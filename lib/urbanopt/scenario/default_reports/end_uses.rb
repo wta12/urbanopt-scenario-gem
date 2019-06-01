@@ -45,26 +45,11 @@ class EndUses
     
     end
 
-    def merge_end_uses(existing_period, new_period)
+    def merge_end_uses!(new_end_uses)
                         
         # modify the existing_period by summing up the results ; # sum results only if they exist
 
-        #if existing_period.end_uses.electricity
-            existing_period.end_uses.electricity.heating += new_period.end_uses.electricity.heating #if existing_period.end_uses.electricity.heating
-            existing_period.end_uses.electricity.cooling += new_period.end_uses.electricity.cooling if existing_period.end_uses.electricity.cooling
-            existing_period.end_uses.electricity.interior_lighting += new_period.end_uses.electricity.interior_lighting if existing_period.end_uses.electricity.interior_lighting
-            existing_period.end_uses.electricity.exterior_lighting += new_period.end_uses.electricity.exterior_lighting if existing_period.end_uses.electricity.exterior_lighting
-            existing_period.end_uses.electricity.interior_equipment += new_period.end_uses.electricity.interior_equipment if existing_period.end_uses.electricity.interior_equipment
-            existing_period.end_uses.electricity.exterior_equipment += new_period.end_uses.electricity.exterior_equipment if existing_period.end_uses.electricity.exterior_equipment
-            existing_period.end_uses.electricity.fans += new_period.end_uses.electricity.fans if existing_period.end_uses.electricity.fans
-            existing_period.end_uses.electricity.pumps += new_period.end_uses.electricity.pumps if existing_period.end_uses.electricity.pumps
-            existing_period.end_uses.electricity.heat_rejection += new_period.end_uses.electricity.heat_rejection if existing_period.end_uses.electricity.heat_rejection
-            existing_period.end_uses.electricity.humidification += new_period.end_uses.electricity.humidification if existing_period.end_uses.electricity.humidification
-            existing_period.end_uses.electricity.heat_recovery += new_period.end_uses.electricity.heat_recovery if existing_period.end_uses.electricity.heat_recovery
-            existing_period.end_uses.electricity.water_systems += new_period.end_uses.electricity.water_systems if existing_period.end_uses.electricity.water_systems
-            existing_period.end_uses.electricity.refrigeration += new_period.end_uses.electricity.refrigeration if existing_period.end_uses.electricity.refrigeration
-            existing_period.end_uses.electricity.generators += new_period.end_uses.electricity.generators if existing_period.end_uses.electricity.generators
-          #end  
+        @electricity.merge_end_use!(new_end_uses.electricity)
 
           # if existing_period[:end_uses].include?(:natural_gas)
           #   existing_period[:end_uses][:natural_gas][:heating] += new_period[:end_uses][:natural_gas][:heating] if existing_period[:end_uses][:natural_gas].include?(:heating)
@@ -151,7 +136,7 @@ class EndUses
           #   existing_period[:end_uses][:water][:generators] += new_period[:end_uses][:water][:generators] if existing_period[:end_uses][:water].include?(:generators) 
           # end
             
-        return existing_period
+        return self
         
     end
 

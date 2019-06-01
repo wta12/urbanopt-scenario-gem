@@ -149,14 +149,13 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
 
   it 'can merge end uses' do
-    existing_end_use = URBANopt::Scenario::DefaultReports::ReportingPeriod.new({end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}}})
-    new_end_use = URBANopt::Scenario::DefaultReports::ReportingPeriod.new({end_uses: { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}}})
+    existing_end_uses = EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}} )
+    new_end_uses = EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}} )
 
-    end_uses = EndUses.new
-    puts "\nexisting end uses = #{existing_end_use}"
-    puts "\nnew end uses = #{new_end_use}"
+    puts "\nexisting end uses = #{existing_end_uses}"
+    puts "\nnew end uses = #{new_end_uses}"
     
-    puts "\nfinal end uses = #{end_uses.merge_end_uses(existing_end_use, new_end_use)}"
+    puts "\nfinal end uses = #{existing_end_uses.merge_end_uses!(new_end_uses)}"
 
   end
 
