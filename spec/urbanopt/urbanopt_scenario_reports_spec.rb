@@ -156,7 +156,12 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     puts "\nnew end uses = #{new_end_uses.to_hash.to_hash}"
     
     puts "\nfinal end uses = #{existing_end_uses.merge_end_uses!(new_end_uses).to_hash}"
-
+    
+    expect(existing_end_uses.electricity.heating).to eq(2)
+    expect(existing_end_uses.electricity.cooling).to eq(2)
+    expect(existing_end_uses.natural_gas.fans).to eq(2)
+    expect(existing_end_uses.natural_gas.pumps).to eq(2)
+   
   end
 
   it 'can merge reporting periods together' do
