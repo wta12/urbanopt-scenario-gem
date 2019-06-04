@@ -67,25 +67,23 @@ class EndUse
     end
     
     def merge_end_use!(new_end_use)
-    
-        @heating += new_end_use.heating 
-        @cooling += new_end_use.cooling 
-        @interior_lighting += new_end_use.interior_lighting 
-        @exterior_lighting += new_end_use.exterior_lighting 
-        @interior_equipment += new_end_use.interior_equipment 
-        @exterior_equipment += new_end_use.exterior_equipment 
-        @fans += new_end_use.fans 
-        @pumps += new_end_use.pumps
-        @heat_rejection += new_end_use.heat_rejection
-        @humidification += new_end_use.humidification 
-        @heat_recovery += new_end_use.heat_recovery
-        @water_systems += new_end_use.water_systems 
-        @refrigeration += new_end_use.refrigeration
-        @generators += new_end_use.generators
+        
+        @heating += new_end_use.heating if new_end_use.heating
+        @cooling += new_end_use.cooling if new_end_use.cooling
+        @interior_lighting += new_end_use.interior_lighting if new_end_use.interior_lighting
+        @exterior_lighting += new_end_use.exterior_lighting if new_end_use.exterior_lighting
+        @interior_equipment += new_end_use.interior_equipment if new_end_use.interior_equipment
+        @exterior_equipment += new_end_use.exterior_equipment if new_end_use.exterior_equipment
+        @fans += new_end_use.fans if new_end_use.fans
+        @pumps += new_end_use.pumps if new_end_use.pumps
+        @heat_rejection += new_end_use.heat_rejection if new_end_use.heat_rejection
+        @humidification += new_end_use.humidification if new_end_use.humidification
+        @heat_recovery += new_end_use.heat_recovery if new_end_use.heat_recovery
+        @water_systems += new_end_use.water_systems if new_end_use.water_systems
+        @refrigeration += new_end_use.refrigeration if new_end_use.refrigeration
+        @generators += new_end_use.generators if new_end_use.generators
  
         return self
     end
 
 end
-
-#test

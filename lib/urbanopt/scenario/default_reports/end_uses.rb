@@ -8,16 +8,14 @@ class EndUses
         hash.delete_if {|k, v| v.nil?}
         hash = defaults.merge(hash)
                
-        @electricity = EndUse.new
-        @natural_gas = EndUse.new
-        @additional_fuel = EndUse.new
-        @district_cooling = EndUse.new
-        @district_heating = EndUse.new
-        @water = EndUse.new
+        @electricity = EndUse.new(hash[:electricity])
+        @natural_gas = EndUse.new(hash[:natural_gas])
+        @additional_fuel = EndUse.new(hash[:additional_fuel])
+        @district_cooling = EndUse.new(hash[:district_cooling])
+        @district_heating = EndUse.new(hash[:district_heating])
+        @water = EndUse.new(hash[:water])
     end
 
-
-   #puts EndUse.new.to_hash
 
     def to_hash
         result = {}
@@ -50,6 +48,10 @@ class EndUses
         # modify the existing_period by summing up the results ; # sum results only if they exist
 
         @electricity.merge_end_use!(new_end_uses.electricity)
+        @natural_gas.merge_end_use!(new_end_uses.natural_gas)
+        @additional_fuel.merge_end_use!(new_end_uses.additional_fuel)
+        @district_cooling.merge_end_use!(new_end_uses.district_cooling)
+        @district_heating.merge_end_use!(new_end_uses.district_heating)
 
           # if existing_period[:end_uses].include?(:natural_gas)
           #   existing_period[:end_uses][:natural_gas][:heating] += new_period[:end_uses][:natural_gas][:heating] if existing_period[:end_uses][:natural_gas].include?(:heating)
@@ -142,4 +144,5 @@ class EndUses
 
 end
 
-#test
+electricity = EndUse.new
+puts electricity.to_hash

@@ -148,9 +148,9 @@ module URBANopt
         end
 
 
-        def self.get_all_keys(h)
-          h.each_with_object([]){|(k,v),a| v.is_a?(Hash) ? a.push(k,*get_all_keys(v)) : a << k }
-        end
+        # def self.get_all_keys(h)
+        #   h.each_with_object([]){|(k,v),a| v.is_a?(Hash) ? a.push(k,*get_all_keys(v)) : a << k }
+        # end
 
         
         def self.merge_reporting_period(existing_period, new_period)
@@ -172,8 +172,9 @@ module URBANopt
           existing_period.electricity_produced += new_period.electricity_produced if existing_period.electricity_produced
         
           
-            end_uses = EndUses.new
-            end_uses.merge_end_uses(existing_period, new_period) #if existing_period.end_uses
+            #merge end uses
+            new_end_uses = new_period.end_uses
+            existing_period.end_uses.merge_end_uses!(new_end_uses) if existing_period.end_uses
           
 
           if existing_period.energy_production
