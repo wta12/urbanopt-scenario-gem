@@ -53,6 +53,8 @@ module URBANopt
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(scenario)
+
+          puts "running scenario report"
           @scenario = scenario
           
           @id = scenario.name

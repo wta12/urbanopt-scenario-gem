@@ -54,9 +54,12 @@ module URBANopt
         ##
         #  @param [Hash] hash A hash which may contain a deserialized feature_report
         def initialize(hash = {})
+          
+          puts " running feature report "
+          
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
-          
+                    
           @id = hash[:id]
           @name = hash[:name]
           @directory_name = hash[:directory_name]
@@ -64,8 +67,20 @@ module URBANopt
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @program = Program.new(hash[:program])
-          @construction_costs = hash[:construction_costs]
-          @reporting_periods = hash[:reporting_periods]
+          #@construction_costs = hash[:construction_costs]
+          #@reporting_periods = hash[:reporting_periods]
+
+          @construction_costs = []
+          hash[:construction_costs].each do |cc|
+            @constructiion_costs << ConstructionCost.new(cc)
+          end
+
+
+          @reporting_periods = [] 
+          hash[:reporting_periods].each do |rp|
+            @reporting_periods << ReportingPeriod.new(rp)
+          end
+
         end
         
         def defaults
@@ -74,6 +89,8 @@ module URBANopt
           hash[:program] = {}
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
+          # hash[:construction_costs] = ConstructionCost.new.to_hash
+          # hash[:reporting_periods] = ReportingPeriod.new.to_hash
           return hash
         end
         

@@ -37,10 +37,15 @@ module URBANopt
     module DefaultReports
       class ReportingPeriod 
 
-        attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy, :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :electricity_produced, :photovoltaic, :utility_costs, :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling, :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours
+        attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy,
+                        :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, 
+                        :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :electricity_produced, :photovoltaic, :utility_costs, 
+                        :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
+                        :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours
 
         # perform initialization functions
         def initialize(hash = {})
+          puts " running reporting period"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
           
@@ -84,9 +89,12 @@ module URBANopt
           @time_setpoint_not_met_during_occupied_heating = hash[:time_setpoint_not_met_during_occupied_heating]
           @time_setpoint_not_met_during_occupied_hours = hash[:time_setpoint_not_met_during_occupied_hours]
 
+          #puts "reporting period STOPPED"
         end
                 
         def defaults
+          puts "running reporting period... defaults method"
+          
           hash = {}
 
           hash[:id] = 0
@@ -98,11 +106,12 @@ module URBANopt
           hash[:utility_costs] = { fuel_type:'', total_cost: 0, usage_cost: 0, demand_cost: 0}
           hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: 0, time_setpoint_not_met_during_occupied_heating: 0, time_setpoint_not_met_during_occupied_hours: 0}
           hash[:end_uses] = EndUses.new.to_hash
-          
+          #hash[:end_uses] = {electricity: {heating: 0, }}
           return hash
         end
         
         def to_hash
+          puts "rawad reporting period... to_hash method"
           result = {}
 
           result[:id] =  @id if @id
@@ -126,7 +135,8 @@ module URBANopt
           result[:water] = @water if @water  
           result[:electricity_produced] = @electricity_produced if @electricity_produced        
 
-          result[:end_uses] = @end_uses if @end_uses 
+          # result[:end_uses] = @end_uses.to_hash if @end_uses 
+          result[:end_uses] = @end_use if @end_uses 
           
           result[:energy_production] = @energy_production if @energy_production 
           result[:electricity_produced] = @electricity_produced if @electricity_produced
@@ -143,6 +153,7 @@ module URBANopt
           result[:time_setpoint_not_met_during_occupied_heating] = @time_setpoint_not_met_during_occupied_heating if @time_setpoint_not_met_during_occupied_heating 
           result[:time_setpoint_not_met_during_occupied_hours] = @time_setpoint_not_met_during_occupied_hours if @time_setpoint_not_met_during_occupied_hours
 
+          #puts " reporting period default method STOPPED"
                     
           return result
         end
@@ -154,7 +165,7 @@ module URBANopt
 
         
         def self.merge_reporting_period(existing_period, new_period)
-                            
+          puts " running  reporting period merge_reporting_period method "                
           # modify the existing_period by summing up the results ; # sum results only if they exist
           
           #try to create a class for enduse 
@@ -195,13 +206,13 @@ module URBANopt
             existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating]
             existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours]
           end         
-                         
+          #puts " merge reporting period STOPPED"            
           return existing_period
          
         end
         
         def self.merge_reporting_periods(existing_periods, new_periods)
-                    
+           puts " running reporting period  merge_reporting_periods method"         
           # TODO: match new periods to existing periods and call merge_reporting_period
 
           id_list_existing = []
@@ -235,7 +246,7 @@ module URBANopt
             raise "cannot merge different reporting periods"
 
           end
-          
+          #puts "merge reporting periods STOPPED"
           return existing_periods
 
         end

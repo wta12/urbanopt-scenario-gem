@@ -1,8 +1,10 @@
 
 class EndUse
-    attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment, :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators
+    attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment,
+                 :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators
 
     def initialize(hash={})
+        puts "running enduse"
         hash.delete_if {|k, v| v.nil?}
         hash = defaults.merge(hash)
         
@@ -20,9 +22,11 @@ class EndUse
         @water_systems = hash[:water_systems]
         @refrigeration = hash[:refrigeration]
         @generators = hash[:generators]
+        #puts "enduse STOPPED"
     end
 
     def defaults
+        puts "running enduse defaults method"
         hash = {}
 
         hash[:heating] = 0
@@ -39,12 +43,13 @@ class EndUse
         hash[:water_systems] = 0
         hash[:refrigeration] = 0 
         hash[:generators] = 0
-        
+        #puts "enduse defaults method STOPPED"
         return hash
     end
 
     
     def to_hash
+        puts "running enduse to_hash method"
         result = {}
 
         result[:heating] = @heating
@@ -61,12 +66,13 @@ class EndUse
         result[:water_systems] = @water_systems 
         result[:refrigeration] = @refrigeration
         result[:generators] = @generators 
-
+        #puts "enduse to_hash method STOPPED"
         return result
 
     end
     
     def merge_end_use!(new_end_use)
+        puts "running enduse merge_end_use! method"
         
         @heating += new_end_use.heating if new_end_use.heating
         @cooling += new_end_use.cooling if new_end_use.cooling
@@ -82,7 +88,7 @@ class EndUse
         @water_systems += new_end_use.water_systems if new_end_use.water_systems
         @refrigeration += new_end_use.refrigeration if new_end_use.refrigeration
         @generators += new_end_use.generators if new_end_use.generators
- 
+        #puts "merge_end_uses! STOPPED"
         return self
     end
 
