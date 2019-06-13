@@ -60,7 +60,6 @@ module URBANopt
           hash[:item_quantity] = 0
           hash[:total_cost] = 0
           
-
           return hash
         end
 
