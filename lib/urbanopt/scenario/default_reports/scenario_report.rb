@@ -46,7 +46,8 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :program, :construction_costs, :reporting_periods, :feature_reports
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
+                      :number_of_failed_simulations, :timeseries_csv, :program, :construction_costs, :reporting_periods, :feature_reports
           
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
@@ -68,16 +69,31 @@ module URBANopt
           @timeseries_csv = TimeseriesCSV.new
           @program = Program.new
           @construction_costs = []
+          # @construction_costs.each do |cc|
+          #   @construction_costs << cc
+          # end
           @reporting_periods = []
+            # scenario.@reporting_periods.each do |rp|
+            #   rp = ReportingPeriod.new
+            #  @reporting_periods << rp
+            # end
+          #@reporting_periods << ReportingPeriod.new
+          
+
           @feature_reports = []
+           
         end
         
+        def json_path
+          File.join(@scenario.run_dir, 'default_scenario_report.json')
+        end
+
         ##
         # Save the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
         def save()
         
-          path = File.join(@scenario.run_dir, 'default_scenario_report.json')
+          path = json_path
           
           hash = {}
           hash[:scenario_report] = self.to_hash
@@ -128,7 +144,7 @@ module URBANopt
         end
         
         def add_feature_report(feature_report)
-          
+          puts " START ADDING FEATURE REPORT"
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
@@ -164,15 +180,21 @@ module URBANopt
           
           # merge program information
           @program.add_program(feature_report.program)
+          puts "PROGRAM : #{@program}"
           
           # merge construction costs information
+          puts "START : MERGING CONSTRUCTION COSTS"
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
+          puts "CONSTRUCTION COSTS = #{@construction_costs}"
           
           # merge reporting periods information
+          puts "START : MERGING REPORTING_PERIODS"
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
+          puts "REPORTING PERIODS = #{@reporting_periods}"
           
           # add feature_report
           @feature_reports << feature_report
+
         end
         
        

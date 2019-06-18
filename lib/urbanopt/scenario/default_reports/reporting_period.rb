@@ -93,7 +93,7 @@ module URBANopt
         end
                 
         def defaults
-          puts "running reporting period... defaults method"
+          #puts "started reporting period... defaults method"
           
           hash = {}
 
@@ -111,7 +111,7 @@ module URBANopt
         end
         
         def to_hash
-          puts "rawad reporting period... to_hash method"
+          #puts "started reporting period... to_hash method"
           result = {}
 
           result[:id] =  @id if @id
@@ -171,6 +171,7 @@ module URBANopt
           #try to create a class for enduse 
 
           existing_period.total_site_energy += new_period.total_site_energy if existing_period.total_site_energy
+          puts " TOTAL SITE ENERGY = #{existing_period.total_site_energy}"
           existing_period.total_source_energy += new_period.total_source_energy if existing_period.total_source_energy  
           existing_period.net_source_energy += new_period.net_source_energy if existing_period.net_source_energy 
           existing_period.net_utility_cost += new_period.net_utility_cost if existing_period.net_utility_cost

@@ -129,6 +129,39 @@ module URBANopt
           @unconditioned_area += other.unconditioned_area
           @footprint_area += other.footprint_area
           @maximum_roof_height += [@maximum_roof_height, other.maximum_roof_height].max
+          
+          @maximum_number_of_stories = [@maximum_number_of_stories, other.maximum_number_of_stories].max
+          @maximum_number_of_stories_above_ground = [@maximum_number_of_stories_above_ground, other.maximum_number_of_stories_above_ground].max
+         
+          @parking_area += other.parking_area
+          @number_of_parking_spaces += other.number_of_parking_spaces
+          @number_of_parking_spaces_charging += other.number_of_parking_spaces_charging
+          @parking_footprint_area += other.parking_footprint_area
+          
+          @maximum_parking_height = [@maximum_parking_height, other.maximum_parking_height].max
+          @maximum_number_of_parking_stories = [@maximum_number_of_parking_stories, other.maximum_number_of_parking_stories].max
+          @maximum_number_of_parking_stories_above_ground = [maximum_number_of_parking_stories_above_ground, other.maximum_number_of_parking_stories_above_ground].max
+                   
+          @number_of_residential_units += other.number_of_residential_units
+
+
+
+          @window_area[:north_window_area] += other.window_area[:north_window_area]
+          @window_area[:south_window_area] += other.window_area[:south_window_area]
+          @window_area[:east_window_area] += other.window_area[:east_window_area]
+          @window_area[:west_window_area] += other.window_area[:west_window_area]
+          @window_area[:total_window_area] += other.window_area[:total_window_area]
+
+          @wall_area[:north_wall_area] += other.wall_area[:north_wall_area]
+          @wall_area[:south_wall_area] += other.wall_area[:south_wall_area]
+          @wall_area[:east_wall_area] += other.wall_area[:east_wall_area]
+          @wall_area[:west_wall_area] += other.wall_area[:west_wall_area]
+          @wall_area[:total_wall_area] += other.wall_area[:total_wall_area]
+
+          @roof_area[:equipment_roof_area] += other.roof_area[:equipment_roof_area]
+          @roof_area[:photovoltaic_roof_area] += other.roof_area[:photovoltaic_roof_area]
+          @roof_area[:available_roof_area] += other.roof_area[:available_roof_area]
+          @roof_area[:total_roof_area] += other.roof_area[:total_roof_area]
 
         end
        
