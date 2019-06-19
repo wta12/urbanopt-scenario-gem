@@ -225,13 +225,14 @@ module URBANopt
           puts "new periods ids: #{id_list_new}"
                  
           if id_list_existing == id_list_new 
-                
+            puts " periods ids equal"  
+            
             existing_periods.each_index do |index|
               # existing_keys = get_all_keys(existing_periods[index])
               # new_keys = get_all_keys(new_periods[index])
               # if new_keys == existing_keys
                 # modify the existing_periods by merging the new periods results
-            existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
+              existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
               # else 
               #   #raise and error if the elements (all keys) in the reporting periods are not identical
               #   raise "reperting periods with unidentical elements cannot be merged"
@@ -239,8 +240,12 @@ module URBANopt
             end
             
           elsif existing_periods.empty?
-            # if existing periods are empty, take the new periods
-            existing_periods = new_periods
+            puts " existing_periods empty" 
+            
+            # if existing periods are empty, initialize with new_periods
+            # the = operator would link existing_periods and new_periods to the same object in memory
+            # we want to initialize with a deep clone of new_periods
+            existing_periods = Marshal.load( Marshal.dump(new_periods) )
                        
           else
             # raise an error if the existing periods are not identical with new periods (cannot have different reporting period ids)

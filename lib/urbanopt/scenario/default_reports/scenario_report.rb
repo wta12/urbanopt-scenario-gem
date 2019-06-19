@@ -87,13 +87,15 @@ module URBANopt
         def json_path
           File.join(@scenario.run_dir, 'default_scenario_report.json')
         end
-
+        
+        def csv_path
+          File.join(@scenario.run_dir, 'default_scenario_report.csv')
+        end
+        
         ##
         # Save the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
         def save()
-        
-          path = json_path
           
           hash = {}
           hash[:scenario_report] = self.to_hash
@@ -102,7 +104,7 @@ module URBANopt
             hash[:feature_reports] << feature_report.to_hash
           end
           
-          File.open(path, 'w') do |f|
+          File.open(json_path, 'w') do |f|
             f.puts JSON::pretty_generate(hash)
             # make sure data is written to the disk one way or the other
             begin
@@ -113,7 +115,7 @@ module URBANopt
           end
  
           # save the csv data
-          timeseries_csv.save_data(File.join(@scenario.run_dir, 'default_scenario_report.csv'))
+          timeseries_csv.save_data(csv_path)
           
           return true
         end
