@@ -29,7 +29,6 @@
 #*********************************************************************************
 
 require 'urbanopt/scenario/default_reports/extension'
-require 'urbanopt/scenario/default_reports/building_type'
 require 'json-schema'
 require 'json'
 
