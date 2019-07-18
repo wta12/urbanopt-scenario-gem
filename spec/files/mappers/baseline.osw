@@ -32,6 +32,22 @@
 
       }
     },{
+	
+		"measure_dir_name": "tariff_selection_flat",
+		"arguments": {
+		"demand_window_length": "FullHour",
+		"elec_rate": 0.12,
+		"elec_demand_rate": 12.00,
+		"elec_monthly_rate": 120.0,
+		"gas_rate": 0.5,
+		"gas_monthly_rate": 50,
+		"water_rate": 0.005,
+		"disthtg_rate": 0.2,
+		"distclg_rate" : 0.2
+		
+		}
+	
+	},{
       "measure_dir_name": "default_feature_reports",
       "arguments": {
         "feature_id": null,
@@ -43,3 +59,5 @@
 	"name": null,
 	"description": null
 }
+
+
