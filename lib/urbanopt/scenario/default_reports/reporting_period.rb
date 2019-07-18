@@ -31,6 +31,9 @@
 require 'json'
 require 'urbanopt/scenario/default_reports/end_uses'
 require 'urbanopt/scenario/default_reports/end_use'
+require 'urbanopt/scenario/default_reports/date'
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 
 module URBANopt
   module Scenario
@@ -45,18 +48,17 @@ module URBANopt
 
         # perform initialization functions
         def initialize(hash = {})
-          puts " running reporting period"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
-          
+                    
           @id = hash[:id]
           @name = hash[:name]
           @multiplier = hash[:multiplier]
-          @start_date = hash[:start_date]
-          @end_date = hash[:end_date]
-          @month = hash[:month]
-          @day_of_month = hash[:day_of_month]
-          @year = hash[:year]
+          @start_date = Date.new(hash[:start_date])          
+          @end_date = Date.new(hash[:end_date])
+          ## need to create a class for Date 
+          
+
           @total_site_energy = hash[:total_site_energy]
           @total_source_energy = hash[:total_source_energy]
           @net_site_energy = hash [:net_site_energy]
@@ -75,53 +77,50 @@ module URBANopt
           
           @electricity_produced = hash[:electricity_produced]
           @photovoltaic = hash[:photovoltaic]
-          
-          @utility_costs = hash[:utility_costs]
-          
-          @fuel_type = hash[:fuel_type]
-          @total_cost = hash[:total_cost]
-          @usage_cost = hash[:usage_cost]
-          @demand_cost = hash[:demand_cost]
-          
+              
           @comfort_result = hash[:comfort_result]
           
           @time_setpoint_not_met_during_occupied_cooling = hash[:time_setpoint_not_met_during_occupied_cooling]
           @time_setpoint_not_met_during_occupied_heating = hash[:time_setpoint_not_met_during_occupied_heating]
           @time_setpoint_not_met_during_occupied_hours = hash[:time_setpoint_not_met_during_occupied_hours]
 
-          #puts "reporting period STOPPED"
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+          
         end
                 
-        def defaults
-          #puts "started reporting period... defaults method"
-          
+        def defaults          
           hash = {}
 
           hash[:id] = 0
           hash[:name] = 'period name'
           hash[:multiplier] = 1
-          hash[:start_date] = {month: 0 ,day_of_month: 0 , year: 0}
-          hash[:end_date] = {month: 0 , day_of_month: 0 , year: 0}
+          hash[:start_date] = Date.new.to_hash #{month: nil.to_i ,day_of_month: nil.to_i , year: nil.to_i}
+          hash[:end_date] = Date.new.to_hash #{month: nil.to_i , day_of_month: nil.to_i , year: nil.to_i}
           hash[:energy_production] = {electricity_produced: {photovoltaic: 0, }}
-          hash[:utility_costs] = { fuel_type:'', total_cost: 0, usage_cost: 0, demand_cost: 0}
+          
+          hash[:utility_costs] = [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 2, demand_cost: nil.to_i}]
+
+
           hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: 0, time_setpoint_not_met_during_occupied_heating: 0, time_setpoint_not_met_during_occupied_hours: 0}
           hash[:end_uses] = EndUses.new.to_hash
-          #hash[:end_uses] = {electricity: {heating: 0, }}
+          
           return hash
         end
         
         def to_hash
-          #puts "started reporting period... to_hash method"
+          
           result = {}
 
           result[:id] =  @id if @id
           result[:name] = @name if @name
           result[:multiplier] = @multiplier if @multiplier
-          result[:start_date] = @start_date if @start_date
-          result[:end_date] = @end_date if @end_date 
-          result[:month] = @month if @month
-          result[:day_of_month] = @day_of_month if @day_of_month
-          result[:year] = @year if @year
+          result[:start_date] = @start_date.to_hash if @start_date
+          result[:end_date] = @end_date.to_hash if @end_date 
+          # result[:month] = @month if @month
+          # result[:day_of_month] = @day_of_month if @day_of_month
+          # result[:year] = @year.to_i if @year
           result[:total_site_energy] = @total_site_energy if @total_site_energy 
           result[:total_source_energy] = @total_source_energy if @total_source_energy
           result[:net_site_energy] = @net_site_energy if @net_site_energy
@@ -135,26 +134,29 @@ module URBANopt
           result[:water] = @water if @water  
           result[:electricity_produced] = @electricity_produced if @electricity_produced        
 
-          # result[:end_uses] = @end_uses.to_hash if @end_uses 
-          result[:end_uses] = @end_use if @end_uses 
-          
+          result[:end_uses] = @end_uses.to_hash if @end_uses 
+                    
           result[:energy_production] = @energy_production if @energy_production 
           result[:electricity_produced] = @electricity_produced if @electricity_produced
           result[:photovoltaic] = @photovoltaic if @photovoltaic 
          
           result[:utility_costs] = @utility_costs if @utility_costs 
-          result[:fuel_type] = @fuel_type if @fuel_type 
-          result[:total_cost] = @total_cost if @total_cost 
-          result[:usage_cost] = @usage_cost if @usage_cost 
-          result[:demand_cost] = @demand_cost if @demand_cost
+
+          # result[:fuel_type] = @fuel_type if @fuel_type 
+          # result[:total_cost] = @total_cost if @total_cost 
+          # result[:usage_cost] = @usage_cost if @usage_cost 
+          # result[:demand_cost] = @demand_cost if @demand_cost
           
           result[:comfort_result] = @comfort_result if @comfort_result 
           result[:time_setpoint_not_met_during_occupied_cooling] = @time_setpoint_not_met_during_occupied_cooling if @time_setpoint_not_met_during_occupied_cooling 
           result[:time_setpoint_not_met_during_occupied_heating] = @time_setpoint_not_met_during_occupied_heating if @time_setpoint_not_met_during_occupied_heating 
           result[:time_setpoint_not_met_during_occupied_hours] = @time_setpoint_not_met_during_occupied_hours if @time_setpoint_not_met_during_occupied_hours
+            
+          # validate reporting_period properties against schema
+          if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result).any?
+            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result)}"
+          end
 
-          #puts " reporting period default method STOPPED"
-                    
           return result
         end
 
@@ -171,7 +173,6 @@ module URBANopt
           #try to create a class for enduse 
 
           existing_period.total_site_energy += new_period.total_site_energy if existing_period.total_site_energy
-          puts " TOTAL SITE ENERGY = #{existing_period.total_site_energy}"
           existing_period.total_source_energy += new_period.total_source_energy if existing_period.total_source_energy  
           existing_period.net_source_energy += new_period.net_source_energy if existing_period.net_source_energy 
           existing_period.net_utility_cost += new_period.net_utility_cost if existing_period.net_utility_cost
@@ -196,10 +197,13 @@ module URBANopt
           end
 
           if existing_period.utility_costs
-            existing_period.utility_costs[:fuel_type] += new_period.utility_costs[:fuel_type] if existing_period.utility_costs[:fuel_type]
-            existing_period.utility_costs[:total_cost] += new_period.utility_costs[:total_cost] if existing_period.utility_costs[:total_cost]
-            existing_period.utility_costs[:usage_cost] += new_period.utility_costs[:usage_cost] if existing_period.utility_costs[:usage_cost]
-            existing_period.utility_costs[:demand_cost] += new_period.utility_costs[:demand_cost] if existing_period.utility_costs[:demand_cost]
+           
+            #existing_period.utility_costs = new_period.utility_costs #to _check_wrong
+            
+            existing_period.utility_costs[0][:fuel_type] += new_period.utility_costs[0][:fuel_type] if existing_period.utility_costs[0][:fuel_type]
+            existing_period.utility_costs[0][:total_cost] += new_period.utility_costs[0][:total_cost] if existing_period.utility_costs[0][:total_cost]
+            existing_period.utility_costs[0][:usage_cost] += new_period.utility_costs[0][:usage_cost] if existing_period.utility_costs[0][:usage_cost]
+            existing_period.utility_costs[0][:demand_cost] += new_period.utility_costs[0][:demand_cost] if existing_period.utility_costs[0][:demand_cost]
           end
           
           if existing_period.comfort_result
@@ -207,13 +211,13 @@ module URBANopt
             existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating]
             existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours]
           end         
-          #puts " merge reporting period STOPPED"            
+                      
           return existing_period
          
         end
         
         def self.merge_reporting_periods(existing_periods, new_periods)
-           puts " running reporting period  merge_reporting_periods method"         
+                   
           # TODO: match new periods to existing periods and call merge_reporting_period
 
           id_list_existing = []
@@ -225,7 +229,7 @@ module URBANopt
           puts "new periods ids: #{id_list_new}"
                  
           if id_list_existing == id_list_new 
-            puts " periods ids equal"  
+             
             
             existing_periods.each_index do |index|
               # existing_keys = get_all_keys(existing_periods[index])
@@ -234,7 +238,7 @@ module URBANopt
                 # modify the existing_periods by merging the new periods results
               existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
               # else 
-              #   #raise and error if the elements (all keys) in the reporting periods are not identical
+              #   #raise an error if the elements (all keys) in the reporting periods are not identical
               #   raise "reperting periods with unidentical elements cannot be merged"
               # end
             end
@@ -252,7 +256,7 @@ module URBANopt
             raise "cannot merge different reporting periods"
 
           end
-          #puts "merge reporting periods STOPPED"
+          
           return existing_periods
 
         end

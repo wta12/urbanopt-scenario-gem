@@ -144,7 +144,7 @@
 			"properties": {
 				"id": {
 					"description": "Id refers to the id of the reporting period. Ids of reporting periods are matched across simulations, so the same period of time gets the same id for all simulations.",
-					"type": "string"
+					"type": "number"
 				},
 				"name": {
 					"description": "name refers to the name of the reporting period(eg. Annual, January)",
@@ -670,7 +670,7 @@
 				},
 				"maximum_occupancy": {
 					"description": "Maximum number of occupants ",
-					"type": "integer"
+					"type": "number"
 				},
 				"floor_area": {
 					"description": "Building gross floor area of this type (ft^2)",

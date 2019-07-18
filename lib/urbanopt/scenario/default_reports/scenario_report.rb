@@ -33,6 +33,8 @@ require 'urbanopt/scenario/default_reports/feature_report'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 
 require 'json'
 
@@ -47,7 +49,7 @@ module URBANopt
       ##
       class ScenarioReport 
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
-                      :number_of_failed_simulations, :timeseries_csv, :program, :construction_costs, :reporting_periods, :feature_reports
+                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
           
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
@@ -55,7 +57,7 @@ module URBANopt
         #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(scenario)
 
-          puts "running scenario report"
+          
           @scenario = scenario
           
           @id = scenario.name
@@ -67,21 +69,16 @@ module URBANopt
           @number_of_complete_simulations = 0
           @number_of_failed_simulations = 0
           @timeseries_csv = TimeseriesCSV.new
+          @location = nil
           @program = Program.new
           @construction_costs = []
-          # @construction_costs.each do |cc|
-          #   @construction_costs << cc
-          # end
-          @reporting_periods = []
-            # scenario.@reporting_periods.each do |rp|
-            #   rp = ReportingPeriod.new
-            #  @reporting_periods << rp
-            # end
-          #@reporting_periods << ReportingPeriod.new
-          
-
+          @reporting_periods = []       
           @feature_reports = []
            
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+
         end
         
         def json_path
@@ -134,6 +131,7 @@ module URBANopt
           result[:number_of_complete_simulations] = @number_of_complete_simulations
           result[:number_of_failed_simulations] = @number_of_failed_simulations
           result[:timeseries_csv] = @timeseries_csv.to_hash
+          result[:location] = @location
           result[:program] = @program.to_hash
           
           result[:construction_costs] = []
@@ -142,11 +140,16 @@ module URBANopt
           result[:reporting_periods] = []
           @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
 
+          # validate scenario_report properties against schema
+          if @@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result).any?
+            raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result)}"
+          end 
+
           return result
         end
         
         def add_feature_report(feature_report)
-          puts " START ADDING FEATURE REPORT"
+          #puts " START ADDING FEATURE REPORT"
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
@@ -182,17 +185,17 @@ module URBANopt
           
           # merge program information
           @program.add_program(feature_report.program)
-          puts "PROGRAM : #{@program}"
+          #puts "PROGRAM : #{@program}"
           
           # merge construction costs information
-          puts "START : MERGING CONSTRUCTION COSTS"
+          #puts "START : MERGING CONSTRUCTION COSTS"
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
-          puts "CONSTRUCTION COSTS = #{@construction_costs}"
+          #puts "CONSTRUCTION COSTS = #{@construction_costs}"
           
           # merge reporting periods information
-          puts "START : MERGING REPORTING_PERIODS"
+          #puts "START : MERGING REPORTING_PERIODS"
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
-          puts "REPORTING PERIODS = #{@reporting_periods}"
+          #puts "REPORTING PERIODS = #{@reporting_periods}"
           
           # add feature_report
           @feature_reports << feature_report

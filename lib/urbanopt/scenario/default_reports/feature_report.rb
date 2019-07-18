@@ -32,6 +32,8 @@ require "urbanopt/scenario/default_reports/construction_cost"
 require "urbanopt/scenario/default_reports/program"
 require "urbanopt/scenario/default_reports/reporting_period"
 require "urbanopt/scenario/default_reports/timeseries_csv"
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 
 require 'json'
 
@@ -47,7 +49,7 @@ module URBANopt
       # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport 
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :program, :construction_costs, :reporting_periods
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods
         
         ##
         # Each FeatureReport object corresponds to a single Feature.
@@ -55,8 +57,7 @@ module URBANopt
         #  @param [Hash] hash A hash which may contain a deserialized feature_report
         def initialize(hash = {})
           
-          puts " running feature report "
-          
+                             
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
                     
@@ -64,33 +65,48 @@ module URBANopt
           @name = hash[:name]
           @directory_name = hash[:directory_name]
           @feature_type = hash[:feature_type]
+          @timesteps_per_hour = hash[:timesteps_per_hour]
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
+          #@location = Location.new(hash[:location]) ###need to create a class for location?
+          @location = hash[:location]
           @program = Program.new(hash[:program])
-          #@construction_costs = hash[:construction_costs]
-          #@reporting_periods = hash[:reporting_periods]
-
+          # design_parameters?           
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
           end
 
-
           @reporting_periods = [] 
           hash[:reporting_periods].each do |rp|
-            @reporting_periods << ReportingPeriod.new(rp)
+             @reporting_periods << ReportingPeriod.new(rp)
           end
+          
+
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+
+          #@hash = hash
+
+          # @type = @hash[:type]
+          # #raise 'Unknown type' if @type.nil?
+          # #raise "Incorrect model type '#{@type}'" unless @type == @hash[:type]
+          # @openstudio_object = nil
+
+          # if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],@hash).any?
+          #   raise " EROOOR ::: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],@hash)} "
+          # end       
 
         end
         
         def defaults
           hash = {}
           hash[:timeseries_csv] = {}
+          hash[:location] = {latitude: nil.to_i , longitude: nil.to_i, surface_elevation: nil.to_i, weather_filename: nil.to_s }
           hash[:program] = {}
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
-          # hash[:construction_costs] = ConstructionCost.new.to_hash
-          # hash[:reporting_periods] = ReportingPeriod.new.to_hash
           return hash
         end
         
@@ -163,6 +179,7 @@ module URBANopt
           result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
           result[:simulation_status] = @simulation_status if @simulation_status
           result[:timeseries_csv] = @timeseries_csv.to_hash
+          result[:location] = @location if @location
           result[:program] = @program.to_hash
           
           result[:construction_costs] = []
@@ -170,6 +187,12 @@ module URBANopt
           
           result[:reporting_periods] = []
           @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
+
+          # validate feature_report properties against schema
+          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],result).any?
+            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],result)}"
+          end
+
           
           return result
         end

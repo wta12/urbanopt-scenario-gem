@@ -29,13 +29,15 @@
 #*********************************************************************************
 
 require 'json'
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 
 module URBANopt
   module Scenario
     module DefaultReports
       class ConstructionCost 
 
-        attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost
+        attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost 
 
         # perform initialization functions
         def initialize(hash = {})
@@ -48,9 +50,16 @@ module URBANopt
           @cost_units = hash[:cost_units]
           @item_quantity = hash[:item_quantity]
           @total_cost = hash[:total_cost]
-          
+
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+
         end
         
+
+      
+
         def defaults
           hash = {}
           hash[:category] = 0
@@ -72,6 +81,12 @@ module URBANopt
           result[:cost_units] = @cost_units if @cost_units
           result[:item_quantity] = @item_quantity if @item_quantity
           result[:total_cost] = @total_cost if @total_cost
+
+          # validate construct_cost properties against schema
+          if @@extension.validate(@@schema[:definitions][:ConstructionCost][:properties],result).any?
+            raise "construction_cost properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ConstructionCost][:properties],result)}"
+          end
+          
           return result
         end
         
