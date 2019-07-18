@@ -53,6 +53,7 @@ module URBANopt
         
         def defaults
           hash = {}
+          hash[:path] = nil.to_s
           hash[:column_names] = []
           return hash
         end
@@ -116,6 +117,8 @@ module URBANopt
         end
         
         def add_timeseries_csv(other)
+
+          @path = other.path
           
           if @first_report_datetime.nil?
             @first_report_datetime = other.first_report_datetime
