@@ -185,17 +185,15 @@ module URBANopt
           
           # merge program information
           @program.add_program(feature_report.program)
-          #puts "PROGRAM : #{@program}"
+          
           
           # merge construction costs information
-          #puts "START : MERGING CONSTRUCTION COSTS"
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
-          #puts "CONSTRUCTION COSTS = #{@construction_costs}"
+          
           
           # merge reporting periods information
-          #puts "START : MERGING REPORTING_PERIODS"
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
-          #puts "REPORTING PERIODS = #{@reporting_periods}"
+          
           
           # add feature_report
           @feature_reports << feature_report

@@ -45,7 +45,6 @@ module URBANopt
         :area, :window_area, :wall_area, :roof_area, :orientation, :aspect_ratio  
         
         # perform initialization functions
-          puts "HASHSHSHSHSHSHS IS +++++========= #{hash}"
         def initialize(hash = {})
           #puts "HASHSHSHSHSHSHS IS +++++========= #{hash}"
           hash.delete_if {|k, v| v.nil?}
