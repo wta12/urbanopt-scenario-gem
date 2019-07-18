@@ -31,6 +31,7 @@
 require_relative '../spec_helper'
 require_relative '../files/example_feature_file'
 require 'json'
+require 'json-schema'
 
 RSpec.describe URBANopt::Scenario do
   it 'has a version number' do
@@ -65,7 +66,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = false
+    clear_results = true
     scenario.clear if clear_results 
     
     simulation_dirs = scenario.simulation_dirs
@@ -123,6 +124,7 @@ RSpec.describe URBANopt::Scenario do
     scenario_json = File.open(scenario_result.json_path)
     data = JSON.load scenario_json
     
+    
     #Program results check
     expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map {|h| h['program']['site_area']}.reduce(:+))
     expect(data['scenario_report']['program']['floor_area']).to eq(data['feature_reports'].map {|h| h['program']['floor_area']}.reduce(:+))
@@ -140,7 +142,7 @@ RSpec.describe URBANopt::Scenario do
     expect(data['scenario_report']['program']['maximum_number_of_parking_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories']}.max)
     expect(data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories_above_ground']}.max)
     expect(data['scenario_report']['program']['number_of_residential_units']).to eq(data['feature_reports'].map {|h| h['program']['number_of_residential_units']}.reduce(:+))
-    #check building types later
+    
 
     expect(data['scenario_report']['program']['window_area']['north_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['north_window_area']}.reduce(:+))
     expect(data['scenario_report']['program']['window_area']['south_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['south_window_area']}.reduce(:+))
@@ -162,14 +164,30 @@ RSpec.describe URBANopt::Scenario do
 
     #Reporting periods results check
     expect(data['scenario_report']['reporting_periods'][0]['total_site_energy']).to eq(data['feature_reports'].map {|h| h['reporting_periods'][0]['total_site_energy'] }.reduce(:+))
-    
   
-
-
-    
 
     scenario_json.close
   end
+
+  it 'validate results against shema' do
+
+    # Read json file to be validated
+    #scenario_json_file = File.open(File.expand_path("/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/default_scenario_report.json"), 'r')
+    scenario_json_file = File.open(File.expand_path('../test/example_scenario/default_scenario_report.json', File.dirname(__FILE__)), 'r')
+    scenario_json= JSON.load scenario_json_file
+    
+    schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
+    schema = JSON.load schema_json
+
+    puts JSON::Validator.fully_validate(schema, scenario_json)
+
+    expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
+   
+    scenario_json_file.close
+    schema_json.close
+
+   end
+
 
 
 end
