@@ -149,8 +149,8 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
 
   it 'can merge end uses' do
-    existing_end_uses = EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
-    new_end_uses = EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
+    existing_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
+    new_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
 
     puts "\nexisting end uses = #{existing_end_uses.to_hash}"
     puts "\nnew end uses = #{new_end_uses.to_hash.to_hash}"
@@ -172,22 +172,22 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new({
     id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 } }
+    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 }, } , utility_costs: [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1}]
     })
     existing_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new({
     id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 } } 
+    end_uses: { electricity: { heating: 1, cooling:1,fans:1, pumps: 1 }, } , utility_costs: [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1}]
     })
     
     new_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new({
     id: 5, name: "Annual", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 12, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1 } }
+    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1 },  } , utility_costs: [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1}]
     })
     new_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new({id: 6, name: "January", multiplier: 1, start_date: {month: 1, day_of_month: 1, year: 2019} , 
     end_date: {month: 1, day_of_month:31, year: 2019 }, total_site_energy: 1, total_source_energy: 1, 
-    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1} }
+    end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1},  } , utility_costs: [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1}]
     })
     
     puts "\nexisting periods: #{existing_periods}"
@@ -198,12 +198,12 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
       expect(reporting_period[0].id).to eq(5)
       expect(reporting_period[0].name).to eq("Annual")
       expect(reporting_period[0].multiplier).to eq(1)
-      expect(reporting_period[0].start_date[:month]).to eq(1)
-      expect(reporting_period[0].start_date[:day_of_month]).to eq(1)
-      expect(reporting_period[0].start_date[:year]).to eq(2019)
-      expect(reporting_period[0].end_date[:month]).to eq(12)
-      expect(reporting_period[0].end_date[:day_of_month]).to eq(31)
-      expect(reporting_period[0].end_date[:year]).to eq(2019)
+      expect(reporting_period[0].start_date.month).to eq(1)
+      expect(reporting_period[0].start_date.day_of_month).to eq(1)
+      expect(reporting_period[0].start_date.year).to eq(2019)
+      expect(reporting_period[0].end_date.month).to eq(12)
+      expect(reporting_period[0].end_date.day_of_month).to eq(31)
+      expect(reporting_period[0].end_date.year).to eq(2019)
       expect(reporting_period[0].total_site_energy).to eq(2)
       expect(reporting_period[0].total_source_energy).to eq(2)
       expect(reporting_period[0].end_uses.electricity.heating).to eq(2)
@@ -215,12 +215,12 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
       expect(reporting_period[1].id).to eq(6)
       expect(reporting_period[1].name).to eq("January")
       expect(reporting_period[1].multiplier).to eq(1)
-      expect(reporting_period[1].start_date[:month]).to eq(1)
-      expect(reporting_period[1].start_date[:day_of_month]).to eq(1)
-      expect(reporting_period[1].start_date[:year]).to eq(2019)
-      expect(reporting_period[1].end_date[:month]).to eq(1)
-      expect(reporting_period[1].end_date[:day_of_month]).to eq(31)
-      expect(reporting_period[1].end_date[:year]).to eq(2019)
+      expect(reporting_period[1].start_date.month).to eq(1)
+      expect(reporting_period[1].start_date.day_of_month).to eq(1)
+      expect(reporting_period[1].start_date.year).to eq(2019)
+      expect(reporting_period[1].end_date.month).to eq(1)
+      expect(reporting_period[1].end_date.day_of_month).to eq(31)
+      expect(reporting_period[1].end_date.year).to eq(2019)
       expect(reporting_period[1].total_site_energy).to eq(2)
       expect(reporting_period[1].total_source_energy).to eq(2)
       expect(reporting_period[1].end_uses.electricity.heating).to eq(2)
