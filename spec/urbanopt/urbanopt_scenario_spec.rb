@@ -66,7 +66,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = true
+    clear_results = true #edited
     scenario.clear if clear_results 
     
     simulation_dirs = scenario.simulation_dirs
@@ -126,40 +126,40 @@ RSpec.describe URBANopt::Scenario do
     
     
     #Program results check
-    expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map {|h| h['program']['site_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['floor_area']).to eq(data['feature_reports'].map {|h| h['program']['floor_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['conditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['conditioned_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['unconditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['unconditioned_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['footprint_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['maximum_roof_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_roof_height']}.max)
-    expect(data['scenario_report']['program']['maximum_number_of_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories']}.max)
-    expect(data['scenario_report']['program']['maximum_number_of_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories_above_ground']}.max)
-    expect(data['scenario_report']['program']['parking_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['number_of_parking_spaces']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces']}.reduce(:+))
-    expect(data['scenario_report']['program']['number_of_parking_spaces_charging']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces_charging']}.reduce(:+))
-    expect(data['scenario_report']['program']['parking_footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_footprint_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['maximum_parking_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_parking_height']}.max)
-    expect(data['scenario_report']['program']['maximum_number_of_parking_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories']}.max)
-    expect(data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories_above_ground']}.max)
-    expect(data['scenario_report']['program']['number_of_residential_units']).to eq(data['feature_reports'].map {|h| h['program']['number_of_residential_units']}.reduce(:+))
+    expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map {|h| h['program']['site_area']}.reduce(:+)) if data['scenario_report']['program']['site_area']
+    expect(data['scenario_report']['program']['floor_area']).to eq(data['feature_reports'].map {|h| h['program']['floor_area']}.reduce(:+)) if data['scenario_report']['program']['floor_area']
+    expect(data['scenario_report']['program']['conditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['conditioned_area']}.reduce(:+)) if data['scenario_report']['program']['conditioned_area']
+    expect(data['scenario_report']['program']['unconditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['unconditioned_area']}.reduce(:+)) if data['scenario_report']['program']['unconditioned_area']
+    expect(data['scenario_report']['program']['footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['footprint_area']}.reduce(:+)) if data['scenario_report']['program']['footprint_area']
+    expect(data['scenario_report']['program']['maximum_roof_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_roof_height']}.max) if data['scenario_report']['program']['maximum_roof_height']
+    expect(data['scenario_report']['program']['maximum_number_of_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories']}.max) if data['scenario_report']['program']['maximum_number_of_stories']
+    expect(data['scenario_report']['program']['maximum_number_of_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories_above_ground']}.max) if data['scenario_report']['program']['maximum_number_of_stories_above_ground']
+    expect(data['scenario_report']['program']['parking_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_area']}.reduce(:+)) if data['scenario_report']['program']['parking_area'] if data['scenario_report']['program']['parking_area']
+    expect(data['scenario_report']['program']['number_of_parking_spaces']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces']}.reduce(:+)) if data['scenario_report']['program']['number_of_parking_spaces']
+    expect(data['scenario_report']['program']['number_of_parking_spaces_charging']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces_charging']}.reduce(:+)) if  data['scenario_report']['program']['number_of_parking_spaces_charging']
+    expect(data['scenario_report']['program']['parking_footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_footprint_area']}.reduce(:+)) if data['scenario_report']['program']['parking_footprint_area']
+    expect(data['scenario_report']['program']['maximum_parking_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_parking_height']}.max) if data['scenario_report']['program']['maximum_parking_height']
+    expect(data['scenario_report']['program']['maximum_number_of_parking_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories']}.max) if data['scenario_report']['program']['maximum_number_of_parking_stories']
+    expect(data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories_above_ground']}.max) if data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']
+    expect(data['scenario_report']['program']['number_of_residential_units']).to eq(data['feature_reports'].map {|h| h['program']['number_of_residential_units']}.reduce(:+)) if data['scenario_report']['program']['number_of_residential_units']
     
 
-    expect(data['scenario_report']['program']['window_area']['north_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['north_window_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['window_area']['south_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['south_window_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['window_area']['east_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['east_window_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['window_area']['west_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['west_window_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['window_area']['total_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['total_window_area']}.reduce(:+))
+    expect(data['scenario_report']['program']['window_area']['north_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['north_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['north_window_area']
+    expect(data['scenario_report']['program']['window_area']['south_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['south_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['south_window_area']
+    expect(data['scenario_report']['program']['window_area']['east_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['east_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['east_window_area']
+    expect(data['scenario_report']['program']['window_area']['west_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['west_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['west_window_area']
+    expect(data['scenario_report']['program']['window_area']['total_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['total_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['total_window_area']
 
-    expect(data['scenario_report']['program']['wall_area']['north_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['north_wall_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['wall_area']['south_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['south_wall_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['wall_area']['east_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['east_wall_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['wall_area']['west_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['west_wall_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['wall_area']['total_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['total_wall_area']}.reduce(:+))
+    expect(data['scenario_report']['program']['wall_area']['north_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['north_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['north_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['south_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['south_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['south_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['east_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['east_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['east_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['west_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['west_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['west_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['total_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['total_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['total_wall_area']
 
-    expect(data['scenario_report']['program']['roof_area']['equipment_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['equipment_roof_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['roof_area']['photovoltaic_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['photovoltaic_roof_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['roof_area']['available_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['available_roof_area']}.reduce(:+))
-    expect(data['scenario_report']['program']['roof_area']['total_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['total_roof_area']}.reduce(:+))
+    expect(data['scenario_report']['program']['roof_area']['equipment_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['equipment_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['equipment_roof_area'] 
+    expect(data['scenario_report']['program']['roof_area']['photovoltaic_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['photovoltaic_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['photovoltaic_roof_area'] 
+    expect(data['scenario_report']['program']['roof_area']['available_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['available_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['available_roof_area']
+    expect(data['scenario_report']['program']['roof_area']['total_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['total_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['total_roof_area']
     
 
     #Reporting periods results check

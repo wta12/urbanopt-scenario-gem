@@ -113,8 +113,8 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new({ :category => "HVACComponent", :item_name => "hvac", :unit_cost => 1,
     :cost_units => "CostPerEach", :item_quantity => 1, :total_cost => 1})
     
-    puts "existing_costs = #{existing_costs}"
-    puts "new_costs = #{new_costs}"
+    #puts "existing_costs = #{existing_costs}"
+    #puts "new_costs = #{new_costs}"
 
     construction_cost = URBANopt::Scenario::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs)
     
@@ -142,7 +142,7 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
       expect(construction_cost[2].total_cost).to eq(1)  
     end
       
-    puts "final cost = #{existing_costs}"
+    #puts "final cost = #{existing_costs}"
 
   end
 
@@ -151,12 +151,9 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
   it 'can merge end uses' do
     existing_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
     new_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})
+    
+    existing_end_uses.merge_end_uses!(new_end_uses)
 
-    puts "\nexisting end uses = #{existing_end_uses.to_hash}"
-    puts "\nnew end uses = #{new_end_uses.to_hash.to_hash}"
-    
-    puts "\nfinal end uses = #{existing_end_uses.merge_end_uses!(new_end_uses).to_hash}"
-    
     expect(existing_end_uses.electricity.heating).to eq(2)
     expect(existing_end_uses.electricity.cooling).to eq(2)
     expect(existing_end_uses.natural_gas.fans).to eq(2)
@@ -190,8 +187,8 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     end_uses: { electricity: { heating: 1, cooling:1, fans:1, pumps: 1},  } , utility_costs: [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1}]
     })
     
-    puts "\nexisting periods: #{existing_periods}"
-    puts "\nnew periods: #{new_periods}"
+    #puts "\nexisting periods: #{existing_periods}"
+    #puts "\nnew periods: #{new_periods}"
 
     reporting_period = URBANopt::Scenario::DefaultReports::ReportingPeriod.merge_reporting_periods(existing_periods, new_periods)
         
@@ -228,7 +225,7 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
       expect(reporting_period[1].end_uses.electricity.fans).to eq(2)
       expect(reporting_period[1].end_uses.electricity.pumps).to eq(2)
     
-    puts "\nfinal periods: #{existing_periods}"
+    #puts "\nfinal periods: #{existing_periods}"
     
   end
 
