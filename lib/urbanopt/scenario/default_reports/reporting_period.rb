@@ -133,13 +133,24 @@ module URBANopt
           result[:electricity_produced] = @electricity_produced if @electricity_produced        
           result[:end_uses] = @end_uses.to_hash if @end_uses 
           
+          
           energy_production_hash = @energy_production if @energy_production
           energy_production_hash.delete_if {|k,v| v.nil?}
+          energy_production_hash.each do |eph|
+            puts "energy_production hash before is #{energy_production_hash}"
+            eph.delete_if {|k,v| v.nil?}
+            puts "energy_production hash after is #{energy_production_hash}"
+          end
+          puts "energy_production hash after END is #{energy_production_hash}"
           result[:energy_production] = energy_production_hash if @energy_production
 
-          utility_costs_hash = @utility_costs if @utility_costs
-          utility_costs_hash.delete_if {|k,v| v.nil?}       
-          result[:utility_costs] = @utility_costs if @utility_costs
+          
+          if @utility_costs.any?
+            result[:utility_costs] = @utility_costs
+            @utility_costs.each do |uc|
+              uc.delete_if {|k,v| v.nil?} if uc  
+            end
+          end
 
           comfort_result_hash = @comfort_result if @comfort_result
           comfort_result_hash.delete_if {|k,v| v.nil?}    
@@ -201,6 +212,7 @@ module URBANopt
 
           if existing_period.energy_production
             if existing_period.energy_production[:electricity_produced]
+              existing_period.energy_production[:electricity_produced][:photovoltaic] = add_values(existing_period.energy_production[:electricity_produced][:photovoltaic], new_period.energy_production[:electricity_produced][:photovoltaic])
               existing_period.energy_production[:electricity_produced][:electricity_produced] = add_values(existing_period.energy_production[:electricity_produced][:electricity_produced], new_period.energy_production[:electricity_produced][:electricity_produced])
             end
           end

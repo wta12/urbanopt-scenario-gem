@@ -155,9 +155,14 @@ module URBANopt
           result[:maximum_number_of_parking_stories] = @maximum_number_of_parking_stories if @maximum_number_of_parking_stories
           result[:maximum_number_of_parking_stories_above_ground] = @maximum_number_of_parking_stories_above_ground if @maximum_number_of_parking_stories_above_ground
           result[:number_of_residential_units] = @number_of_residential_units if @number_of_residential_units
-          result[:building_types] = @building_types if @building_types 
           
-
+          if @building_types.any?
+            result[:building_types] = @building_types 
+            @building_types.each do |bt|
+              bt.delete_if {|k,v| v.nil?} if bt
+            end
+          end
+          
           #result[:window_area] = @window_area if @window_area
           window_area_hash = @window_area if @window_area 
           window_area_hash.delete_if {|k, v| v.nil?}
