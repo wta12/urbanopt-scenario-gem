@@ -68,10 +68,9 @@ module URBANopt
           @timesteps_per_hour = hash[:timesteps_per_hour]
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
-          #@location = Location.new(hash[:location]) ###need to create a class for location?
           @location = hash[:location]
           @program = Program.new(hash[:program])
-          # design_parameters?           
+          # design_parameters? to add later          
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
@@ -85,25 +84,17 @@ module URBANopt
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
-
-          #@hash = hash
-
-          # @type = @hash[:type]
-          # #raise 'Unknown type' if @type.nil?
-          # #raise "Incorrect model type '#{@type}'" unless @type == @hash[:type]
-          # @openstudio_object = nil
-
-          # if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],@hash).any?
-          #   raise " EROOOR ::: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],@hash)} "
-          # end       
+          @@schema ||= @@extension.schema   
 
         end
         
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults
           hash = {}
           hash[:timeseries_csv] = {}
-          hash[:location] = {latitude: nil.to_i , longitude: nil.to_i, surface_elevation: nil.to_i, weather_filename: nil.to_s }
+          hash[:location] = {latitude: nil , longitude: nil, surface_elevation: nil, weather_filename: nil}
           hash[:program] = {}
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
@@ -179,7 +170,11 @@ module URBANopt
           result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
           result[:simulation_status] = @simulation_status if @simulation_status
           result[:timeseries_csv] = @timeseries_csv.to_hash
-          result[:location] = @location if @location
+          
+          location_hash = @location if @location
+          location_hash.delete_if {|k,v| v.nil?}
+          result[:location] = location_hash if @location
+
           result[:program] = @program.to_hash
           
           result[:construction_costs] = []

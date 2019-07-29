@@ -39,6 +39,10 @@ module URBANopt
                 attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment,
                             :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators
 
+                            
+                ##
+                # EndUse class intialize all enduse atributes
+                ##
                 def initialize(hash={})
                     hash.delete_if {|k, v| v.nil?}
                     hash = defaults.merge(hash)
@@ -64,29 +68,34 @@ module URBANopt
 
                 end
 
+                ##
+                # Assign default values if values does not exist
+                ##
                 def defaults
                     
                     hash = {}
 
-                    hash[:heating] = 0
-                    hash[:cooling] = 0
-                    hash[:interior_lighting] = 0
-                    hash[:exterior_lighting] = 0
-                    hash[:interior_equipment] = 0
-                    hash[:exterior_equipment] = 0 
-                    hash[:fans] = 0
-                    hash[:pumps] = 0
-                    hash[:heat_rejection] = 0
-                    hash[:humidification] = 0
-                    hash[:heat_recovery] = 0
-                    hash[:water_systems] = 0
-                    hash[:refrigeration] = 0 
-                    hash[:generators] = 0
+                    hash[:heating] = nil
+                    hash[:cooling] = nil
+                    hash[:interior_lighting] = nil
+                    hash[:exterior_lighting] = nil
+                    hash[:interior_equipment] = nil
+                    hash[:exterior_equipment] = nil
+                    hash[:fans] = nil
+                    hash[:pumps] = nil
+                    hash[:heat_rejection] = nil
+                    hash[:humidification] = nil
+                    hash[:heat_recovery] = nil
+                    hash[:water_systems] = nil
+                    hash[:refrigeration] = nil 
+                    hash[:generators] = nil
                     
                     return hash
                 end
 
-                
+                ##
+                # Convert to a Hash equivalent for JSON serialization
+                ##
                 def to_hash
                     
                     result = {}
@@ -115,9 +124,11 @@ module URBANopt
 
                 end
                 
+                ##
+                # Aggregate the values of each EndUse attribute
+                ##
                 def merge_end_use!(new_end_use)
-                    
-                    
+                                        
                     @heating += new_end_use.heating if new_end_use.heating
                     @cooling += new_end_use.cooling if new_end_use.cooling
                     @interior_lighting += new_end_use.interior_lighting if new_end_use.interior_lighting

@@ -39,6 +39,9 @@ module URBANopt
 
         attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost 
 
+        ##
+        # Intialize construction cost attributes
+        ##
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
@@ -59,20 +62,24 @@ module URBANopt
         
 
       
-
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults
           hash = {}
-          hash[:category] = 0
-          hash[:item_name] = 0
-          hash[:unit_cost] = 0
-          hash[:cost_units] = 0
-          hash[:item_quantity] = 0
-          hash[:total_cost] = 0
+          hash[:category] = nil
+          hash[:item_name] = nil
+          hash[:unit_cost] = nil
+          hash[:cost_units] = nil
+          hash[:item_quantity] = nil
+          hash[:total_cost] = nil
           
           return hash
         end
 
-        
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
           result = {}
           result[:category] = @category if @category
@@ -90,6 +97,9 @@ module URBANopt
           return result
         end
         
+        ##
+        # Merge an existing cost with a new cost
+        ## 
         def self.merge_construction_cost(existing_cost, new_cost)
           # modify the existing_cost by adding the :total_cost and :item_quantity
           existing_cost.total_cost += new_cost.total_cost
@@ -110,10 +120,13 @@ module URBANopt
           return existing_cost
         end
         
+        ##
+        # Merge muliple construction costs together
+        ## 
         def self.merge_construction_costs(existing_costs, new_costs)
              
-          puts "existing_costs = #{existing_costs}"
-          puts "new_costs = #{new_costs}"
+          #puts "existing_costs = #{existing_costs}"
+          #puts "new_costs = #{new_costs}"
 
           item_name_list = []
           item_name_list = existing_costs.collect {|x| x.item_name}
@@ -134,7 +147,7 @@ module URBANopt
               existing_costs << x_new
 
             end
-            puts "final cost = #{existing_costs}"
+            #puts "final cost = #{existing_costs}"
                  
           end
           

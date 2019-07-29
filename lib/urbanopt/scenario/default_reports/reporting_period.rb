@@ -46,6 +46,9 @@ module URBANopt
                         :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
                         :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours
 
+        ##
+        # Intialize reporting period attributes
+        ##
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
@@ -56,7 +59,6 @@ module URBANopt
           @multiplier = hash[:multiplier]
           @start_date = Date.new(hash[:start_date])          
           @end_date = Date.new(hash[:end_date])
-          ## need to create a class for Date 
           
 
           @total_site_energy = hash[:total_site_energy]
@@ -74,41 +76,40 @@ module URBANopt
           @end_uses = EndUses.new(hash[:end_uses])
           
           @energy_production = hash[:energy_production]
-          
-          @electricity_produced = hash[:electricity_produced]
-          @photovoltaic = hash[:photovoltaic]
-              
+                       
+          @utility_costs = hash[:utility_costs]
+
           @comfort_result = hash[:comfort_result]
           
-          @time_setpoint_not_met_during_occupied_cooling = hash[:time_setpoint_not_met_during_occupied_cooling]
-          @time_setpoint_not_met_during_occupied_heating = hash[:time_setpoint_not_met_during_occupied_heating]
-          @time_setpoint_not_met_during_occupied_hours = hash[:time_setpoint_not_met_during_occupied_hours]
-
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
           
         end
-                
+        
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults          
           hash = {}
 
-          hash[:id] = 0
-          hash[:name] = 'period name'
-          hash[:multiplier] = 1
-          hash[:start_date] = Date.new.to_hash #{month: nil.to_i ,day_of_month: nil.to_i , year: nil.to_i}
-          hash[:end_date] = Date.new.to_hash #{month: nil.to_i , day_of_month: nil.to_i , year: nil.to_i}
-          hash[:energy_production] = {electricity_produced: {photovoltaic: 0, }}
-          
-          hash[:utility_costs] = [{ fuel_type:'Electricity', total_cost: 1, usage_cost: 2, demand_cost: nil.to_i}]
-
-
-          hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: 0, time_setpoint_not_met_during_occupied_heating: 0, time_setpoint_not_met_during_occupied_hours: 0}
+          hash[:id] = nil
+          hash[:name] = nil
+          hash[:multiplier] = nil
+          hash[:start_date] = Date.new.to_hash
+          hash[:end_date] = Date.new.to_hash 
+          hash[:energy_production] = {electricity_produced: {photovoltaic: nil, }}
+          hash[:utility_costs] = [{fuel_type: nil, total_cost: nil, usage_cost: nil, demand_cost: nil}]
+          hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: nil, time_setpoint_not_met_during_occupied_heating: nil, time_setpoint_not_met_during_occupied_hours: nil}
           hash[:end_uses] = EndUses.new.to_hash
           
           return hash
         end
         
+
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
           
           result = {}
@@ -118,9 +119,6 @@ module URBANopt
           result[:multiplier] = @multiplier if @multiplier
           result[:start_date] = @start_date.to_hash if @start_date
           result[:end_date] = @end_date.to_hash if @end_date 
-          # result[:month] = @month if @month
-          # result[:day_of_month] = @day_of_month if @day_of_month
-          # result[:year] = @year.to_i if @year
           result[:total_site_energy] = @total_site_energy if @total_site_energy 
           result[:total_source_energy] = @total_source_energy if @total_source_energy
           result[:net_site_energy] = @net_site_energy if @net_site_energy
@@ -133,24 +131,20 @@ module URBANopt
           result[:district_heating] = @district_heating if @district_heating 
           result[:water] = @water if @water  
           result[:electricity_produced] = @electricity_produced if @electricity_produced        
-
           result[:end_uses] = @end_uses.to_hash if @end_uses 
-                    
-          result[:energy_production] = @energy_production if @energy_production 
-          result[:electricity_produced] = @electricity_produced if @electricity_produced
-          result[:photovoltaic] = @photovoltaic if @photovoltaic 
-         
-          result[:utility_costs] = @utility_costs if @utility_costs 
-
-          # result[:fuel_type] = @fuel_type if @fuel_type 
-          # result[:total_cost] = @total_cost if @total_cost 
-          # result[:usage_cost] = @usage_cost if @usage_cost 
-          # result[:demand_cost] = @demand_cost if @demand_cost
           
-          result[:comfort_result] = @comfort_result if @comfort_result 
-          result[:time_setpoint_not_met_during_occupied_cooling] = @time_setpoint_not_met_during_occupied_cooling if @time_setpoint_not_met_during_occupied_cooling 
-          result[:time_setpoint_not_met_during_occupied_heating] = @time_setpoint_not_met_during_occupied_heating if @time_setpoint_not_met_during_occupied_heating 
-          result[:time_setpoint_not_met_during_occupied_hours] = @time_setpoint_not_met_during_occupied_hours if @time_setpoint_not_met_during_occupied_hours
+          energy_production_hash = @energy_production if @energy_production
+          energy_production_hash.delete_if {|k,v| v.nil?}
+          result[:energy_production] = energy_production_hash if @energy_production
+
+          utility_costs_hash = @utility_costs if @utility_costs
+          utility_costs_hash.delete_if {|k,v| v.nil?}       
+          result[:utility_costs] = @utility_costs if @utility_costs
+
+          comfort_result_hash = @comfort_result if @comfort_result
+          comfort_result_hash.delete_if {|k,v| v.nil?}    
+          result[:comfort_result] = comfort_result_hash if @comfort_result 
+         
             
           # validate reporting_period properties against schema
           if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result).any?
@@ -160,29 +154,44 @@ module URBANopt
           return result
         end
 
-
+        ### get keys ...not needed
         # def self.get_all_keys(h)
         #   h.each_with_object([]){|(k,v),a| v.is_a?(Hash) ? a.push(k,*get_all_keys(v)) : a << k }
         # end
 
+
+        ##
+        # Add up old and new values
+        ##
+        def self.add_values(existing_value, new_value)
+          if existing_value && new_value
+            existing_value += new_value
+          elsif new_value
+            existing_value = new_value
+          end
+          return existing_value
+        end
         
+        ##
+        # Merge a reporting period with a new reporting period
+        ## 
         def self.merge_reporting_period(existing_period, new_period)
-          puts " running  reporting period merge_reporting_period method "                
+          #puts " running  reporting period merge_reporting_period method "                
           # modify the existing_period by summing up the results ; # sum results only if they exist
           
           #try to create a class for enduse 
 
-          existing_period.total_site_energy += new_period.total_site_energy if existing_period.total_site_energy
-          existing_period.total_source_energy += new_period.total_source_energy if existing_period.total_source_energy  
-          existing_period.net_source_energy += new_period.net_source_energy if existing_period.net_source_energy 
-          existing_period.net_utility_cost += new_period.net_utility_cost if existing_period.net_utility_cost
-          existing_period.electricity += new_period.electricity if existing_period.electricity
-          existing_period.natural_gas += new_period.natural_gas if existing_period.natural_gas
-          existing_period.additional_fuel += new_period.additional_fuel if existing_period.additional_fuel
-          existing_period.district_cooling += new_period.district_cooling if existing_period.district_cooling
-          existing_period.district_heating += new_period.district_heating if existing_period.district_heating
-          existing_period.water += new_period.water if existing_period.water
-          existing_period.electricity_produced += new_period.electricity_produced if existing_period.electricity_produced
+          existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
+          existing_period.total_source_energy = add_values(existing_period.total_source_energy, new_period.total_source_energy)  
+          existing_period.net_source_energy = add_values(existing_period.net_source_energy, new_period.net_source_energy) 
+          existing_period.net_utility_cost = add_values(existing_period.net_utility_cost, new_period.net_utility_cost)
+          existing_period.electricity = add_values(existing_period.electricity, new_period.electricity)
+          existing_period.natural_gas = add_values(existing_period.natural_gas, new_period.natural_gas)
+          existing_period.additional_fuel = add_values(existing_period.additional_fuel, new_period.additional_fuel)
+          existing_period.district_cooling = add_values(existing_period.district_cooling, new_period.district_cooling)
+          existing_period.district_heating = add_values(existing_period.district_heating, new_period.district_heating)
+          existing_period.water = add_values(existing_period.water, new_period.water)
+          existing_period.electricity_produced = add_values(existing_period.electricity_produced, new_period.electricity_produced)
         
           
             #merge end uses
@@ -192,30 +201,35 @@ module URBANopt
 
           if existing_period.energy_production
             if existing_period.energy_production[:electricity_produced]
-              existing_period.energy_production[:electricity_produced][:electricity_produced] += new_period.energy_production[:electricity_produced][:electricity_produced] if existing_period.energy_production[:electricity_produced][:electricity_produced]
+              existing_period.energy_production[:electricity_produced][:electricity_produced] = add_values(existing_period.energy_production[:electricity_produced][:electricity_produced], new_period.energy_production[:electricity_produced][:electricity_produced])
             end
           end
 
           if existing_period.utility_costs
            
-            #existing_period.utility_costs = new_period.utility_costs #to _check_wrong
-            
-            existing_period.utility_costs[0][:fuel_type] += new_period.utility_costs[0][:fuel_type] if existing_period.utility_costs[0][:fuel_type]
-            existing_period.utility_costs[0][:total_cost] += new_period.utility_costs[0][:total_cost] if existing_period.utility_costs[0][:total_cost]
-            existing_period.utility_costs[0][:usage_cost] += new_period.utility_costs[0][:usage_cost] if existing_period.utility_costs[0][:usage_cost]
-            existing_period.utility_costs[0][:demand_cost] += new_period.utility_costs[0][:demand_cost] if existing_period.utility_costs[0][:demand_cost]
+            existing_period.utility_costs.each_with_index do |item, i|
+              existing_period.utility_costs[i][:fuel_type] = add_values(existing_period.utility_costs[i][:fuel_type], new_period.utility_costs[i][:fuel_type])
+              existing_period.utility_costs[i][:total_cost] = add_values(existing_period.utility_costs[i][:total_cost], new_period.utility_costs[i][:total_cost])
+              existing_period.utility_costs[i][:usage_cost] = add_values(existing_period.utility_costs[i][:usage_cost], new_period.utility_costs[i][:usage_cost])
+              existing_period.utility_costs[i][:demand_cost] = add_values(existing_period.utility_costs[i][:demand_cost], new_period.utility_costs[i][:demand_cost])
+            end
+
           end
           
           if existing_period.comfort_result
-            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling]
-            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating]
-            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] += new_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] if existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours]
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling] = add_values(existing_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling], new_period.comfort_result[:time_setpoint_not_met_during_occupied_cooling])
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating] = add_values(existing_period.comfort_result[:time_setpoint_not_met_during_occupied_heating], new_period.comfort_result[:time_setpoint_not_met_during_occupied_heating])
+            existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours] = add_values(existing_period.comfort_result[:time_setpoint_not_met_during_occupied_hours], new_period.comfort_result[:time_setpoint_not_met_during_occupied_hours])
           end         
                       
           return existing_period
          
         end
         
+
+        ##
+        # Merge muliple reporting periods together
+        ##
         def self.merge_reporting_periods(existing_periods, new_periods)
                    
           # TODO: match new periods to existing periods and call merge_reporting_period
@@ -225,8 +239,8 @@ module URBANopt
           id_list_existing = existing_periods.collect {|x| x.id}
           id_list_new = new_periods.collect {|x| x.id}
 
-          puts "\nexisting periods ids: #{id_list_new}"
-          puts "new periods ids: #{id_list_new}"
+          #puts "\nexisting periods ids: #{id_list_new}"
+          #puts "new periods ids: #{id_list_new}"
                  
           if id_list_existing == id_list_new 
              
@@ -244,7 +258,7 @@ module URBANopt
             end
             
           elsif existing_periods.empty?
-            puts " existing_periods empty" 
+            #puts " existing_periods empty" 
             
             # if existing periods are empty, initialize with new_periods
             # the = operator would link existing_periods and new_periods to the same object in memory

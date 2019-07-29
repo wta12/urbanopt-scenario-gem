@@ -37,8 +37,13 @@ module URBANopt
         
         attr_accessor :path, :first_report_datetime, :column_names
         
+        ##
+        # Intialize timeseries CSV attributes
+        ##
         # perform initialization functions
+        #puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
         def initialize(hash = {})
+          puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
 
@@ -51,13 +56,19 @@ module URBANopt
           @data = nil
         end
         
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults
           hash = {}
-          hash[:path] = nil.to_s
+          hash[:path] = nil
           hash[:column_names] = []
           return hash
         end
         
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
           result = {}
           result[:path] = @path if @path
@@ -66,6 +77,10 @@ module URBANopt
           return result
         end
         
+
+        ##
+        # Load data from the CSV file
+        ##
         def load_data
           @mutex.synchronize do
             if @data.nil?
@@ -89,11 +104,17 @@ module URBANopt
           end
         end
         
+        ##
+        # Get data
+        ##
         def get_data(column_name)
           load_data
           return @data[column_name]
         end
         
+        ##
+        # Save data
+        ##
         def save_data(path)
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
@@ -116,6 +137,9 @@ module URBANopt
             
         end
         
+        ##
+        # Merge timeseries csv to each other
+        ##
         def add_timeseries_csv(other)
 
           @path = other.path

@@ -39,6 +39,9 @@ module URBANopt
 
         attr_accessor :month, :day_of_month, :year
 
+        ##
+        # Date class intialize date attributes
+        ##
         def initialize(hash = {})
             hash.delete_if {|k, v| v.nil?}
             hash = defaults.merge(hash)
@@ -53,7 +56,9 @@ module URBANopt
 
         end
 
-
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
             result = {}
             result[:month] = @month if @month
@@ -69,11 +74,14 @@ module URBANopt
             return result
         end
 
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults
             hash = {}
-            hash[:month] = nil.to_i
-            hash[:day_of_month] = nil.to_i
-            hash[:year] = nil.to_i
+            hash[:month] = nil
+            hash[:day_of_month] = nil
+            hash[:year] = nil
                             
             return hash
                 

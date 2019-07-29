@@ -38,6 +38,9 @@ module URBANopt
             class EndUses
                 attr_accessor :electricity, :natural_gas, :additional_fuel, :district_cooling, :district_heating, :water
 
+                ##
+                # EndUses class intialize fuel type attributes that incluse all enduse values
+                ##
                 def initialize(hash = {})
                     hash.delete_if {|k, v| v.nil?}
                     hash = defaults.merge(hash)
@@ -55,15 +58,38 @@ module URBANopt
 
                 end
 
-
+                ##
+                # Convert to a Hash equivalent for JSON serialization
+                ##
                 def to_hash
                     result = {}
-                    result[:electricity] = @electricity.to_hash
-                    result[:natural_gas] = @natural_gas.to_hash
-                    result[:additional_fuel] = @additional_fuel.to_hash
-                    result[:district_cooling] = @district_cooling.to_hash
-                    result[:district_heating] = @district_heating.to_hash
-                    result[:water] = @water.to_hash
+
+                    electricity_hash = @electricity.to_hash if @electricity.to_hash
+                    electricity_hash.delete_if {|k,v| v.nil?}
+                    result[:electricity] = electricity_hash if @electricity
+
+
+                    natural_gas_hash = @natural_gas.to_hash if @natural_gas
+                    natural_gas_hash.delete_if {|k,v| v.nil?}
+                    result[:natural_gas] = natural_gas_hash if @natural_gas
+                    
+                    additional_fuel_hash = @additional_fuel.to_hash if @additional_fuel
+                    additional_fuel_hash.delete_if {|k,v| v.nil?}
+                    result[:additional_fuel] = additional_fuel_hash if @additional_fuel
+
+                    district_cooling_hash = @district_cooling.to_hash if @district_cooling
+                    district_cooling_hash.delete_if {|k,v| v.nil?}
+                    result[:district_cooling] = district_cooling_hash if @district_cooling
+
+
+                    district_heating_hash = @district_heating.to_hash if @district_heating
+                    district_heating_hash.delete_if {|k,v| v.nil?}
+                    result[:district_heating] = district_heating_hash if @district_heating
+
+                    water_hash = @water.to_hash if @water
+                    water_hash.delete_if {|k,v| v.nil?}
+                    result[:water] = water_hash if @water
+                   
 
                     # validate end_uses properties against schema
                     if @@extension.validate(@@schema[:definitions][:EndUses][:properties],result).any?
@@ -74,6 +100,9 @@ module URBANopt
                     return result
                 end
 
+                ##
+                # Assign default values if values does not exist
+                ##
                 def defaults
                     hash = {}
                     hash[:electricity] = EndUse.new.to_hash
@@ -87,6 +116,9 @@ module URBANopt
                         
                 end
 
+                ##
+                # Aggregate the values of each EndUse attribute
+                ##
                 def merge_end_uses!(new_end_uses)
                             
                     # modify the existing_period by summing up the results ; # sum results only if they exist

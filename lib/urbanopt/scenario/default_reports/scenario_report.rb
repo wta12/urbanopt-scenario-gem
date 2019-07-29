@@ -56,8 +56,25 @@ module URBANopt
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(scenario)
-
           
+          # scenario.delete_if {|k,v| v.nil?}
+          # scenario = defaults.merge(scenario)
+          
+          # @id = scenario[:id]
+          # @name = scenario[:name]
+          # @directory_name = scenario[:directory_name]
+          # @timesteps_per_hour = scenario[:timesteps_per_hour]
+          # @number_of_not_started_simulations = scenario[:number_of_not_started_simulations]
+          # @number_of_started_simulations = scenario[:number_of_started_simulations]
+          # @number_of_complete_simulations = scenario[:number_of_complete_simulations]
+          # @number_of_failed_simulations = scenario[:number_of_failed_simulations]
+          # @timeseries_csv = TimeseriesCSV.new(scenario[:timeseries_csv])
+          # @location = scenario[:location]
+          # @program = Program.new(scenario[:program])
+          # @construction_costs = scenario[:construction_costs]
+          # @reporting_periods = scenario[:reporting_periods]
+          # @feature_reports = scenario[:feature_reports]
+
           @scenario = scenario
           
           @id = scenario.name
@@ -74,12 +91,31 @@ module URBANopt
           @construction_costs = []
           @reporting_periods = []       
           @feature_reports = []
-           
+                   
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
 
         end
+
+        # def defaults 
+        #   hash = {}
+        #   hash[:id] = 0 # scenario.name
+        #   hash[:name] = 0 #scenario.name
+        #   hash[:directory_name] = 0 #scenario.run_dir
+        #   hash[:timesteps_per_hour] = nil #unknown
+        #   hash[:number_of_not_started_simulations] = 0
+        #   hash[:number_of_started_simulations] = 0
+        #   hash[:number_of_complete_simulations] = 0
+        #   hash[:number_of_failed_simulations] = 0
+        #   hash[:timeseries_csv] = TimeseriesCSV.new
+        #   hash[:location] = nil
+        #   hash[:program] = Program.new
+        #   hash[:construction_costs] = []
+        #   hash[:reporting_periods] = []
+        #   hash[:feature_reports] = []
+        #   return hash
+        # end
         
         def json_path
           File.join(@scenario.run_dir, 'default_scenario_report.json')
