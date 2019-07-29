@@ -234,6 +234,9 @@ module URBANopt
           # add feature_report
           @feature_reports << feature_report
 
+          # assign scenario location to the location of the first feature
+          @location = feature_reports[0].location
+
         end
         
        
