@@ -127,23 +127,8 @@ module URBANopt
           hash[:number_of_residential_units] = nil
           hash[:building_types] = [{:building_type => nil, :maximum_occupancy => nil , :floor_area => nil }]
           hash[:window_area] = {:north_window_area => nil, :south_window_area => nil, :east_window_area => nil, :west_window_area => nil, :total_window_area => nil}
-          # hash[:window_area] = {}
-          # hash[:window_area][:north_window_area] = nil
-          # hash[:window_area][:south_window_area] = nil
-          # hash[:window_area][:east_window_area] = nil
-          # hash[:window_area][:west_window_area] = nil
-          # hash[:window_area][:total_window_area] = nil 
-
-
           hash[:wall_area] = {:north_wall_area => nil, :south_wall_area => nil, :east_wall_area => nil, :west_wall_area => nil, :total_wall_area => nil}
           hash[:roof_area] = {:equipment_roof_area => nil, :photovoltaic_roof_area => nil, :available_roof_area => nil, :total_roof_area => nil}
-          #hash[:roof_area] = {}
-          
-          # hash[:roof_area][:equipment_roof_area] = nil
-          # hash[:roof_area][:photovoltaic_roof_area] = nil
-          # hash[:roof_area][:available_roof_area] = nil
-          # hash[:roof_area][:total_roof_area] = nil
-          
           hash[:orientation] = nil
           hash[:aspect_ratio] = nil
           return hash
