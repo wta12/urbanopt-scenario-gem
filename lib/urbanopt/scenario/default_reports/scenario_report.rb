@@ -219,6 +219,8 @@ module URBANopt
           # merge timeseries_csv information
           @timeseries_csv.add_timeseries_csv(feature_report.timeseries_csv)
           
+          @timeseries_csv.run_dir_name(@directory_name)
+          
           # merge program information
           @program.add_program(feature_report.program)
           

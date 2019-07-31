@@ -29,6 +29,7 @@
 #*********************************************************************************
 
 require 'csv'
+require 'pathname'
 
 module URBANopt
   module Scenario
@@ -46,6 +47,8 @@ module URBANopt
           puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
+
+          @run_dir = ''
 
           @path = hash[:path]
           @first_report_datetime = hash[:first_report_datetime]
@@ -66,12 +69,27 @@ module URBANopt
           return hash
         end
         
+
+        ##
+        # Gets run directory
+        ##
+        def run_dir_name(name)
+          @run_dir = name
+        end
+
         ##
         # Convert to a Hash equivalent for JSON serialization
         ##
         def to_hash
           result = {}
-          result[:path] = @path if @path
+
+          directory_path = Pathname.new File.expand_path(@run_dir, File.dirname(__FILE__)) 
+          csv_path = Pathname.new @path if @path
+          relative = csv_path.relative_path_from directory_path  if @path
+          puts "RELATIVE PATH IS ====== #{relative}"
+          path = "./#{relative}"
+          
+          result[:path] = path if @path
           result[:first_report_datetime] = @first_report_datetime if @first_report_datetime
           result[:column_names] = @column_names if @column_names
           return result
