@@ -81,6 +81,7 @@ module URBANopt
              @reporting_periods << ReportingPeriod.new(rp)
           end
           
+          @timeseries_csv.run_dir_name(@directory_name)
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
