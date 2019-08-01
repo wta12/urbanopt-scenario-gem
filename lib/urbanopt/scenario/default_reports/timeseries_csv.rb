@@ -49,7 +49,7 @@ module URBANopt
           hash = defaults.merge(hash)
 
           @run_dir = ''
-
+          
           @path = hash[:path]
           @first_report_datetime = hash[:first_report_datetime]
           @column_names = hash[:column_names]
@@ -82,14 +82,21 @@ module URBANopt
         ##
         def to_hash
           result = {}
-
-          directory_path = Pathname.new File.expand_path(@run_dir, File.dirname(__FILE__)) 
+          puts "RUN DIRECTORY IS BOOOO == #{@run_dir.class}"
+          directory_path = Pathname.new File.expand_path(@run_dir, File.dirname(__FILE__)) if @run_dir
           csv_path = Pathname.new @path if @path
-          relative = csv_path.relative_path_from directory_path  if @path
-          puts "RELATIVE PATH IS ====== #{relative}"
-          path = "./#{relative}"
+
           
-          result[:path] = path if @path
+          #relative = csv_path.relative_path_from directory_path  if @path #if @run_dir
+          relative_path = csv_path.to_s.sub(directory_path.to_s, "")
+
+          puts "DIRECTORY_PATH IS ==== #{directory_path.to_s}"
+          puts "CSV_PATH IS ==== #{csv_path.to_s}"
+          #relative_path = ".#{relative_path}"
+          puts " relative path is  == #{relative_path}"
+          
+          result[:path] = relative_path if @path
+          #result[:path] = @path if @path
           result[:first_report_datetime] = @first_report_datetime if @first_report_datetime
           result[:column_names] = @column_names if @column_names
           return result

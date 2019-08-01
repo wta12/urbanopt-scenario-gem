@@ -68,6 +68,7 @@ module URBANopt
           @timesteps_per_hour = hash[:timesteps_per_hour]
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
+          @timeseries_csv.run_dir_name(@directory_name)
           @location = hash[:location]
           @program = Program.new(hash[:program])
           # design_parameters? to add later          
@@ -81,7 +82,6 @@ module URBANopt
              @reporting_periods << ReportingPeriod.new(rp)
           end
           
-          @timeseries_csv.run_dir_name(@directory_name)
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
