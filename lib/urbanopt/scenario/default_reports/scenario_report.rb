@@ -56,7 +56,12 @@ module URBANopt
         
 
         puts caller.inspect
-
+        
+        ##
+        # Create a ScenarioReport from a derivative of ScenarioBase (e.g. ScenarioCSV).
+        # The ScenarioBase should have been run at this point with FeatureReports generated.
+        ##
+        #  @param [ScenarioBase] scenario Scenario to generate results for
         def self.from_scenario_base(scenario_base)
                    
           result = ScenarioReport.new()
