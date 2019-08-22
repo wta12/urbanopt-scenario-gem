@@ -37,6 +37,9 @@ require 'urbanopt/scenario/default_reports/extension'
 require 'json-schema'
 
 require 'json'
+require 'pathname'
+
+
 
 module URBANopt
   module Scenario
@@ -50,73 +53,95 @@ module URBANopt
       class ScenarioReport 
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
                       :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
-          
+        
+
+        puts caller.inspect
+
+        def self.from_scenario_base(scenario_base)
+                   
+          result = ScenarioReport.new()
+
+          #get all the features from the scenario base, create a feature report for each, accumulate the feature reports
+          scenario_base.simulation_dirs.each do |simulation_dir|
+            puts "simulation_dir is = #{simulation_dir}"
+            feature_report = FeatureReport.from_simulation_dir(simulation_dir)
+            result.add(feature_report)
+      
+          end
+          return result
+        end
+        
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
-        def initialize(scenario)
+        def initialize(hash = {})
+          puts " scenario report hash is == #{hash}"
           
-          # scenario.delete_if {|k,v| v.nil?}
-          # scenario = defaults.merge(scenario)
-          
-          # @id = scenario[:id]
-          # @name = scenario[:name]
-          # @directory_name = scenario[:directory_name]
-          # @timesteps_per_hour = scenario[:timesteps_per_hour]
-          # @number_of_not_started_simulations = scenario[:number_of_not_started_simulations]
-          # @number_of_started_simulations = scenario[:number_of_started_simulations]
-          # @number_of_complete_simulations = scenario[:number_of_complete_simulations]
-          # @number_of_failed_simulations = scenario[:number_of_failed_simulations]
-          # @timeseries_csv = TimeseriesCSV.new(scenario[:timeseries_csv])
-          # @location = scenario[:location]
-          # @program = Program.new(scenario[:program])
-          # @construction_costs = scenario[:construction_costs]
-          # @reporting_periods = scenario[:reporting_periods]
-          # @feature_reports = scenario[:feature_reports]
+          hash.delete_if {|k,v| v.nil?}
+          hash = defaults.merge(hash)
+        
 
-          @scenario = scenario
+          @id = hash[:id]
+          @name = hash[:name]
+          @directory_name = hash[:directory_name]
+          @timesteps_per_hour = hash[:timesteps_per_hour]
+          @number_of_not_started_simulations = hash[:number_of_not_started_simulations]
+          @number_of_started_simulations = hash[:number_of_started_simulations]
+          @number_of_complete_simulations = hash[:number_of_complete_simulations]
+          @number_of_failed_simulations = hash[:number_of_failed_simulations]
+          @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
+          @location = hash[:location]
+          @program = Program.new(hash[:program])
+          @construction_costs = hash[:construction_costs]
+          @reporting_periods = hash[:reporting_periods]
+          @feature_reports = hash[:feature_reports]
+
+          @scenario = hash
           
-          @id = scenario.name
-          @name = scenario.name
-          @directory_name = scenario.run_dir
-          @timesteps_per_hour = nil # unknown
-          @number_of_not_started_simulations = 0
-          @number_of_started_simulations = 0
-          @number_of_complete_simulations = 0
-          @number_of_failed_simulations = 0
-          @timeseries_csv = TimeseriesCSV.new
-          @location = nil
-          @program = Program.new
-          @construction_costs = []
-          @reporting_periods = []       
-          @feature_reports = []
+          # @id = scenario.name
+          # @name = scenario.name
+          # @directory_name = scenario.run_dir
+          # puts "SCENARIO RUN DIRECTORY IS #{scenario.class}"
+          # @timesteps_per_hour = nil # unknown
+          # @number_of_not_started_simulations = 0
+          # @number_of_started_simulations = 0
+          # @number_of_complete_simulations = 0
+          # @number_of_failed_simulations = 0
+          # @timeseries_csv = TimeseriesCSV.new
+          # @location = nil
+          # @program = Program.new
+          # @construction_costs = []
+          # @reporting_periods = []       
+          # @feature_reports = []
                    
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
 
+
+
         end
 
-        # def defaults 
-        #   hash = {}
-        #   hash[:id] = 0 # scenario.name
-        #   hash[:name] = 0 #scenario.name
-        #   hash[:directory_name] = 0 #scenario.run_dir
-        #   hash[:timesteps_per_hour] = nil #unknown
-        #   hash[:number_of_not_started_simulations] = 0
-        #   hash[:number_of_started_simulations] = 0
-        #   hash[:number_of_complete_simulations] = 0
-        #   hash[:number_of_failed_simulations] = 0
-        #   hash[:timeseries_csv] = TimeseriesCSV.new
-        #   hash[:location] = nil
-        #   hash[:program] = Program.new
-        #   hash[:construction_costs] = []
-        #   hash[:reporting_periods] = []
-        #   hash[:feature_reports] = []
-        #   return hash
-        # end
-        
+        def defaults 
+          hash = {}
+          hash[:id] = 0 # scenario.name
+          hash[:name] = 0 #scenario.name
+          hash[:directory_name] = 0 #scenario.run_dir
+          hash[:timesteps_per_hour] = nil #unknown
+          hash[:number_of_not_started_simulations] = 0
+          hash[:number_of_started_simulations] = 0
+          hash[:number_of_complete_simulations] = 0
+          hash[:number_of_failed_simulations] = 0
+          hash[:timeseries_csv] = TimeseriesCSV.new.to_hash
+          hash[:location] = nil
+          hash[:program] = Program.new.to_hash
+          hash[:construction_costs] = []
+          hash[:reporting_periods] = []
+          hash[:feature_reports] = []
+          return hash
+        end
+
         def json_path
           File.join(@scenario.run_dir, 'default_scenario_report.json')
         end

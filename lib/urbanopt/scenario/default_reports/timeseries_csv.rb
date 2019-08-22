@@ -82,7 +82,7 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          puts "RUN DIRECTORY IS BOOOO == #{@run_dir.class}"
+          puts "RUN DIRECTORY IS == #{@run_dir.class}"
           directory_path = Pathname.new File.expand_path(@run_dir, File.dirname(__FILE__)) if @run_dir
           csv_path = Pathname.new @path if @path
 

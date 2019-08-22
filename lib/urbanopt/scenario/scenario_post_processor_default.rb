@@ -42,17 +42,20 @@ module URBANopt
       ##
       # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
       ##
-      def initialize(scenario)
-        super(scenario)
+      def initialize(scenario_csv)
+        super(scenario_csv)
         
-        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
       end
       
       ##
       # Run the post processor on this Scenario
       ##
       def run
-        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(scenario)
+        #puts "IT IS RUNNING >>>> #{scenario_base}"
+        
+        a = URBANopt::Scenario::DefaultReports::ScenarioReport.new
+        @scenario_result  = a.from_scenario_base(scenario_base)
+        #@scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport::from_scenario_base(scenario_base)
       
         # this run method adds all the simulation_dirs, you can extend it to do more custom stuff
         scenario.simulation_dirs.each do |simulation_dir|
