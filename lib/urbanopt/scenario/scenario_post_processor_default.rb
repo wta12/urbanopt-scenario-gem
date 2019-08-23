@@ -51,9 +51,9 @@ module URBANopt
       # Run the post processor on this Scenario
       ##
       def run
-        #puts "IT IS RUNNING >>>> #{scenario_base}"
+        puts "IT IS RUNNING >>>> #{scenario_csv}"
         
-        @scenario_result  = URBANopt::Scenario::DefaultReports::ScenarioReport.from_scenario_base(scenario_base)
+        @scenario_result  = URBANopt::Scenario::DefaultReports::ScenarioReport.from_scenario_base(scenario_csv)
         #@scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport::from_scenario_base(scenario_base)
       
         # this run method adds all the simulation_dirs, you can extend it to do more custom stuff

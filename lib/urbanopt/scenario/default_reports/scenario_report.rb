@@ -55,29 +55,27 @@ module URBANopt
                       :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
         
 
-        puts caller.inspect
         
         ##
         # Create a ScenarioReport from a derivative of ScenarioBase (e.g. ScenarioCSV).
         # The ScenarioBase should have been run at this point with FeatureReports generated.
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
-        def self.from_scenario_base(scenario_base)
-                   
+        def self.from_scenario_base(scenario_csv)
           result = ScenarioReport.new()
 
           #get all the features from the scenario base, create a feature report for each, accumulate the feature reports
-          scenario_base.simulation_dirs.each do |simulation_dir|
-            puts "simulation_dir is = #{simulation_dir}"
+          scenario_csv.simulation_dirs.each do |simulation_dir|
             feature_reports = FeatureReport.from_simulation_dir(simulation_dir)
-            puts "FEATURE REPORTS is === #{feature_reports[0]}"
+            
 
             feature_reports.each do |feature_report|
-              #puts "feature_report is = #{feature_report.id}"
               result.add_feature_report(feature_report)
             end
-            
           end
+          
+          @@scenario_csv = scenario_csv
+        
           return result
         end
         
@@ -110,7 +108,8 @@ module URBANopt
 
           @scenario = hash
 
-
+          #@scenario_csv = @@scenario_csv
+          #puts "scenario_csv is = =====  == #{@scenario_csv}"
           # @id = scenario.name
           # @name = scenario.name
           # @directory_name = scenario.run_dir
@@ -133,11 +132,11 @@ module URBANopt
 
         end
 
-        def defaults 
+        def defaults  
           hash = {}
-          hash[:id] = 0.to_s # scenario.name
-          hash[:name] = nil.to_s #scenario.name
-          hash[:directory_name] = File.expand_path('../../../../spec/test/example_scenario', File.dirname(__FILE__)) #scenario.run_dir
+          hash[:id] = nil.to_s #scenario_csv.name
+          hash[:name] = nil.to_s #scenario_csv.name
+          hash[:directory_name] = nil.to_s #scenario_csv.run_dir
           hash[:timesteps_per_hour] = nil #unknown
           hash[:number_of_not_started_simulations] = 0
           hash[:number_of_started_simulations] = 0
@@ -153,15 +152,12 @@ module URBANopt
         end
 
         def json_path
-          #puts "@scenario is == #{@scenario}"
-          #run_dir = File.dirname(@scenario[:feature_reports][0].directory_name)
-          #puts "DIRECTORRYYYYYYYYYYYYYYYYYY NAME IS = #{run_dir}"
-          File.join(@directory_name, 'default_scenario_report.json')
+          puts "@@RUN _DIR IS == #{@@scenario_csv.run_dir}"
+          File.join(@@scenario_csv.run_dir, 'default_scenario_report.json')
         end
         
         def csv_path
-          #run_dir = File.dirname(@scenario[:feature_reports][0].directory_name)
-          File.join(@directory_name, 'default_scenario_report.csv')
+          File.join(@@scenario_csv.run_dir, 'default_scenario_report.csv')
         end
         
         ##
@@ -197,9 +193,9 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          result[:id] = @id
-          result[:name] = @name
-          result[:directory_name] = @directory_name
+          result[:id] = @@scenario_csv.name
+          result[:name] = @@scenario_csv.name
+          result[:directory_name] = @@scenario_csv.run_dir
           result[:timesteps_per_hour] = @timesteps_per_hour
           result[:number_of_not_started_simulations] = @number_of_not_started_simulations
           result[:number_of_started_simulations] = @number_of_started_simulations
