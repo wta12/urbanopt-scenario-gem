@@ -44,7 +44,7 @@ module URBANopt
       ##
       def initialize(scenario_csv)
         super(scenario_csv)
-        
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.from_scenario_base(scenario_csv)
       end
       
       ##
@@ -53,14 +53,13 @@ module URBANopt
       def run
         #puts "IT IS RUNNING >>>> #{scenario_base}"
         
-        a = URBANopt::Scenario::DefaultReports::ScenarioReport.new
-        @scenario_result  = a.from_scenario_base(scenario_base)
+        @scenario_result  = URBANopt::Scenario::DefaultReports::ScenarioReport.from_scenario_base(scenario_base)
         #@scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport::from_scenario_base(scenario_base)
       
         # this run method adds all the simulation_dirs, you can extend it to do more custom stuff
-        scenario.simulation_dirs.each do |simulation_dir|
-          add_simulation_dir(simulation_dir)
-        end
+        #scenario_base.simulation_dirs.each do |simulation_dir|
+          #add_simulation_dir(simulation_dir)
+        #end
         
         return @scenario_result
       end

@@ -69,9 +69,14 @@ module URBANopt
           #get all the features from the scenario base, create a feature report for each, accumulate the feature reports
           scenario_base.simulation_dirs.each do |simulation_dir|
             puts "simulation_dir is = #{simulation_dir}"
-            feature_report = FeatureReport.from_simulation_dir(simulation_dir)
-            result.add(feature_report)
-      
+            feature_reports = FeatureReport.from_simulation_dir(simulation_dir)
+            puts "FEATURE REPORTS is === #{feature_reports[0]}"
+
+            feature_reports.each do |feature_report|
+              #puts "feature_report is = #{feature_report.id}"
+              result.add_feature_report(feature_report)
+            end
+            
           end
           return result
         end
@@ -86,6 +91,7 @@ module URBANopt
           hash.delete_if {|k,v| v.nil?}
           hash = defaults.merge(hash)
         
+          
 
           @id = hash[:id]
           @name = hash[:name]
@@ -103,7 +109,8 @@ module URBANopt
           @feature_reports = hash[:feature_reports]
 
           @scenario = hash
-          
+
+
           # @id = scenario.name
           # @name = scenario.name
           # @directory_name = scenario.run_dir
@@ -124,15 +131,13 @@ module URBANopt
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
 
-
-
         end
 
         def defaults 
           hash = {}
-          hash[:id] = 0 # scenario.name
-          hash[:name] = 0 #scenario.name
-          hash[:directory_name] = 0 #scenario.run_dir
+          hash[:id] = 0.to_s # scenario.name
+          hash[:name] = nil.to_s #scenario.name
+          hash[:directory_name] = File.expand_path('../../../../spec/test/example_scenario', File.dirname(__FILE__)) #scenario.run_dir
           hash[:timesteps_per_hour] = nil #unknown
           hash[:number_of_not_started_simulations] = 0
           hash[:number_of_started_simulations] = 0
@@ -148,11 +153,15 @@ module URBANopt
         end
 
         def json_path
-          File.join(@scenario.run_dir, 'default_scenario_report.json')
+          #puts "@scenario is == #{@scenario}"
+          #run_dir = File.dirname(@scenario[:feature_reports][0].directory_name)
+          #puts "DIRECTORRYYYYYYYYYYYYYYYYYY NAME IS = #{run_dir}"
+          File.join(@directory_name, 'default_scenario_report.json')
         end
         
         def csv_path
-          File.join(@scenario.run_dir, 'default_scenario_report.csv')
+          #run_dir = File.dirname(@scenario[:feature_reports][0].directory_name)
+          File.join(@directory_name, 'default_scenario_report.csv')
         end
         
         ##

@@ -44,7 +44,7 @@ module URBANopt
         # perform initialization functions
         #puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
         def initialize(hash = {})
-          puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
+          #puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
 
@@ -82,8 +82,9 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          puts "RUN DIRECTORY IS == #{@run_dir.class}"
-          directory_path = Pathname.new File.expand_path(@run_dir, File.dirname(__FILE__)) if @run_dir
+          puts "RUN DIRECTORY IS == #{@run_dir}"
+          directory_path = Pathname.new File.expand_path(@run_dir.to_s, File.dirname(__FILE__)) if @run_dir
+          puts "directory_path is == #{directory_path}"
           csv_path = Pathname.new @path if @path
 
           
