@@ -34,5 +34,4 @@ Check out the repository and then execute:
 * Update change log
 * Update version in `/lib/urbanopt/scenario/version.rb`
 * Merge down to master
-* Release via github
 * run `rake release` from master
