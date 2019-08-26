@@ -28,42 +28,16 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require 'logger'
+
 module URBANopt
   module Scenario
-    class ScenarioPostProcessorBase
-
-      ##
-      # ScenarioPostProcessorBase post-processes a Scenario to create scenario level results
-      ##
-      def initialize(scenario_base)
-        @scenario_base = scenario_base
-      end
+    module DefaultReports
+      @@logger = Logger.new(STDOUT)
       
-      def scenario_base
-        @scenario_base
+      def self.logger
+        @@logger
       end
-
-      ##
-      # Run the post processor on this Scenario
-      ##
-      def run
-        raise 'run not implemented for ScenarioPostProcessorBase, override in your class'
-      end
-
-      ##
-      # Add results from a simulation_dir to this result
-      ##
-      def add_simulation_dir(simulation_dir)
-        raise 'add_simulation_dir not implemented for ScenarioPostProcessorBase, override in your class'
-      end
-
-      ##
-      # Save scenario result
-      ##
-      def save
-        raise 'save not implemented for ScenarioPostProcessorBase, override in your class'
-      end
-      
     end
   end
 end

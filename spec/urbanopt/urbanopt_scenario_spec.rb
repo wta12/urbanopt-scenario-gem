@@ -38,6 +38,14 @@ RSpec.describe URBANopt::Scenario do
     expect(URBANopt::Scenario::VERSION).not_to be nil
   end
   
+  it 'has a logger' do
+    expect(URBANopt::Scenario.logger).not_to be nil
+    current_level = URBANopt::Scenario.logger.level
+    URBANopt::Scenario.logger.level = Logger::DEBUG
+    expect(URBANopt::Scenario.logger.level).to eq Logger::DEBUG
+    URBANopt::Scenario.logger.level = current_level
+  end
+  
   it 'can run a scenario' do
   
     name = 'Example Scenario'

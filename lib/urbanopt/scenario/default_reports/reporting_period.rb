@@ -137,11 +137,11 @@ module URBANopt
           energy_production_hash = @energy_production if @energy_production
           energy_production_hash.delete_if {|k,v| v.nil?}
           energy_production_hash.each do |eph|
-            puts "energy_production hash before is #{energy_production_hash}"
+            
             eph.delete_if {|k,v| v.nil?}
-            puts "energy_production hash after is #{energy_production_hash}"
+            
           end
-          puts "energy_production hash after END is #{energy_production_hash}"
+          
           result[:energy_production] = energy_production_hash if @energy_production
 
           
@@ -187,11 +187,8 @@ module URBANopt
         # Merge a reporting period with a new reporting period
         ## 
         def self.merge_reporting_period(existing_period, new_period)
-          #puts " running  reporting period merge_reporting_period method "                
+                         
           # modify the existing_period by summing up the results ; # sum results only if they exist
-          
-          #try to create a class for enduse 
-
           existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
           existing_period.total_source_energy = add_values(existing_period.total_source_energy, new_period.total_source_energy)  
           existing_period.net_source_energy = add_values(existing_period.net_source_energy, new_period.net_source_energy) 
@@ -244,15 +241,10 @@ module URBANopt
         ##
         def self.merge_reporting_periods(existing_periods, new_periods)
                    
-          # TODO: match new periods to existing periods and call merge_reporting_period
-
           id_list_existing = []
           id_list_new = []
           id_list_existing = existing_periods.collect {|x| x.id}
           id_list_new = new_periods.collect {|x| x.id}
-
-          #puts "\nexisting periods ids: #{id_list_new}"
-          #puts "new periods ids: #{id_list_new}"
                  
           if id_list_existing == id_list_new 
              
@@ -270,7 +262,6 @@ module URBANopt
             end
             
           elsif existing_periods.empty?
-            #puts " existing_periods empty" 
             
             # if existing periods are empty, initialize with new_periods
             # the = operator would link existing_periods and new_periods to the same object in memory

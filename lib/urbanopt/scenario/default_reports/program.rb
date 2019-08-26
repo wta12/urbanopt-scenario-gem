@@ -47,11 +47,9 @@ module URBANopt
         # Program class intialize attributes related to the building program
         ##
         # perform initialization functions
-          def initialize(hash = {})
-          #puts "PROGRAM HASHSHSHSHSHSH IS  +++++========= #{hash}"
+        def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
-          #hash = defaults
 
           @site_area = hash[:site_area]
           @floor_area = hash[:floor_area]
@@ -70,31 +68,9 @@ module URBANopt
           @maximum_number_of_parking_stories_above_ground = hash[:maximum_number_of_parking_stories_above_ground]
           @number_of_residential_units = hash[:number_of_residential_units]
           @building_types = hash[:building_types]
-
-
           @window_area = hash[:window_area]
-          # @north_window_area = hash[:window_area][:north_wall_area]
-          # @south_window_area = hash[:window_area][:south_wall_area]
-          # @east_window_area = hash[:window_area][:east_wall_area]
-          # @west_window_area = hash[:window_area][:west_wall_area]
-          # @total_window_area = hash[:window_area][:total_wall_area]
-
           @wall_area = hash[:wall_area]
-
-          # @north_wall_area = hash[:wall_area][:north_wall_area]
-          # @south_wall_area = hash[:wall_area][:south_wall_area]
-          # @east_wall_area = hash[:wall_area][:east_wall_area]
-          # @west_wall_area = hash[:wall_area][:west_wall_area]
-          # @total_wall_area = hash[:wall_area][:total_wall_area]
-
           @roof_area = hash[:roof_area]
-
-          #puts "roof_area is ====== :) :) === #{@roof_area}"
-          #@equipment_roof_area = hash[:roof_area][:equipment_roof_area]
-          #@photovoltaic_roof_area = hash[:roof_area][:photovoltaic_roof_area]
-          #@available_roof_area = hash[:roof_area][:available_roof_area]
-          #@total_roof_area = hash[:roof_area][:total_roof_area]
-          
           @orientation = hash[:orientation]
           @aspect_ratio = hash[:aspect_ratio]
 
@@ -177,7 +153,6 @@ module URBANopt
           roof_area_hash = @roof_area if @roof_area
           roof_area_hash.delete_if {|k,v| v.nil?}
           result[:roof_area] = roof_area_hash if @roof_area
-
 
           result[:orientation] = @orientation if @orientation
           result[:aspect_ratio] = @aspect_ratio if @aspect_ratio 
