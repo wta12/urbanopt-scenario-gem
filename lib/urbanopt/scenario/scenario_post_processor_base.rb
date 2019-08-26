@@ -35,12 +35,12 @@ module URBANopt
       ##
       # ScenarioPostProcessorBase post-processes a Scenario to create scenario level results
       ##
-      def initialize(scenario_csv)
-        @scenario_csv = scenario_csv
+      def initialize(scenario_base)
+        @scenario_base = scenario_base
       end
       
-      def scenario_csv
-        @scenario_csv
+      def scenario_base
+        @scenario_base
       end
 
       ##
