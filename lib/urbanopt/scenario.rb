@@ -29,6 +29,7 @@
 #*********************************************************************************
 
 require 'urbanopt/scenario/version'
+require 'urbanopt/scenario/logger'
 require 'urbanopt/scenario/extension'
 
 require 'urbanopt/scenario/scenario_base'

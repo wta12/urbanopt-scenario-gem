@@ -31,6 +31,14 @@
 require_relative '../spec_helper'
 
 RSpec.describe URBANopt::Scenario::DefaultReports do
+
+  it 'has a logger' do
+    expect(URBANopt::Scenario::DefaultReports.logger).not_to be nil
+    current_level = URBANopt::Scenario::DefaultReports.logger.level
+    URBANopt::Scenario::DefaultReports.logger.level = Logger::DEBUG
+    expect(URBANopt::Scenario::DefaultReports.logger.level).to eq Logger::DEBUG
+    URBANopt::Scenario::DefaultReports.logger.level = current_level
+  end
   
   it 'can construct a scenario report' do
 
@@ -144,8 +152,6 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     #puts "final cost = #{existing_costs}"
 
   end
-
-
 
   it 'can merge end uses' do
     existing_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new( { electricity: { heating: 1, cooling:1 }, natural_gas:{fans: 1, pumps: 1}})

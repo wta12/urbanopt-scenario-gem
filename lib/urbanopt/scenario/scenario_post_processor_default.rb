@@ -51,13 +51,11 @@ module URBANopt
       # Run the post processor on this Scenario
       ##
       def run
-                
-        @scenario_result  = URBANopt::Scenario::DefaultReports::ScenarioReport.from_scenario_base(scenario_base)
               
         # this run method adds all the simulation_dirs, you can extend it to do more custom stuff
-        #scenario_base.simulation_dirs.each do |simulation_dir|
-          #add_simulation_dir(simulation_dir)
-        #end
+        @scenario_result.scenario.simulation_dirs.each do |simulation_dir|
+          add_simulation_dir(simulation_dir)
+        end
         
         return @scenario_result
       end

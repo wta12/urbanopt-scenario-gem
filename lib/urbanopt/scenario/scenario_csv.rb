@@ -56,6 +56,8 @@ module URBANopt
         @csv_file = csv_file
         @num_header_rows = num_header_rows
         
+        @@logger ||= URBANopt::Scenario.logger
+        
         load_mapper_files
       end
       
@@ -80,7 +82,7 @@ module URBANopt
           begin
             require(f)
           rescue LoadError => e
-            puts e.message
+            @@logger.error(e.message)
             raise         
           end
         end

@@ -30,6 +30,7 @@
 
 require 'urbanopt/scenario/default_reports/construction_cost'
 require 'urbanopt/scenario/default_reports/feature_report'
+require 'urbanopt/scenario/default_reports/logger'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
@@ -38,8 +39,6 @@ require 'json-schema'
 
 require 'json'
 require 'pathname'
-require 'logger'
-
 
 module URBANopt
   module Scenario
@@ -58,22 +57,21 @@ module URBANopt
         # Create a ScenarioReport from a derivative of ScenarioBase (e.g. ScenarioCSV).
         # The ScenarioBase should have been run at this point with FeatureReports generated.
         ##
-        #  @param [ScenarioBase] scenario Scenario to generate results for
-        def self.from_scenario_base(scenario_csv)
+        #  @param [ScenarioBase] scenario_base Scenario to generate results for
+        def self.from_scenario_base(scenario_base)
           result = ScenarioReport.new()
+          result.scenario = scenario_base
 
-          #get all the features from the scenario base, create a feature report for each, accumulate the feature reports
-          scenario_csv.simulation_dirs.each do |simulation_dir|
-            feature_reports = FeatureReport.from_simulation_dir(simulation_dir)
-            
+          #DLM: accumulating results is done in the post processor run method
+          ##get all the features from the scenario base, create a feature report for each, accumulate the feature reports
+          #scenario_base.simulation_dirs.each do |simulation_dir|
+          #  feature_reports = FeatureReport.from_simulation_dir(simulation_dir)
+          #
+          #  feature_reports.each do |feature_report|
+          #    result.add_feature_report(feature_report)
+          #  end
+          #end
 
-            feature_reports.each do |feature_report|
-              result.add_feature_report(feature_report)
-            end
-          end
-          
-          result.scenario = scenario_csv
-        
           return result
         end
         
@@ -82,6 +80,8 @@ module URBANopt
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(hash = {})
+          # have to use the module method before we have initialized the class one
+          URBANopt::Scenario::DefaultReports.logger.debug("Scenario report hash is == #{hash}")
           
           hash.delete_if {|k,v| v.nil?}
           hash = defaults.merge(hash)
@@ -106,9 +106,10 @@ module URBANopt
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
 
-          # initialize logger
-          @@logger = Logger.new(STDOUT)
+          @@logger.info("Run directory: #{@scenario[:directory_name]}")
+
         end
 
         def defaults  

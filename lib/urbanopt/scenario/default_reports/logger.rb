@@ -28,10 +28,16 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require "urbanopt/scenario/default_reports/logger"
-require "urbanopt/scenario/default_reports/construction_cost"
-require "urbanopt/scenario/default_reports/feature_report"
-require "urbanopt/scenario/default_reports/program"
-require "urbanopt/scenario/default_reports/reporting_period"
-require "urbanopt/scenario/default_reports/scenario_report"
-require "urbanopt/scenario/default_reports/timeseries_csv"
+require 'logger'
+
+module URBANopt
+  module Scenario
+    module DefaultReports
+      @@logger = Logger.new(STDOUT)
+      
+      def self.logger
+        @@logger
+      end
+    end
+  end
+end
