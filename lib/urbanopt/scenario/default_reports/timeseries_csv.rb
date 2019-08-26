@@ -42,9 +42,7 @@ module URBANopt
         # Intialize timeseries CSV attributes
         ##
         # perform initialization functions
-        #puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
         def initialize(hash = {})
-          #puts "TIME SERIES CSV HASH IS +++++===== #{hash}"
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
 
@@ -82,24 +80,15 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          puts "RUN DIRECTORY IS == #{@run_dir}"
           directory_path = Pathname.new File.expand_path(@run_dir.to_s, File.dirname(__FILE__)) if @run_dir
-          puts "directory_path is == #{directory_path}"
           csv_path = Pathname.new @path if @path
 
-          
-          #relative = csv_path.relative_path_from directory_path  if @path #if @run_dir
           relative_path = csv_path.to_s.sub(directory_path.to_s, "")
 
-          puts "DIRECTORY_PATH IS ==== #{directory_path.to_s}"
-          puts "CSV_PATH IS ==== #{csv_path.to_s}"
-          #relative_path = ".#{relative_path}"
-          puts " relative path is  == #{relative_path}"
-          
           result[:path] = relative_path if @path
-          #result[:path] = @path if @path
           result[:first_report_datetime] = @first_report_datetime if @first_report_datetime
           result[:column_names] = @column_names if @column_names
+          
           return result
         end
         

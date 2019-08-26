@@ -54,10 +54,6 @@ module URBANopt
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
                       :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports , :scenario
         
-
-        
-
-        
         ##
         # Create a ScenarioReport from a derivative of ScenarioBase (e.g. ScenarioCSV).
         # The ScenarioBase should have been run at this point with FeatureReports generated.
@@ -86,13 +82,10 @@ module URBANopt
         ##
         #  @param [ScenarioBase] scenario Scenario to generate results for
         def initialize(hash = {})
-          puts " scenario report hash is == #{hash}"
           
           hash.delete_if {|k,v| v.nil?}
           hash = defaults.merge(hash)
         
-          
-
           @id = hash[:id]
           @name = hash[:name]
           @directory_name = hash[:directory_name]
@@ -116,9 +109,6 @@ module URBANopt
 
           # initialize logger
           @@logger = Logger.new(STDOUT)
-          
-          @@logger.info("Run directory: #{@scenario[:directory_name]}")
-
         end
 
         def defaults  
