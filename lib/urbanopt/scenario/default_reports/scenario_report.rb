@@ -50,37 +50,15 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
-                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports , :scenario
-        
-        ##
-        # Create a ScenarioReport from a derivative of ScenarioBase (e.g. ScenarioCSV).
-        # The ScenarioBase should have been run at this point with FeatureReports generated.
-        ##
-        #  @param [ScenarioBase] scenario_base Scenario to generate results for
-        def self.from_scenario_base(scenario_base)
-          result = ScenarioReport.new()
-          result.scenario = scenario_base
-
-          #DLM: accumulating results is done in the post processor run method
-          ##get all the features from the scenario base, create a feature report for each, accumulate the feature reports
-          #scenario_base.simulation_dirs.each do |simulation_dir|
-          #  feature_reports = FeatureReport.from_simulation_dir(simulation_dir)
-          #
-          #  feature_reports.each do |feature_report|
-          #    result.add_feature_report(feature_report)
-          #  end
-          #end
-
-          return result
-        end
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
         
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
         ##
-        #  @param [ScenarioBase] scenario Scenario to generate results for
+        #  @param [Hash] hash Hash of a previously serialized ScenarioReport
         def initialize(hash = {})
-          # have to use the module method before we have initialized the class one
+        
+          # have to use the module method because we have not yet initialized the class one
           URBANopt::Scenario::DefaultReports.logger.debug("Scenario report hash is == #{hash}")
           
           hash.delete_if {|k,v| v.nil?}
@@ -101,14 +79,12 @@ module URBANopt
           @reporting_periods = hash[:reporting_periods]
           @feature_reports = hash[:feature_reports]
 
-          @scenario = hash
-
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
 
-          @@logger.info("Run directory: #{@scenario[:directory_name]}")
+          @@logger.info("Run directory: #{@directory_name}")
 
         end
 
@@ -132,11 +108,11 @@ module URBANopt
         end
 
         def json_path
-          File.join(@scenario.run_dir, 'default_scenario_report.json')
+          File.join(@directory_name, 'default_scenario_report.json')
         end
         
         def csv_path
-          File.join(@scenario.run_dir, 'default_scenario_report.csv')
+          File.join(@directory_name, 'default_scenario_report.csv')
         end
         
         ##
@@ -172,9 +148,9 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          result[:id] = @scenario.name
-          result[:name] = @scenario.name
-          result[:directory_name] = @scenario.run_dir
+          result[:id] = @id
+          result[:name] = @name
+          result[:directory_name] = @directory_name
           result[:timesteps_per_hour] = @timesteps_per_hour
           result[:number_of_not_started_simulations] = @number_of_not_started_simulations
           result[:number_of_started_simulations] = @number_of_started_simulations
@@ -237,16 +213,13 @@ module URBANopt
           
           # merge program information
           @program.add_program(feature_report.program)
-          
-          
+
           # merge construction costs information
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
-          
-          
+
           # merge reporting periods information
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
-          
-          
+
           # add feature_report
           @feature_reports << feature_report
 
@@ -254,8 +227,7 @@ module URBANopt
           @location = feature_reports[0].location
 
         end
-        
-       
+
       end
     end
   end
