@@ -28,13 +28,17 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'urbanopt/scenario/default_reports/construction_costs'
+require 'urbanopt/scenario/default_reports/construction_cost'
 require 'urbanopt/scenario/default_reports/feature_report'
+require 'urbanopt/scenario/default_reports/logger'
 require 'urbanopt/scenario/default_reports/program'
-require 'urbanopt/scenario/default_reports/reporting_periods'
+require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 
 require 'json'
+require 'pathname'
 
 module URBANopt
   module Scenario
@@ -46,36 +50,75 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :program, :construction_costs, :reporting_periods, :feature_reports
-          
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
+        
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
         ##
-        #  @param [ScenarioBase] scenario Scenario to generate results for
-        def initialize(scenario)
-          @scenario = scenario
+        #  @param [Hash] hash Hash of a previously serialized ScenarioReport
+        def initialize(hash = {})
+        
+          # have to use the module method because we have not yet initialized the class one
+          URBANopt::Scenario::DefaultReports.logger.debug("Scenario report hash is == #{hash}")
           
-          @id = scenario.name
-          @name = scenario.name
-          @directory_name = scenario.run_dir
-          @timesteps_per_hour = nil # unknown
-          @number_of_not_started_simulations = 0
-          @number_of_started_simulations = 0
-          @number_of_complete_simulations = 0
-          @number_of_failed_simulations = 0
-          @timeseries_csv = TimeseriesCSV.new
-          @program = Program.new
-          @construction_costs = ConstructionCosts.new
-          @reporting_periods = ReportingPeriods.new
-          @feature_reports = []
+          hash.delete_if {|k,v| v.nil?}
+          hash = defaults.merge(hash)
+        
+          @id = hash[:id]
+          @name = hash[:name]
+          @directory_name = hash[:directory_name]
+          @timesteps_per_hour = hash[:timesteps_per_hour]
+          @number_of_not_started_simulations = hash[:number_of_not_started_simulations]
+          @number_of_started_simulations = hash[:number_of_started_simulations]
+          @number_of_complete_simulations = hash[:number_of_complete_simulations]
+          @number_of_failed_simulations = hash[:number_of_failed_simulations]
+          @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
+          @location = hash[:location]
+          @program = Program.new(hash[:program])
+          @construction_costs = hash[:construction_costs]
+          @reporting_periods = hash[:reporting_periods]
+          @feature_reports = hash[:feature_reports]
+
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
+
+          @@logger.info("Run directory: #{@directory_name}")
+
+        end
+
+        def defaults  
+          hash = {}
+          hash[:id] = nil.to_s 
+          hash[:name] = nil.to_s
+          hash[:directory_name] = nil.to_s
+          hash[:timesteps_per_hour] = nil #unknown
+          hash[:number_of_not_started_simulations] = 0
+          hash[:number_of_started_simulations] = 0
+          hash[:number_of_complete_simulations] = 0
+          hash[:number_of_failed_simulations] = 0
+          hash[:timeseries_csv] = TimeseriesCSV.new.to_hash
+          hash[:location] = nil
+          hash[:program] = Program.new.to_hash
+          hash[:construction_costs] = []
+          hash[:reporting_periods] = []
+          hash[:feature_reports] = []
+          return hash
+        end
+
+        def json_path
+          File.join(@directory_name, 'default_scenario_report.json')
+        end
+        
+        def csv_path
+          File.join(@directory_name, 'default_scenario_report.csv')
         end
         
         ##
         # Save the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
         def save()
-        
-          path = File.join(@scenario.run_dir, 'default_scenario_report.json')
           
           hash = {}
           hash[:scenario_report] = self.to_hash
@@ -84,7 +127,7 @@ module URBANopt
             hash[:feature_reports] << feature_report.to_hash
           end
           
-          File.open(path, 'w') do |f|
+          File.open(json_path, 'w') do |f|
             f.puts JSON::pretty_generate(hash)
             # make sure data is written to the disk one way or the other
             begin
@@ -95,7 +138,7 @@ module URBANopt
           end
  
           # save the csv data
-          timeseries_csv.save_data(File.join(@scenario.run_dir, 'default_scenario_report.csv'))
+          timeseries_csv.save_data(csv_path)
           
           return true
         end
@@ -114,14 +157,25 @@ module URBANopt
           result[:number_of_complete_simulations] = @number_of_complete_simulations
           result[:number_of_failed_simulations] = @number_of_failed_simulations
           result[:timeseries_csv] = @timeseries_csv.to_hash
+          result[:location] = @location
           result[:program] = @program.to_hash
-          result[:construction_costs] = @construction_costs.to_hash
-          result[:reporting_periods] = @reporting_periods.to_hash
+          
+          result[:construction_costs] = []
+          @construction_costs.each{|cc| result[:construction_costs] << cc.to_hash}
+          
+          result[:reporting_periods] = []
+          @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
+
+          # validate scenario_report properties against schema
+          if @@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result).any?
+            raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result)}"
+          end 
+
           return result
         end
         
         def add_feature_report(feature_report)
-          
+          #puts " START ADDING FEATURE REPORT"
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
@@ -155,20 +209,25 @@ module URBANopt
           # merge timeseries_csv information
           @timeseries_csv.add_timeseries_csv(feature_report.timeseries_csv)
           
+          @timeseries_csv.run_dir_name(@directory_name)
+          
           # merge program information
           @program.add_program(feature_report.program)
-          
+
           # merge construction costs information
-          @construction_costs.add_construction_costs(feature_report.construction_costs)
-          
+          @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
+
           # merge reporting periods information
-          @reporting_periods.add_reporting_periods(feature_report.reporting_periods)
-          
+          @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
+
           # add feature_report
           @feature_reports << feature_report
+
+          # assign scenario location to the location of the first feature
+          @location = feature_reports[0].location
+
         end
-        
-       
+
       end
     end
   end

@@ -74,9 +74,11 @@
 			"type": "object",
 			"properties": {
 				"id": {
+					"description": "Id refers to the id of a building/feature",
 					"type": "string"
 				},
 				"name": {
+					"description": "name refers to the name of the feature (eg. Building 1, tranformer 5)",
 					"type": "string"
 				},
 				"directory_name": {
@@ -141,9 +143,11 @@
 			"type": "object",
 			"properties": {
 				"id": {
-					"type": "string"
+					"description": "Id refers to the id of the reporting period. Ids of reporting periods are matched across simulations, so the same period of time gets the same id for all simulations.",
+					"type": "number"
 				},
 				"name": {
+					"description": "name refers to the name of the reporting period(eg. Annual, January)",
 					"type": "string"
 				},
 				"multiplier": {
@@ -538,10 +542,6 @@
 						}
 					},
 					"required": [
-						"north_window_area",
-						"south_window_area",
-						"east_window_area",
-						"west_window_area",
 						"total_window_area"
 					]
 				},
@@ -592,9 +592,6 @@
 						}
 					},
 					"required": [
-						"equipment_roof_area",
-						"photovoltaic_roof_area",
-						"available_roof_area",
 						"total_roof_area"
 					]
 				},
@@ -608,28 +605,16 @@
 				}
 			},
 			"required": [
-				"site_area",
 				"floor_area",
 				"conditioned_area",
 				"unconditioned_area",
 				"footprint_area",
 				"maximum_roof_height",
-				"maximum_number_of_stories",
-				"maximum_number_of_stories_above_ground",
-				"parking_area",
-				"number_of_parking_spaces",
-				"number_of_parking_spaces_charging",
-				"parking_footprint_area",
-				"maximum_parking_height",
-				"maximum_number_of_parking_stories",
-				"maximum_number_of_parking_stories_above_ground",
 				"number_of_residential_units",
 				"building_types",
 				"window_area",
 				"wall_area",
-				"roof_area",
-				"orientation",
-				"aspect_ratio"
+				"roof_area"
 			]
 		},
 		"BuildingType": {
@@ -666,7 +651,7 @@
 				},
 				"maximum_occupancy": {
 					"description": "Maximum number of occupants ",
-					"type": "integer"
+					"type": "number"
 				},
 				"floor_area": {
 					"description": "Building gross floor area of this type (ft^2)",

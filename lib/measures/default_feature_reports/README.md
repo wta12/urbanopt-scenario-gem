@@ -43,6 +43,14 @@ ReportingMeasure
 **Required:** false,
 **Model Dependent:** false
 
+### Reporting Frequency
+The frequency at which to report timeseries output data.
+**Name:** reporting_frequency,
+**Type:** Choice,
+**Units:** ,
+**Required:** true,
+**Model Dependent:** false
+
 
 
 

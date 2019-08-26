@@ -28,27 +28,66 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
+require 'urbanopt/scenario/default_reports/extension'
+require 'json-schema'
 require 'json'
 
 module URBANopt
   module Scenario
     module DefaultReports
-      class ConstructionCosts 
+      class Date 
 
-        # perform initialization functions
+        attr_accessor :month, :day_of_month, :year
+
+        ##
+        # Date class intialize date attributes
+        ##
         def initialize(hash = {})
+            hash.delete_if {|k, v| v.nil?}
+            hash = defaults.merge(hash)
+                
+            @month = hash[:month].to_i
+            @day_of_month = hash[:day_of_month].to_i
+            @year = hash[:year].to_i
+                        
+            # initialize class variable @@extension only once
+            @@extension ||= Extension.new
+            @@schema ||= @@extension.schema
 
         end
-        
+
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
-          result = {}
-          return result
+            result = {}
+            result[:month] = @month if @month
+            result[:day_of_month] = @day_of_month if @day_of_month
+            result[:year] = @year if @year
+            
+
+            # validate end_uses properties against schema
+            if @@extension.validate(@@schema[:definitions][:Date][:properties],result).any?
+            raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Date][:properties],result)}"
+            end
+
+            return result
         end
-        
-        def add_construction_costs(construction_costs)
-        
+
+        ##
+        # Assign default values if values does not exist
+        ##
+        def defaults
+            hash = {}
+            hash[:month] = nil
+            hash[:day_of_month] = nil
+            hash[:year] = nil
+                            
+            return hash
+                
         end
-        
+
+
       end
     end
   end

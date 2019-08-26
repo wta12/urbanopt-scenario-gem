@@ -29,6 +29,7 @@
 #*********************************************************************************
 
 require 'csv'
+require 'pathname'
 
 module URBANopt
   module Scenario
@@ -37,11 +38,16 @@ module URBANopt
         
         attr_accessor :path, :first_report_datetime, :column_names
         
+        ##
+        # Intialize timeseries CSV attributes
+        ##
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
 
+          @run_dir = ''
+          
           @path = hash[:path]
           @first_report_datetime = hash[:first_report_datetime]
           @column_names = hash[:column_names]
@@ -51,20 +57,45 @@ module URBANopt
           @data = nil
         end
         
+        ##
+        # Assign default values if values does not exist
+        ##
         def defaults
           hash = {}
+          hash[:path] = nil
           hash[:column_names] = []
           return hash
         end
         
+
+        ##
+        # Gets run directory
+        ##
+        def run_dir_name(name)
+          @run_dir = name
+        end
+
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
         def to_hash
           result = {}
-          result[:path] = @path if @path
+          directory_path = Pathname.new File.expand_path(@run_dir.to_s, File.dirname(__FILE__)) if @run_dir
+          csv_path = Pathname.new @path if @path
+
+          relative_path = csv_path.to_s.sub(directory_path.to_s, "")
+
+          result[:path] = relative_path if @path
           result[:first_report_datetime] = @first_report_datetime if @first_report_datetime
           result[:column_names] = @column_names if @column_names
+          
           return result
         end
         
+
+        ##
+        # Load data from the CSV file
+        ##
         def load_data
           @mutex.synchronize do
             if @data.nil?
@@ -88,11 +119,17 @@ module URBANopt
           end
         end
         
+        ##
+        # Get data
+        ##
         def get_data(column_name)
           load_data
           return @data[column_name]
         end
         
+        ##
+        # Save data
+        ##
         def save_data(path)
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
@@ -115,7 +152,12 @@ module URBANopt
             
         end
         
+        ##
+        # Merge timeseries csv to each other
+        ##
         def add_timeseries_csv(other)
+
+          @path = other.path
           
           if @first_report_datetime.nil?
             @first_report_datetime = other.first_report_datetime

@@ -28,26 +28,15 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #*********************************************************************************
 
-require 'json'
+require 'logger'
 
 module URBANopt
   module Scenario
     module DefaultReports
-      class ReportingPeriods 
-
-        # perform initialization functions
-        def initialize(hash = {})
-        end
-        
-        def to_hash
-          result = {}
-          return result
-        end
-        
-        def add_reporting_periods(reporting_periods)
-        
-        end
-        
+      @@logger = Logger.new(STDOUT)
+      
+      def self.logger
+        @@logger
       end
     end
   end

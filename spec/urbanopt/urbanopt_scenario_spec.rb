@@ -30,10 +30,20 @@
 
 require_relative '../spec_helper'
 require_relative '../files/example_feature_file'
+require 'json'
+require 'json-schema'
 
 RSpec.describe URBANopt::Scenario do
   it 'has a version number' do
     expect(URBANopt::Scenario::VERSION).not_to be nil
+  end
+  
+  it 'has a logger' do
+    expect(URBANopt::Scenario.logger).not_to be nil
+    current_level = URBANopt::Scenario.logger.level
+    URBANopt::Scenario.logger.level = Logger::DEBUG
+    expect(URBANopt::Scenario.logger.level).to eq Logger::DEBUG
+    URBANopt::Scenario.logger.level = current_level
   end
   
   it 'can run a scenario' do
@@ -64,7 +74,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = false
+    clear_results = true #edited
     scenario.clear if clear_results 
     
     simulation_dirs = scenario.simulation_dirs
@@ -104,18 +114,88 @@ RSpec.describe URBANopt::Scenario do
       simulation_status = simulation_dir.simulation_status
       puts "run_dir = #{run_dir}, simulation_status = #{simulation_status}"
       if simulation_dir.simulation_status != 'Complete'
-        failures << simulation_dir
+        failures << run_dir
       end
     end
     
-    expect(failures).to be_empty
+    expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
     
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
     scenario_result.save
     
     # TODO: Rawad, add test assertions on scenario_result
+    
+    ## Check scenario_report JSON file
+
+    # Read json file
+    scenario_json = File.open(scenario_result.json_path)
+    data = JSON.load scenario_json
+    
+    
+    #Program results check
+    expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map {|h| h['program']['site_area']}.reduce(:+)) if data['scenario_report']['program']['site_area']
+    expect(data['scenario_report']['program']['floor_area']).to eq(data['feature_reports'].map {|h| h['program']['floor_area']}.reduce(:+)) if data['scenario_report']['program']['floor_area']
+    expect(data['scenario_report']['program']['conditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['conditioned_area']}.reduce(:+)) if data['scenario_report']['program']['conditioned_area']
+    expect(data['scenario_report']['program']['unconditioned_area']).to eq(data['feature_reports'].map {|h| h['program']['unconditioned_area']}.reduce(:+)) if data['scenario_report']['program']['unconditioned_area']
+    expect(data['scenario_report']['program']['footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['footprint_area']}.reduce(:+)) if data['scenario_report']['program']['footprint_area']
+    expect(data['scenario_report']['program']['maximum_roof_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_roof_height']}.max) if data['scenario_report']['program']['maximum_roof_height']
+    expect(data['scenario_report']['program']['maximum_number_of_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories']}.max) if data['scenario_report']['program']['maximum_number_of_stories']
+    expect(data['scenario_report']['program']['maximum_number_of_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_stories_above_ground']}.max) if data['scenario_report']['program']['maximum_number_of_stories_above_ground']
+    expect(data['scenario_report']['program']['parking_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_area']}.reduce(:+)) if data['scenario_report']['program']['parking_area'] if data['scenario_report']['program']['parking_area']
+    expect(data['scenario_report']['program']['number_of_parking_spaces']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces']}.reduce(:+)) if data['scenario_report']['program']['number_of_parking_spaces']
+    expect(data['scenario_report']['program']['number_of_parking_spaces_charging']).to eq(data['feature_reports'].map {|h| h['program']['number_of_parking_spaces_charging']}.reduce(:+)) if  data['scenario_report']['program']['number_of_parking_spaces_charging']
+    expect(data['scenario_report']['program']['parking_footprint_area']).to eq(data['feature_reports'].map {|h| h['program']['parking_footprint_area']}.reduce(:+)) if data['scenario_report']['program']['parking_footprint_area']
+    expect(data['scenario_report']['program']['maximum_parking_height']).to eq(data['feature_reports'].map {|h| h['program']['maximum_parking_height']}.max) if data['scenario_report']['program']['maximum_parking_height']
+    expect(data['scenario_report']['program']['maximum_number_of_parking_stories']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories']}.max) if data['scenario_report']['program']['maximum_number_of_parking_stories']
+    expect(data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']).to eq(data['feature_reports'].map {|h| h['program']['maximum_number_of_parking_stories_above_ground']}.max) if data['scenario_report']['program']['maximum_number_of_parking_stories_above_ground']
+    expect(data['scenario_report']['program']['number_of_residential_units']).to eq(data['feature_reports'].map {|h| h['program']['number_of_residential_units']}.reduce(:+)) if data['scenario_report']['program']['number_of_residential_units']
+    
+
+    expect(data['scenario_report']['program']['window_area']['north_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['north_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['north_window_area']
+    expect(data['scenario_report']['program']['window_area']['south_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['south_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['south_window_area']
+    expect(data['scenario_report']['program']['window_area']['east_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['east_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['east_window_area']
+    expect(data['scenario_report']['program']['window_area']['west_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['west_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['west_window_area']
+    expect(data['scenario_report']['program']['window_area']['total_window_area']).to eq(data['feature_reports'].map {|h| h['program']['window_area']['total_window_area']}.reduce(:+)) if data['scenario_report']['program']['window_area']['total_window_area']
+
+    expect(data['scenario_report']['program']['wall_area']['north_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['north_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['north_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['south_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['south_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['south_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['east_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['east_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['east_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['west_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['west_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['west_wall_area']
+    expect(data['scenario_report']['program']['wall_area']['total_wall_area']).to eq(data['feature_reports'].map {|h| h['program']['wall_area']['total_wall_area']}.reduce(:+)) if data['scenario_report']['program']['wall_area']['total_wall_area']
+
+    expect(data['scenario_report']['program']['roof_area']['equipment_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['equipment_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['equipment_roof_area'] 
+    expect(data['scenario_report']['program']['roof_area']['photovoltaic_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['photovoltaic_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['photovoltaic_roof_area'] 
+    expect(data['scenario_report']['program']['roof_area']['available_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['available_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['available_roof_area']
+    expect(data['scenario_report']['program']['roof_area']['total_roof_area']).to eq(data['feature_reports'].map {|h| h['program']['roof_area']['total_roof_area']}.reduce(:+)) if data['scenario_report']['program']['roof_area']['total_roof_area']
+    
+
+    #Reporting periods results check
+    expect(data['scenario_report']['reporting_periods'][0]['total_site_energy']).to eq(data['feature_reports'].map {|h| h['reporting_periods'][0]['total_site_energy'] }.reduce(:+))
+  
+
+    scenario_json.close
   end
+
+  it 'validate results against shema' do
+
+    # Read json file to be validated
+    #scenario_json_file = File.open(File.expand_path("/gitrepos/urbanopt-scenario-gem/spec/test/example_scenario/default_scenario_report.json"), 'r')
+    scenario_json_file = File.open(File.expand_path('../test/example_scenario/default_scenario_report.json', File.dirname(__FILE__)), 'r')
+    scenario_json= JSON.load scenario_json_file
+    
+    schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
+    schema = JSON.load schema_json
+
+    puts JSON::Validator.fully_validate(schema, scenario_json)
+
+    expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
+   
+    scenario_json_file.close
+    schema_json.close
+
+   end
+
 
 
 end
