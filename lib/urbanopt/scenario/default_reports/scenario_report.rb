@@ -38,7 +38,7 @@ require 'json-schema'
 
 require 'json'
 require 'pathname'
-
+require 'logger'
 
 
 module URBANopt
@@ -52,7 +52,9 @@ module URBANopt
       ##
       class ScenarioReport 
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
-                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
+                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports , :scenario
+        
+
         
 
         
@@ -74,7 +76,7 @@ module URBANopt
             end
           end
           
-          @@scenario_csv = scenario_csv
+          result.scenario = scenario_csv
         
           return result
         end
@@ -108,35 +110,22 @@ module URBANopt
 
           @scenario = hash
 
-          #@scenario_csv = @@scenario_csv
-          #puts "scenario_csv is = =====  == #{@scenario_csv}"
-          # @id = scenario.name
-          # @name = scenario.name
-          # @directory_name = scenario.run_dir
-          # puts "SCENARIO RUN DIRECTORY IS #{scenario.class}"
-          # @timesteps_per_hour = nil # unknown
-          # @number_of_not_started_simulations = 0
-          # @number_of_started_simulations = 0
-          # @number_of_complete_simulations = 0
-          # @number_of_failed_simulations = 0
-          # @timeseries_csv = TimeseriesCSV.new
-          # @location = nil
-          # @program = Program.new
-          # @construction_costs = []
-          # @reporting_periods = []       
-          # @feature_reports = []
-                   
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
+
+          # initialize logger
+          @@logger = Logger.new(STDOUT)
+          
+          @@logger.info("Run directory: #{@scenario[:directory_name]}")
 
         end
 
         def defaults  
           hash = {}
-          hash[:id] = nil.to_s #scenario_csv.name
-          hash[:name] = nil.to_s #scenario_csv.name
-          hash[:directory_name] = nil.to_s #scenario_csv.run_dir
+          hash[:id] = nil.to_s 
+          hash[:name] = nil.to_s
+          hash[:directory_name] = nil.to_s
           hash[:timesteps_per_hour] = nil #unknown
           hash[:number_of_not_started_simulations] = 0
           hash[:number_of_started_simulations] = 0
@@ -152,12 +141,11 @@ module URBANopt
         end
 
         def json_path
-          puts "@@RUN _DIR IS == #{@@scenario_csv.run_dir}"
-          File.join(@@scenario_csv.run_dir, 'default_scenario_report.json')
+          File.join(@scenario.run_dir, 'default_scenario_report.json')
         end
         
         def csv_path
-          File.join(@@scenario_csv.run_dir, 'default_scenario_report.csv')
+          File.join(@scenario.run_dir, 'default_scenario_report.csv')
         end
         
         ##
@@ -193,9 +181,9 @@ module URBANopt
         ##
         def to_hash
           result = {}
-          result[:id] = @@scenario_csv.name
-          result[:name] = @@scenario_csv.name
-          result[:directory_name] = @@scenario_csv.run_dir
+          result[:id] = @scenario.name
+          result[:name] = @scenario.name
+          result[:directory_name] = @scenario.run_dir
           result[:timesteps_per_hour] = @timesteps_per_hour
           result[:number_of_not_started_simulations] = @number_of_not_started_simulations
           result[:number_of_started_simulations] = @number_of_started_simulations
