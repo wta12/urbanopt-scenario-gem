@@ -74,7 +74,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = false #edited
+    clear_results = true #edited
     scenario.clear if clear_results 
     
     simulation_dirs = scenario.simulation_dirs
@@ -196,12 +196,8 @@ RSpec.describe URBANopt::Scenario do
 
     # Read csv file to be validated
     scenario_csv_headers = CSV.open(File.expand_path('../test/example_scenario/default_scenario_report.csv', File.dirname(__FILE__)),&:readline) 
-    puts "SCENARIO_CSV_FILE IS = #{scenario_csv_headers}"
 
-    
-    
     scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__)))#.read()
-    #scenario_csv_schema_headers = scenario_csv_schema.readlines
 
     scenario_csv_schema_headers = []
     File.readlines(scenario_csv_schema).each do |line|

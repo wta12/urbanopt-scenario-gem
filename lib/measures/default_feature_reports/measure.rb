@@ -31,6 +31,9 @@
 require 'urbanopt/scenario/default_reports/feature_report'
 require 'csv'
 require 'benchmark'
+require 'logger'
+
+@@logger = Logger.new(STDOUT)
 
 #start the measure
 class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
@@ -89,6 +92,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency.setDescription("The frequency at which to report timeseries output data.")
     reporting_frequency.setDefaultValue("Hourly")
     args << reporting_frequency 
+
+
+    if reporting_frequency.defaultValueDisplayName == "BillingPeriod"
+      @@logger.error('BillingPeriod frequency is not implemented yet')
+    end
 
     return args
   end
@@ -670,167 +678,168 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     
 
 
-####################################### REPORTING RESULTS FOR CSV ######################################
-# # Timeseries csv OTHER METHOD 
+
+# ####################################### REPORTING RESULTS FOR CSV ######################################
+# # # Timeseries csv OTHER METHOD 
     
-  # Get the weather file run period (as opposed to design day run period)
-  ann_env_pd = nil
-  sql_file.availableEnvPeriods.each do |env_pd|
-    env_type = sql_file.environmentType(env_pd)
-    if env_type.is_initialized
-      if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
-        ann_env_pd = env_pd
-      end
-    end
-  end
+#   # Get the weather file run period (as opposed to design day run period)
+#   ann_env_pd = nil
+#   sql_file.availableEnvPeriods.each do |env_pd|
+#     env_type = sql_file.environmentType(env_pd)
+#     if env_type.is_initialized
+#       if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
+#         ann_env_pd = env_pd
+#       end
+#     end
+#   end
 
-  if ann_env_pd == false
-    runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
-    return false
-  end 
+#   if ann_env_pd == false
+#     runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
+#     return false
+#   end 
 
 
-  # Method to translate from OpenStudio's time formatting
-  # to Javascript time formatting
-  # OpenStudio time
-  # 2009-May-14 00:10:00   Raw string
-  # Javascript time
-  # 2009/07/12 12:34:56
-  def to_JSTime(os_time)
-    js_time = os_time.to_s
-    # Replace the '-' with '/'
-    js_time = js_time.gsub('-','/')
-    # Replace month abbreviations with numbers
-    js_time = js_time.gsub('Jan','01')
-    js_time = js_time.gsub('Feb','02')
-    js_time = js_time.gsub('Mar','03')
-    js_time = js_time.gsub('Apr','04')
-    js_time = js_time.gsub('May','05')
-    js_time = js_time.gsub('Jun','06')
-    js_time = js_time.gsub('Jul','07')
-    js_time = js_time.gsub('Aug','08')
-    js_time = js_time.gsub('Sep','09')
-    js_time = js_time.gsub('Oct','10')
-    js_time = js_time.gsub('Nov','11')
-    js_time = js_time.gsub('Dec','12')
+#   # Method to translate from OpenStudio's time formatting
+#   # to Javascript time formatting
+#   # OpenStudio time
+#   # 2009-May-14 00:10:00   Raw string
+#   # Javascript time
+#   # 2009/07/12 12:34:56
+#   def to_JSTime(os_time)
+#     js_time = os_time.to_s
+#     # Replace the '-' with '/'
+#     js_time = js_time.gsub('-','/')
+#     # Replace month abbreviations with numbers
+#     js_time = js_time.gsub('Jan','01')
+#     js_time = js_time.gsub('Feb','02')
+#     js_time = js_time.gsub('Mar','03')
+#     js_time = js_time.gsub('Apr','04')
+#     js_time = js_time.gsub('May','05')
+#     js_time = js_time.gsub('Jun','06')
+#     js_time = js_time.gsub('Jul','07')
+#     js_time = js_time.gsub('Aug','08')
+#     js_time = js_time.gsub('Sep','09')
+#     js_time = js_time.gsub('Oct','10')
+#     js_time = js_time.gsub('Nov','11')
+#     js_time = js_time.gsub('Dec','12')
     
-    return js_time
+#     return js_time
 
-  end     
+#   end     
 
-  # Create an array of arrays of variables
-  variables_to_graph = []
-  end_uses.each do |end_use|
-    fuel_types.each do |fuel_type|
-      variable_name = if end_use == 'Facility'
-                        "#{fuel_type}:#{end_use}"
-                      else
-                        "#{end_use}:#{fuel_type}"
-                      end
-
-
-  puts " VARIABLE _NAME ARE:  #{variable_name}"
-
-      variables_to_graph << [variable_name, reporting_frequency,'']
-      runner.registerInfo("Exporting #{variable_name}")
-    end
-  end
+#   # Create an array of arrays of variables
+#   variables_to_graph = []
+#   end_uses.each do |end_use|
+#     fuel_types.each do |fuel_type|
+#       variable_name = if end_use == 'Facility'
+#                         "#{fuel_type}:#{end_use}"
+#                       else
+#                         "#{end_use}:#{fuel_type}"
+#                       end
 
 
+#   puts " VARIABLE _NAME ARE:  #{variable_name}"
+
+#       variables_to_graph << [variable_name, reporting_frequency,'']
+#       runner.registerInfo("Exporting #{variable_name}")
+#     end
+#   end
 
 
 
 
 
 
-  # timeseries we want to report
-  variable_name = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate", 
-    "District Cooling Inlet Temperature", "District Cooling Outlet Temperature", "District Heating Hot Water Rate", "District Heating Mass Flow Rate", "District Heating Inlet Temperature", "District Heating Outlet Temperature"]
 
-    variable_name.each do |vn|
-      variables_to_graph << [vn, reporting_frequency,'']
-      runner.registerInfo("Exporting #{variable_name}")
-    end
 
-    # number of values in each timeseries
-    n = nil
+#   # timeseries we want to report
+#   variable_name = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate", 
+#     "District Cooling Inlet Temperature", "District Cooling Outlet Temperature", "District Heating Hot Water Rate", "District Heating Mass Flow Rate", "District Heating Inlet Temperature", "District Heating Outlet Temperature"]
+
+#     variable_name.each do |vn|
+#       variables_to_graph << [vn, reporting_frequency,'']
+#       runner.registerInfo("Exporting #{variable_name}")
+#     end
+
+#     # number of values in each timeseries
+#     n = nil
     
-    # all numeric timeseries values, transpose of CSV file (e.g. values[j] is column, values[j][i] is column and row)
-    values = []
+#     # all numeric timeseries values, transpose of CSV file (e.g. values[j] is column, values[j][i] is column and row)
+#     values = []
 
-  # Since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
-  # this is recording the name of these final timeseries to write in the header of the CSV
-    final_timeseries_names = []
+#   # Since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
+#   # this is recording the name of these final timeseries to write in the header of the CSV
+#     final_timeseries_names = []
 
-    # loop over requested timeseries
-    variable_name.each_with_index do |timeseries_name, j|
+#     # loop over requested timeseries
+#     variable_name.each_with_index do |timeseries_name, j|
 
-      runner.registerInfo("TIMESERIES: #{timeseries_name}")
+#       runner.registerInfo("TIMESERIES: #{timeseries_name}")
       
-      # get all the key values that this timeseries can be reported for (e.g. if power is requested for each zone)
-      key_values = sql_file.availableKeyValues("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name)
-      runner.registerInfo("KEY VALUES: #{key_values}")
-      if key_values.empty?
-          key_values = [""]
-      end
+#       # get all the key values that this timeseries can be reported for (e.g. if power is requested for each zone)
+#       key_values = sql_file.availableKeyValues("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name)
+#       runner.registerInfo("KEY VALUES: #{key_values}")
+#       if key_values.empty?
+#           key_values = [""]
+#       end
       
-      # sort keys
-      sorted_keys = key_values.sort
-      requested_keys = ['SUMMED ELECTRICITY:FACILITY', 'SUMMED ELECTRICITY:FACILITY POWER', 'SUMMED ELECTRICITYPRODUCED:FACILITY', 'SUMMED ELECTRICITYPRODUCED:FACILITY POWER', 'SUMMED NET APPARENT POWER', 'SUMMED NET ELECTRIC ENERGY', 'SUMMED NET POWER', 'TRANSFORMER OUTPUT ELECTRIC ENERGY SCHEDULE']
-      final_keys = []
-      # make sure aggregated timeseries are listed in sorted order before all individual feature timeseries
-      sorted_keys.each do |k|
-          if requested_keys.include? k
-          final_keys << k
-          end
-      end
-      sorted_keys.each do |k|
-          if !requested_keys.include? k
-          final_keys << k
-          end
-      end
+#       # sort keys
+#       sorted_keys = key_values.sort
+#       requested_keys = ['SUMMED ELECTRICITY:FACILITY', 'SUMMED ELECTRICITY:FACILITY POWER', 'SUMMED ELECTRICITYPRODUCED:FACILITY', 'SUMMED ELECTRICITYPRODUCED:FACILITY POWER', 'SUMMED NET APPARENT POWER', 'SUMMED NET ELECTRIC ENERGY', 'SUMMED NET POWER', 'TRANSFORMER OUTPUT ELECTRIC ENERGY SCHEDULE']
+#       final_keys = []
+#       # make sure aggregated timeseries are listed in sorted order before all individual feature timeseries
+#       sorted_keys.each do |k|
+#           if requested_keys.include? k
+#           final_keys << k
+#           end
+#       end
+#       sorted_keys.each do |k|
+#           if !requested_keys.include? k
+#           final_keys << k
+#           end
+#       end
 
-      # loop over final keys
-      final_keys.each_with_index do |key_value, key_i|
+#       # loop over final keys
+#       final_keys.each_with_index do |key_value, key_i|
 
-        new_timeseries_name = ''
+#         new_timeseries_name = ''
 
-        runner.registerInfo("!! TIMESERIES NAME: #{timeseries_name} AND key_value: #{key_value}")
+#         runner.registerInfo("!! TIMESERIES NAME: #{timeseries_name} AND key_value: #{key_value}")
 
-        # check if we have to come up with a new name for the timeseries in our CSV header
-        if key_values.size == 1
-        # use timeseries name when only 1 keyvalue
-        new_timeseries_name = timeseries_name
-        else
-        # use key_value name
-        # special case for Zone Thermal Comfort: use both timeseries_name and key_value
-        if timeseries_name.include? 'Zone Thermal Comfort'
-            new_timeseries_name = timeseries_name + ' ' + key_value
-        else
-            new_timeseries_name = key_value
-        end
-        end
-        final_timeseries_names << new_timeseries_name
+#         # check if we have to come up with a new name for the timeseries in our CSV header
+#         if key_values.size == 1
+#         # use timeseries name when only 1 keyvalue
+#         new_timeseries_name = timeseries_name
+#         else
+#         # use key_value name
+#         # special case for Zone Thermal Comfort: use both timeseries_name and key_value
+#         if timeseries_name.include? 'Zone Thermal Comfort'
+#             new_timeseries_name = timeseries_name + ' ' + key_value
+#         else
+#             new_timeseries_name = key_value
+#         end
+#         end
+#         final_timeseries_names << new_timeseries_name
 
-        # get the actual timeseries
-        ts = sql_file.timeSeries("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name, key_value)
+#         # get the actual timeseries
+#         ts = sql_file.timeSeries("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name, key_value)
 
-        if n.nil?
-        # first timeseries should always be set
-        runner.registerInfo("First timeseries")
-        values[j] = ts.get.values
-        n = values[j].size
-        elsif ts.is_initialized
-        runner.registerInfo('Is Initialized')
-        values[j] = ts.get.values
-        else
-        runner.registerInfo('Is NOT Initialized')
-        values[j] = Array.new(n, 0)
-        end
-      end
-    end
+#         if n.nil?
+#         # first timeseries should always be set
+#         runner.registerInfo("First timeseries")
+#         values[j] = ts.get.values
+#         n = values[j].size
+#         elsif ts.is_initialized
+#         runner.registerInfo('Is Initialized')
+#         values[j] = ts.get.values
+#         else
+#         runner.registerInfo('Is NOT Initialized')
+#         values[j] = Array.new(n, 0)
+#         end
+#       end
+#     end
 
-  runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
+#   runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
 
 
@@ -839,153 +848,172 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
 
 
-  # Create a new series like this
-  # for each condition series we want to plot
-  # {"name" : "series 1",
-  # "color" : "purple",
-  # "data" :[{ "x": 20, "y": 0.015, "time": "2009/07/12 12:34:56"},
-          # { "x": 25, "y": 0.008, "time": "2009/07/12 12:34:56"},
-          # { "x": 30, "y": 0.005, "time": "2009/07/12 12:34:56"}]
-  # }
-  all_series = []
-  # Sort by fuel, putting the total (Facility) column at the end of the fuel.
-  variables_to_graph.sort_by! do |i| 
-    fuel_type = if i[0].include?('Facility')
-                  i[0].gsub(/:Facility/, '')
-                else
-                  i[0].gsub(/.*:/, '')
-                end
-    end_use = if i[0].include?('Facility')
-                'ZZZ' # so it will be last
-              else
-                i[0].gsub(/:.*/, '')
-              end
-    sort_key = "#{fuel_type}#{end_use}"
-  end
+#   # Create a new series like this
+#   # for each condition series we want to plot
+#   # {"name" : "series 1",
+#   # "color" : "purple",
+#   # "data" :[{ "x": 20, "y": 0.015, "time": "2009/07/12 12:34:56"},
+#           # { "x": 25, "y": 0.008, "time": "2009/07/12 12:34:56"},
+#           # { "x": 30, "y": 0.005, "time": "2009/07/12 12:34:56"}]
+#   # }
+#   all_series = []
+#   # Sort by fuel, putting the total (Facility) column at the end of the fuel.
+#   variables_to_graph.sort_by! do |i| 
+#     fuel_type = if i[0].include?('Facility')
+#                   i[0].gsub(/:Facility/, '')
+#                 else
+#                   i[0].gsub(/.*:/, '')
+#                 end
+#     end_use = if i[0].include?('Facility')
+#                 'ZZZ' # so it will be last
+#               else
+#                 i[0].gsub(/:.*/, '')
+#               end
+#     sort_key = "#{fuel_type}#{end_use}"
+#   end
 
-  variables_to_graph.each_with_index do |var_to_graph, j|
+#   variables_to_graph.each_with_index do |var_to_graph, j|
 
-    var_name = var_to_graph[0]
-    freq = var_to_graph[1]
-    kv = var_to_graph[2]
+#     var_name = var_to_graph[0]
+#     freq = var_to_graph[1]
+#     kv = var_to_graph[2]
 
-    # Get the y axis values
-    y_timeseries = sql_file.timeSeries(ann_env_pd, freq, var_name, kv)
-    if y_timeseries.empty?
-      runner.registerWarning("No data found for #{freq} #{var_name} #{kv}.")
-      next
-    else
-      y_timeseries = y_timeseries.get
-    end
-    y_vals = y_timeseries.values
+#     # Get the y axis values
+#     y_timeseries = sql_file.timeSeries(ann_env_pd, freq, var_name, kv)
+#     if y_timeseries.empty?
+#       runner.registerWarning("No data found for #{freq} #{var_name} #{kv}.")
+#       next
+#     else
+#       y_timeseries = y_timeseries.get
+#     end
+#     y_vals = y_timeseries.values
           
-    # Convert time stamp format to be more readable
-    js_date_times = []
-    y_timeseries.dateTimes.each do |date_time|
-      js_date_times << to_JSTime(date_time)
-    end    
+#     # Convert time stamp format to be more readable
+#     js_date_times = []
+#     y_timeseries.dateTimes.each do |date_time|
+#       js_date_times << to_JSTime(date_time)
+#     end    
     
-    # Store the timeseries data to hash for later
-    # export to the HTML file
-    series = {}
-    series["name"] = "#{kv}"
-    series["type"] = "#{var_name}"
-    # Unit conversion
-    old_units = y_timeseries.units
-    new_units = case old_units
-                when "J"
-                  if var_name.include?('Facility')
-                    "kBtu"
-                  # elsif var_name.include?('Electricity')
-                  #   "kBtu"
-                  # else
-                  #   "kBtu"
-                  end
+#     # Store the timeseries data to hash for later
+#     # export to the HTML file
+#     series = {}
+#     series["name"] = "#{kv}"
+#     series["type"] = "#{var_name}"
+#     # Unit conversion
+#     old_units = y_timeseries.units
+#     new_units = case old_units
+#                 when "J"
+#                   if var_name.include?('Facility')
+#                     "kBtu"
+#                   # elsif var_name.include?('Electricity')
+#                   #   "kBtu"
+#                   # else
+#                   #   "kBtu"
+#                   end
                 
-                when "kWh"
-                  if var_name.include?('Gas')
-                    "kBtu"
-                  else
-                    "kBtu"
-                  end 
+#                 when "kWh"
+#                   if var_name.include?('Gas')
+#                     "kBtu"
+#                   else
+#                     "kBtu"
+#                   end 
 
-                when "m3"
-                  old_units = "m^3"
-                  "gal"
-                else
-                  old_units
-                end
-    series["units"] = new_units
-    data = []
-    for i in 0..(js_date_times.size - 1)
-      point = {}
-      val_i = y_vals[i]
-      # Unit conversion
-      unless new_units == old_units
-       # val_i = OpenStudio.convert(val_i, old_units, new_units).get
-      end
-      time_i = js_date_times[i]
-      point["y"] = val_i
-      point["time"] = time_i
-      data << point
-    end
-    series["data"] = data
-    all_series << series        
+#                 when "m3"
+#                   old_units = "m^3"
+#                   "gal"
+#                 else
+#                   old_units
+#                 end
+#     series["units"] = new_units
+#     data = []
+#     for i in 0..(js_date_times.size - 1)
+#       point = {}
+#       val_i = y_vals[i]
+#       # Unit conversion
+#       unless new_units == old_units
+#        # val_i = OpenStudio.convert(val_i, old_units, new_units).get
+#       end
+#       time_i = js_date_times[i]
+#       point["y"] = val_i
+#       point["time"] = time_i
+#       data << point
+#     end
+#     series["data"] = data
+#     all_series << series        
       
-    # increment color selection
-    j += 1  
+#     # increment color selection
+#     j += 1  
       
-  end
+#   end
       
-  # Transform the data to CSV
-  cols = []
-  all_series.each_with_index do |series, k|
-    data = series['data']
-    units = series['units']
-    # Record the timestamps and units on the first pass only
-    if k == 0
-      time_col = ['Time']
-      time_col << "#{reporting_frequency}"
-      data.each do |entry|
-        time_col << entry['time']
-      end
-      cols << time_col
-    end
-    # Record the data
-    col_name = "#{series['type']} #{series['name']} " #[{series['units']}]
-    data_col = [col_name]
-    data_col << units
-    data.each do |entry|
-      data_col << entry['y']
-    end
-    cols << data_col
-  end
-  rows = cols.transpose 
+#   # Transform the data to CSV
+#   cols = []
+#   all_series.each_with_index do |series, k|
+#     data = series['data']
+#     units = series['units']
+#     # Record the timestamps and units on the first pass only
+#     if k == 0
+#       time_col = ['Time']
+#       time_col << "#{reporting_frequency}"
+#       data.each do |entry|
+#         time_col << entry['time']
+#       end
+#       cols << time_col
+#     end
+#     # Record the data
+#     col_name = "#{series['type']} #{series['name']} " #[{series['units']}]
+#     data_col = [col_name]
+#     data_col << units
+#     data.each do |entry|
+#       data_col << entry['y']
+#     end
+#     cols << data_col
+#   end
+#   rows = cols.transpose 
 
 
 
-  # Write the rows out to CSV
-  #csv_path = File.expand_path("./enduse_timeseries.csv")
-  CSV.open("enduse_timeseries.csv", "w") do |csv|
-    rows.each do |row|
-      csv << row
-    end
-  end 
+#   # Write the rows out to CSV
+#   #csv_path = File.expand_path("./enduse_timeseries.csv")
+#   CSV.open("enduse_timeseries.csv", "w") do |csv|
+#     rows.each do |row|
+#       csv << row
+#     end
+#   end 
 
-      # # Save the 'default_feature_reports.csv' file
-      # File.open("default_feature_reports_2.csv", 'w') do |file|
+#       # # Save the 'default_feature_reports.csv' file
+#       # File.open("default_feature_reports_2.csv", 'w') do |file|
         
-      #   file.puts(final_timeseries_names.join(','))
-      #   # rows.each do |row|
-      #   #   file << row
-      #   # end
-      # end
+#       #   file.puts(final_timeseries_names.join(','))
+#       #   # rows.each do |row|
+#       #   #   file << row
+#       #   # end
+#       # end
 
 
 
 ###########################################################################
 # # Timeseries ORIGINAL METHOD
-    
+  
+    # Get the weather file run period (as opposed to design day run period)
+    ann_env_pd = nil
+    sql_file.availableEnvPeriods.each do |env_pd|
+      env_type = sql_file.environmentType(env_pd)
+      if env_type.is_initialized
+        if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
+          ann_env_pd = env_pd
+        end
+      end
+    end
+
+    if ann_env_pd == false
+      runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
+      return false
+    end 
+
+
+
+
     # timeseries we want to report
     requested_timeseries_names = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", 
       "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", 
