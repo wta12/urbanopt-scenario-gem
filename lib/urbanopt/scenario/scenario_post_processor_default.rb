@@ -30,6 +30,7 @@
 
 require 'urbanopt/scenario/scenario_post_processor_base'
 require 'urbanopt/scenario/default_reports'
+require 'urbanopt/scenario/default_reports/logger'
 
 require 'csv'
 require 'json'
@@ -48,6 +49,9 @@ module URBANopt
         @scenario_result.id = scenario_base.name
         @scenario_result.name = scenario_base.name
         @scenario_result.directory_name = scenario_base.run_dir
+
+        @@logger ||= URBANopt::Scenario::DefaultReports.logger
+
       end
       
       ##
@@ -59,7 +63,6 @@ module URBANopt
         @scenario_base.simulation_dirs.each do |simulation_dir|
           add_simulation_dir(simulation_dir)
         end
-        
         return @scenario_result
       end
       
@@ -70,7 +73,13 @@ module URBANopt
         feature_reports = URBANopt::Scenario::DefaultReports::FeatureReport::from_simulation_dir(simulation_dir)
         
         feature_reports.each do |feature_report|
-          @scenario_result.add_feature_report(feature_report)
+
+          if feature_report.to_hash[:simulation_status] == "Complete"
+            @scenario_result.add_feature_report(feature_report) 
+          else 
+            @@logger.error("Feature #{feature_report.id} failed to run!")      
+          end
+        
         end
         
         return feature_reports
