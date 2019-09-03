@@ -57,7 +57,7 @@ module URBANopt
         ##
         #  @param [Hash] hash A hash which may contain a deserialized feature_report
         def initialize(hash = {})      
-                                
+
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
                     
@@ -158,6 +158,10 @@ module URBANopt
             end
           end
           
+          # validate feature_report json against schema
+          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],default_feature_reports_json).any?
+            raise "default_feature_report_json properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],default_feature_reports_json)}"
+          end
           
           return result
         end
