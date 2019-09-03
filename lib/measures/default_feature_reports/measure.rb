@@ -72,16 +72,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_type.setDefaultValue('Building')
     args << feature_type
 
-
-      
-
     #make an argument for the frequency
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << "Detailed"
     reporting_frequency_chs << "Timestep"
     reporting_frequency_chs << "Hourly"
     reporting_frequency_chs << "Daily"
-    reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
+    #reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
     ###### Utility report here to report the start and end for each fueltype
     reporting_frequency_chs << "Monthly"
     reporting_frequency_chs << "Runperiod"
@@ -94,6 +91,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     args << reporting_frequency 
 
 
+    #move this in the run method
     if reporting_frequency.defaultValueDisplayName == "BillingPeriod"
       @@logger.error('BillingPeriod frequency is not implemented yet')
     end
@@ -137,9 +135,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     return end_uses
   end
   
-
-
-
 
   # return a vector of IdfObject's to request EnergyPlus objects needed by the run method
   def energyPlusOutputRequests(runner, user_arguments)
@@ -316,20 +311,21 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # latitude
     latitude = epwFile.latitude
     puts "latitude = #{latitude}"
-    feature_report.location[:latitude] = latitude
+    feature_report.location.latitude = latitude
 
     # longitude
     longitude = epwFile.longitude
     puts "longitude = #{longitude}"
-    feature_report.location[:longitude] = longitude
+    feature_report.location.longitude = longitude
 
     # surface_elevation
     elev = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
-    feature_report.location[:surface_elevation] = elev
+    feature_report.location.surface_elevation = elev
 
     #weather_filename
     weather_file = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='General' AND RowName='Weather File' AND ColumnName='Value'")
-    feature_report.location[:weather_file] = weather_file
+    puts "WEATHER FILE IS = #{weather_file}"
+    #feature_report.location[:weather_file] = weather_file
 
     # weather_file = model.getWeatherFile
     # epw_path = weather_file.path.to_s
@@ -680,7 +676,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
 
 # ####################################### REPORTING RESULTS FOR CSV ######################################
-# # # Timeseries csv OTHER METHOD 
+# # # Timeseries csv enduses METHOD 
     
 #   # Get the weather file run period (as opposed to design day run period)
 #   ann_env_pd = nil
@@ -1011,9 +1007,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       return false
     end 
 
-
-
-
     # timeseries we want to report
     requested_timeseries_names = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", 
       "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", 
@@ -1159,14 +1152,20 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.timeseries_csv.column_names = final_timeseries_names
 
 
-
     ##### Save the 'default_feature_reports.json' file
-    hash = {}    
-    hash[:feature_reports] = []
-    hash[:feature_reports] << feature_report.to_hash
+    #hash = {}    
+    #hash[:feature_reports] = []
+    #hash[:feature_reports] << feature_report.to_hash
+
+    #feature_report_array = []
+    #feature_report_array << feature_report.to_hash
+
+    feature_report_hash = feature_report.to_hash
+
+    
 
     File.open('default_feature_reports.json', 'w') do |f|
-      f.puts JSON::pretty_generate(hash)
+      f.puts JSON::pretty_generate(feature_report_hash)
       # make sure data is written to the disk one way or the other
       begin
         f.fsync

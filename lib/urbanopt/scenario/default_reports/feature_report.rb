@@ -30,6 +30,7 @@
 
 require "urbanopt/scenario/default_reports/construction_cost"
 require "urbanopt/scenario/default_reports/program"
+require "urbanopt/scenario/default_reports/location"
 require "urbanopt/scenario/default_reports/reporting_period"
 require "urbanopt/scenario/default_reports/timeseries_csv"
 require 'urbanopt/scenario/default_reports/extension'
@@ -55,9 +56,8 @@ module URBANopt
         # Each FeatureReport object corresponds to a single Feature.
         ##
         #  @param [Hash] hash A hash which may contain a deserialized feature_report
-        def initialize(hash = {})
-          
-                             
+        def initialize(hash = {})      
+                                
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
                     
@@ -69,7 +69,7 @@ module URBANopt
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @timeseries_csv.run_dir_name(@directory_name)
-          @location = hash[:location]
+          @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
           # design_parameters? to add later          
           @construction_costs = []
@@ -95,7 +95,7 @@ module URBANopt
         def defaults
           hash = {}
           hash[:timeseries_csv] = {}
-          hash[:location] = {latitude: nil , longitude: nil, surface_elevation: nil, weather_filename: nil}
+          hash[:location] = {}
           hash[:program] = {}
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
@@ -140,10 +140,12 @@ module URBANopt
           end
           
           # if we loaded the json
-          if default_feature_reports_json && default_feature_reports_json[:feature_reports]
-            default_feature_reports_json[:feature_reports].each do |feature_report|
-              result << FeatureReport.new(feature_report)
-            end
+          if default_feature_reports_json #&& default_feature_reports_json[:feature_reports]
+            #default_feature_reports_json.each do |feature_report|
+              #result << FeatureReport.new(feature_report)
+            #end
+            result << FeatureReport.new(default_feature_reports_json) # should we keep it as an array !? or each each report can only include 1 feature
+
           else
             # we did not find a report
             features.each do |feature|
@@ -155,6 +157,7 @@ module URBANopt
               result << FeatureReport.new(hash)
             end
           end
+          
           
           return result
         end
@@ -171,10 +174,8 @@ module URBANopt
           result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
           result[:simulation_status] = @simulation_status if @simulation_status
           result[:timeseries_csv] = @timeseries_csv.to_hash
-          
-          location_hash = @location if @location
-          location_hash.delete_if {|k,v| v.nil?}
-          result[:location] = location_hash if @location
+
+          result[:location] = @location.to_hash if @location
 
           result[:program] = @program.to_hash
           
