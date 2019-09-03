@@ -73,7 +73,7 @@ module URBANopt
           @number_of_complete_simulations = hash[:number_of_complete_simulations]
           @number_of_failed_simulations = hash[:number_of_failed_simulations]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
-          @location = hash[:location]
+          @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
           @construction_costs = hash[:construction_costs]
           @reporting_periods = hash[:reporting_periods]
@@ -99,7 +99,7 @@ module URBANopt
           hash[:number_of_complete_simulations] = 0
           hash[:number_of_failed_simulations] = 0
           hash[:timeseries_csv] = TimeseriesCSV.new.to_hash
-          hash[:location] = nil
+          hash[:location] = Location.new.defaults
           hash[:program] = Program.new.to_hash
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
@@ -157,7 +157,7 @@ module URBANopt
           result[:number_of_complete_simulations] = @number_of_complete_simulations
           result[:number_of_failed_simulations] = @number_of_failed_simulations
           result[:timeseries_csv] = @timeseries_csv.to_hash
-          result[:location] = @location
+          result[:location] = @location.to_hash
           result[:program] = @program.to_hash
           
           result[:construction_costs] = []
