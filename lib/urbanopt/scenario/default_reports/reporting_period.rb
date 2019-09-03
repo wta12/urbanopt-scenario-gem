@@ -98,10 +98,25 @@ module URBANopt
           hash[:multiplier] = nil
           hash[:start_date] = Date.new.to_hash
           hash[:end_date] = Date.new.to_hash 
-          hash[:energy_production] = {electricity_produced: {photovoltaic: nil, }}
+
+          hash[:total_site_energy] = nil
+          hash[:total_source_energy] = nil
+          hash [:net_site_energy] = nil
+          hash [:net_source_energy] = nil
+          hash [:net_utility_cost] = nil
+          hash [:electricity] = nil
+          hash [:natural_gas] = nil
+          hash [:additional_fuel] = nil
+          hash [:district_cooling] = nil
+          hash[:district_heating] = nil
+
+
+          hash[:electricity_produced] = nil
+          hash[:end_uses] = EndUses.new.to_hash
+          hash[:energy_production] = {electricity_produced: {photovoltaic: nil }}
           hash[:utility_costs] = [{fuel_type: nil, total_cost: nil, usage_cost: nil, demand_cost: nil}]
           hash[:comfort_result] = {time_setpoint_not_met_during_occupied_cooling: nil, time_setpoint_not_met_during_occupied_heating: nil, time_setpoint_not_met_during_occupied_hours: nil}
-          hash[:end_uses] = EndUses.new.to_hash
+         
           
           return hash
         end
@@ -210,7 +225,6 @@ module URBANopt
           if existing_period.energy_production
             if existing_period.energy_production[:electricity_produced]
               existing_period.energy_production[:electricity_produced][:photovoltaic] = add_values(existing_period.energy_production[:electricity_produced][:photovoltaic], new_period.energy_production[:electricity_produced][:photovoltaic])
-              existing_period.energy_production[:electricity_produced][:electricity_produced] = add_values(existing_period.energy_production[:electricity_produced][:electricity_produced], new_period.energy_production[:electricity_produced][:electricity_produced])
             end
           end
 
