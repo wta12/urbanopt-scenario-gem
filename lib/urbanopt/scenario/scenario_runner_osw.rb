@@ -64,7 +64,6 @@ module URBANopt
             simulation_dir.create_input_files
           end
         end
-
         return simulation_dirs
       end
       
@@ -90,7 +89,7 @@ module URBANopt
         end
         
         failures = runner.run_osws(osws)
-        
+        #puts "failures = #{failures}"
         return simulation_dirs
       end
       

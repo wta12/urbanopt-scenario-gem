@@ -74,7 +74,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
     
     # Rawad: set clear_results to be false if you want the tests to run faster
-    clear_results = false #edited
+    clear_results = true #edited
     scenario.clear if clear_results 
     
     simulation_dirs = scenario.simulation_dirs
