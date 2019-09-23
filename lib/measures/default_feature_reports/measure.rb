@@ -56,17 +56,17 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
   def arguments
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    id = OpenStudio::Ruleset::OSArgument.makeStringArgument('feature_id', false)
+    id = OpenStudio::Measure::OSArgument.makeStringArgument('feature_id', false)
     id.setDisplayName('Feature unique identifier')
     id.setDefaultValue('1')
     args << id
 
-    name = OpenStudio::Ruleset::OSArgument.makeStringArgument('feature_name', false)
+    name = OpenStudio::Measure::OSArgument.makeStringArgument('feature_name', false)
     name.setDisplayName('Feature scenario specific name')
     name.setDefaultValue('name')
     args << name
 
-    feature_type = OpenStudio::Ruleset::OSArgument.makeStringArgument('feature_type', false)
+    feature_type = OpenStudio::Measure::OSArgument.makeStringArgument('feature_type', false)
     feature_type.setDisplayName('URBANopt Feature Type')
     feature_type.setDefaultValue('Building')
     args << feature_type
@@ -82,7 +82,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs << 'Monthly'
     reporting_frequency_chs << 'Runperiod'
 
-    reporting_frequency = OpenStudio::Ruleset::OSArgument.makeChoiceArgument('reporting_frequency', reporting_frequency_chs, true)
+    reporting_frequency = OpenStudio::Measure::OSArgument.makeChoiceArgument('reporting_frequency', reporting_frequency_chs, true)
     reporting_frequency.setDisplayName('Reporting Frequency')
     reporting_frequency.setDescription('The frequency at which to report timeseries output data.')
     reporting_frequency.setDefaultValue('Hourly')

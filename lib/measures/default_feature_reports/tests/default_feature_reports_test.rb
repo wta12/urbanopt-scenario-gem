@@ -37,7 +37,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require 'csv'
 
-class DefaultFeatureReports_Test < MiniTest::Unit::TestCase
+class DefaultFeatureReports_Test < MiniTest::Test
 
   def is_openstudio_2?
     begin
@@ -173,7 +173,7 @@ class DefaultFeatureReports_Test < MiniTest::Unit::TestCase
     measure = DefaultFeatureReports.new
 
     # create an instance of a runner
-    runner = OpenStudio::Ruleset::OSRunner.new
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
     # get arguments
     arguments = measure.arguments
