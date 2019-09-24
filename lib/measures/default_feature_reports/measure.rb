@@ -146,7 +146,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                           "#{fuel_type}:#{end_use}"
                         else
                           "#{end_use}:#{fuel_type}"
-                end
+                        end
         result << OpenStudio::IdfObject.load("Output:Meter,#{variable_name},#{reporting_frequency};").get
       end
     end
@@ -1074,10 +1074,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Save the 'default_feature_reports.csv' file
     File.open('default_feature_reports.csv', 'w') do |file|
       file.puts(final_timeseries_names.join(','))
-      (0...n).each do |i|
+      (0...n).each do |l|
         line = []
         values.each_index do |j|
-          line << values[j][i]
+          line << values[j][l]
         end
         file.puts(line.join(','))
       end
@@ -1116,8 +1116,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     runner.registerFinalCondition('Default Feature Reports generated successfully.')
 
     true
-  end # end the run method
-end # end the measure
+  # end the run method
+  end 
+# end the measure
+end 
 
 # register the measure to be used by the application
 DefaultFeatureReports.new.registerWithApplication
