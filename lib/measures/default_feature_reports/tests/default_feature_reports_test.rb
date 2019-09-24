@@ -1,32 +1,32 @@
-#*********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other 
+# *********************************************************************************
+# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without modification, 
+#
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
-# Redistributions of source code must retain the above copyright notice, this list 
+#
+# Redistributions of source code must retain the above copyright notice, this list
 # of conditions and the following disclaimer.
-# 
-# Redistributions in binary form must reproduce the above copyright notice, this 
-# list of conditions and the following disclaimer in the documentation and/or other 
+#
+# Redistributions in binary form must reproduce the above copyright notice, this
+# list of conditions and the following disclaimer in the documentation and/or other
 # materials provided with the distribution.
-# 
-# Neither the name of the copyright holder nor the names of its contributors may be 
-# used to endorse or promote products derived from this software without specific 
+#
+# Neither the name of the copyright holder nor the names of its contributors may be
+# used to endorse or promote products derived from this software without specific
 # prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-#*********************************************************************************
+# *********************************************************************************
 
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -38,11 +38,10 @@ require 'fileutils'
 require 'csv'
 
 class DefaultFeatureReports_Test < MiniTest::Test
-
   def is_openstudio_2?
     begin
       workflow = OpenStudio::WorkflowJSON.new
-    rescue
+    rescue StandardError
       return false
     end
     return true
@@ -91,15 +90,14 @@ class DefaultFeatureReports_Test < MiniTest::Test
 
   # method for running the test simulation using OpenStudio 1.x API
   def setup_test_1(test_name, epw_path)
-
     co = OpenStudio::Runmanager::ConfigOptions.new(true)
     co.findTools(false, true, false, true)
 
     if !File.exist?(sql_path(test_name))
-      puts "Running EnergyPlus"
+      puts 'Running EnergyPlus'
 
-      wf = OpenStudio::Runmanager::Workflow.new("modeltoidf->energypluspreprocess->energyplus")
-      wf.add(co.getTools())
+      wf = OpenStudio::Runmanager::Workflow.new('modeltoidf->energypluspreprocess->energyplus')
+      wf.add(co.getTools)
       job = wf.create(OpenStudio::Path.new(run_dir(test_name)), OpenStudio::Path.new(model_out_path(test_name)), OpenStudio::Path.new(epw_path))
 
       rm = OpenStudio::Runmanager::RunManager.new
@@ -110,7 +108,6 @@ class DefaultFeatureReports_Test < MiniTest::Test
 
   # method for running the test simulation using OpenStudio 2.x API
   def setup_test_2(test_name, epw_path)
-
     if !File.exist?(sql_path(test_name))
       osw_path = File.join(run_dir(test_name), 'in.osw')
       osw_path = File.absolute_path(osw_path)
@@ -129,7 +126,6 @@ class DefaultFeatureReports_Test < MiniTest::Test
 
   # create test files if they do not exist when the test first runs
   def setup_test(test_name, idf_output_requests, model_in_path = model_in_path_default, epw_path = epw_path_default)
-
     if !File.exist?(run_dir(test_name))
       FileUtils.mkdir_p(run_dir(test_name))
     end
@@ -146,14 +142,14 @@ class DefaultFeatureReports_Test < MiniTest::Test
     end
 
     # convert output requests to OSM for testing, OS App and PAT will add these to the E+ Idf
-    workspace = OpenStudio::Workspace.new("Draft".to_StrictnessLevel, "EnergyPlus".to_IddFileType)
+    workspace = OpenStudio::Workspace.new('Draft'.to_StrictnessLevel, 'EnergyPlus'.to_IddFileType)
     workspace.addObjects(idf_output_requests)
     rt = OpenStudio::EnergyPlus::ReverseTranslator.new
     request_model = rt.translateWorkspace(workspace)
 
     translator = OpenStudio::OSVersion::VersionTranslator.new
     model = translator.loadModel(model_in_path)
-    assert((not model.empty?))
+    assert(!model.empty?)
     model = model.get
     model.addObjects(request_model.objects)
     model.save(model_out_path(test_name), true)
@@ -177,7 +173,7 @@ class DefaultFeatureReports_Test < MiniTest::Test
 
     # get arguments
     arguments = measure.arguments
-    argument_map = OpenStudio::Measure::convertOSArgumentVectorToMap(arguments)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
 
     # create hash of argument values.
     # If the argument has a default that you want to use, you don't need it in the hash
@@ -194,12 +190,12 @@ class DefaultFeatureReports_Test < MiniTest::Test
 
     # get the energyplus output requests, this will be done automatically by OS App and PAT
     idf_output_requests = measure.energyPlusOutputRequests(runner, argument_map)
-    #assert_equal(3, idf_output_requests.size)
+    # assert_equal(3, idf_output_requests.size)
 
     # mimic the process of running this measure in OS App or PAT
     # todo - create alternate setup or new args to pass in IDF with tariff objects using all fuels
     epw_path = epw_path_default
-    setup_test(test_name,idf_output_requests,model_in_path)
+    setup_test(test_name, idf_output_requests, model_in_path)
 
     assert(File.exist?(model_out_path(test_name)))
     assert(File.exist?(sql_path(test_name)))
@@ -227,7 +223,6 @@ class DefaultFeatureReports_Test < MiniTest::Test
       result = runner.result
       show_output(result)
       assert_equal('Success', result.value.valueName)
-
     ensure
       Dir.chdir(start_dir)
     end
@@ -236,5 +231,4 @@ class DefaultFeatureReports_Test < MiniTest::Test
     assert(File.exist?("#{run_dir(test_name)}/default_feature_reports.json"))
     assert(File.exist?("#{run_dir(test_name)}/default_feature_reports.csv"))
   end
-
 end

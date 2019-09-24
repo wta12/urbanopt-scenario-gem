@@ -1,38 +1,38 @@
-#*********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other 
+# *********************************************************************************
+# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without modification, 
+#
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
-# Redistributions of source code must retain the above copyright notice, this list 
+#
+# Redistributions of source code must retain the above copyright notice, this list
 # of conditions and the following disclaimer.
-# 
-# Redistributions in binary form must reproduce the above copyright notice, this 
-# list of conditions and the following disclaimer in the documentation and/or other 
+#
+# Redistributions in binary form must reproduce the above copyright notice, this
+# list of conditions and the following disclaimer in the documentation and/or other
 # materials provided with the distribution.
-# 
-# Neither the name of the copyright holder nor the names of its contributors may be 
-# used to endorse or promote products derived from this software without specific 
+#
+# Neither the name of the copyright holder nor the names of its contributors may be
+# used to endorse or promote products derived from this software without specific
 # prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-#*********************************************************************************
+# *********************************************************************************
 
-require "urbanopt/scenario/default_reports/construction_cost"
-require "urbanopt/scenario/default_reports/program"
-require "urbanopt/scenario/default_reports/location"
-require "urbanopt/scenario/default_reports/reporting_period"
-require "urbanopt/scenario/default_reports/timeseries_csv"
+require 'urbanopt/scenario/default_reports/construction_cost'
+require 'urbanopt/scenario/default_reports/program'
+require 'urbanopt/scenario/default_reports/location'
+require 'urbanopt/scenario/default_reports/reporting_period'
+require 'urbanopt/scenario/default_reports/timeseries_csv'
 require 'urbanopt/scenario/default_reports/extension'
 require 'json-schema'
 
@@ -41,26 +41,24 @@ require 'json'
 module URBANopt
   module Scenario
     module DefaultReports
-    
-      ## 
-      # FeatureReport generate two types of reports in a simulation_dir.  
-      # The 'default_feature_reports' measure writes a 'default_feature_reports.json' file containing 
+      ##
+      # FeatureReport generate two types of reports in a simulation_dir.
+      # The 'default_feature_reports' measure writes a 'default_feature_reports.json' file containing
       # information on all features in the simulation.  It also writes a 'default_feature_reports.csv'
       # containing timeseries data for all features in the simulation.
       # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
       ##
-      class FeatureReport 
+      class FeatureReport
         attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods
-        
+
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
         #  @param [Hash] hash A hash which may contain a deserialized feature_report
-        def initialize(hash = {})      
-
-          hash.delete_if {|k, v| v.nil?}
+        def initialize(hash = {})
+          hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
-                    
+
           @id = hash[:id]
           @name = hash[:name]
           @directory_name = hash[:directory_name]
@@ -71,24 +69,22 @@ module URBANopt
           @timeseries_csv.run_dir_name(@directory_name)
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
-          # design_parameters? to add later          
+          # design_parameters? to add later
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
           end
 
-          @reporting_periods = [] 
+          @reporting_periods = []
           hash[:reporting_periods].each do |rp|
-             @reporting_periods << ReportingPeriod.new(rp)
+            @reporting_periods << ReportingPeriod.new(rp)
           end
-          
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
-          @@schema ||= @@extension.schema   
-
+          @@schema ||= @@extension.schema
         end
-        
+
         ##
         # Assign default values if values does not exist
         ##
@@ -101,49 +97,48 @@ module URBANopt
           hash[:reporting_periods] = []
           return hash
         end
-        
+
         ##
         # Return an Array of FeatureReports for the simulation_dir as multiple Features can be simulated together in a single simulation directory.
         ##
         #  @param [SimulationDirOSW] simulation_dir A simulation directory from an OSW simulation, must include 'default_feature_reports' measure
         def self.from_simulation_dir(simulation_dir)
-          
           result = []
-          
+
           # simulation dir can include only one feature
           features = simulation_dir.features
           if features.size != 1
-            raise "FeatureReport cannot support multiple features per OSW"
+            raise 'FeatureReport cannot support multiple features per OSW'
           end
 
           # read in the reports written by measure
           default_feature_reports_json = nil
           default_feature_reports_csv = nil
-          
+
           simulation_status = simulation_dir.simulation_status
-          if simulation_status == 'Complete' || simulation_status == 'Failed' 
-            
+          if simulation_status == 'Complete' || simulation_status == 'Failed'
+
             # read in the scenario reports JSON and CSV
             Dir.glob(File.join(simulation_dir.run_dir, '*_default_feature_reports/')).each do |dir|
               scenario_reports_json_path = File.join(dir, 'default_feature_reports.json')
-              if File.exists?(scenario_reports_json_path)
+              if File.exist?(scenario_reports_json_path)
                 File.open(scenario_reports_json_path, 'r') do |file|
                   default_feature_reports_json = JSON.parse(file.read, symbolize_names: true)
                 end
               end
               scenario_reports_csv_path = File.join(dir, 'default_feature_reports.csv')
-              if File.exists?(scenario_reports_csv_path)
+              if File.exist?(scenario_reports_csv_path)
                 default_feature_reports_csv = scenario_reports_csv_path
-              end              
+              end
             end
-            
+
           end
-          
+
           # if we loaded the json
-          if default_feature_reports_json #&& default_feature_reports_json[:feature_reports]
-            #default_feature_reports_json.each do |feature_report|
-              #result << FeatureReport.new(feature_report)
-            #end
+          if default_feature_reports_json # && default_feature_reports_json[:feature_reports]
+            # default_feature_reports_json.each do |feature_report|
+            # result << FeatureReport.new(feature_report)
+            # end
             result << FeatureReport.new(default_feature_reports_json) # should we keep it as an array !? or each each report can only include 1 feature
 
           else
@@ -157,15 +152,15 @@ module URBANopt
               result << FeatureReport.new(hash)
             end
           end
-          
+
           # validate feature_report json against schema
-          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],default_feature_reports_json).any?
-            raise "default_feature_report_json properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],default_feature_reports_json)}"
+          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json).any?
+            raise "default_feature_report_json properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json)}"
           end
-          
+
           return result
         end
-        
+
         ##
         # Convert to a Hash equivalent for JSON serialization
         ##
@@ -182,22 +177,20 @@ module URBANopt
           result[:location] = @location.to_hash if @location
 
           result[:program] = @program.to_hash
-          
+
           result[:construction_costs] = []
-          @construction_costs.each{|cc| result[:construction_costs] << cc.to_hash}
-          
+          @construction_costs.each { |cc| result[:construction_costs] << cc.to_hash }
+
           result[:reporting_periods] = []
-          @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
+          @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash }
 
           # validate feature_report properties against schema
-          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties],result).any?
-            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties],result)}"
+          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?
+            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties], result)}"
           end
 
-          
           return result
         end
-       
       end
     end
   end

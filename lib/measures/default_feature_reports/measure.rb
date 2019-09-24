@@ -642,71 +642,71 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     time_setpoint_not_met_during_occupied_hours = time_setpoint_not_met_during_occupied_heating + time_setpoint_not_met_during_occupied_cooling
     feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_hours] = time_setpoint_not_met_during_occupied_hours
 
-# ####################################### REPORTING RESULTS FOR CSV ######################################
-# # # Timeseries csv enduses METHOD
+    # ####################################### REPORTING RESULTS FOR CSV ######################################
+    # # # Timeseries csv enduses METHOD
 
-#   # Get the weather file run period (as opposed to design day run period)
-#   ann_env_pd = nil
-#   sql_file.availableEnvPeriods.each do |env_pd|
-#     env_type = sql_file.environmentType(env_pd)
-#     if env_type.is_initialized
-#       if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
-#         ann_env_pd = env_pd
-#       end
-#     end
-#   end
+    #   # Get the weather file run period (as opposed to design day run period)
+    #   ann_env_pd = nil
+    #   sql_file.availableEnvPeriods.each do |env_pd|
+    #     env_type = sql_file.environmentType(env_pd)
+    #     if env_type.is_initialized
+    #       if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
+    #         ann_env_pd = env_pd
+    #       end
+    #     end
+    #   end
 
-#   if ann_env_pd == false
-#     runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
-#     return false
-#   end
+    #   if ann_env_pd == false
+    #     runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
+    #     return false
+    #   end
 
-#   # Method to translate from OpenStudio's time formatting
-#   # to Javascript time formatting
-#   # OpenStudio time
-#   # 2009-May-14 00:10:00   Raw string
-#   # Javascript time
-#   # 2009/07/12 12:34:56
-#   def to_JSTime(os_time)
-#     js_time = os_time.to_s
-#     # Replace the '-' with '/'
-#     js_time = js_time.gsub('-','/')
-#     # Replace month abbreviations with numbers
-#     js_time = js_time.gsub('Jan','01')
-#     js_time = js_time.gsub('Feb','02')
-#     js_time = js_time.gsub('Mar','03')
-#     js_time = js_time.gsub('Apr','04')
-#     js_time = js_time.gsub('May','05')
-#     js_time = js_time.gsub('Jun','06')
-#     js_time = js_time.gsub('Jul','07')
-#     js_time = js_time.gsub('Aug','08')
-#     js_time = js_time.gsub('Sep','09')
-#     js_time = js_time.gsub('Oct','10')
-#     js_time = js_time.gsub('Nov','11')
-#     js_time = js_time.gsub('Dec','12')
+    #   # Method to translate from OpenStudio's time formatting
+    #   # to Javascript time formatting
+    #   # OpenStudio time
+    #   # 2009-May-14 00:10:00   Raw string
+    #   # Javascript time
+    #   # 2009/07/12 12:34:56
+    #   def to_JSTime(os_time)
+    #     js_time = os_time.to_s
+    #     # Replace the '-' with '/'
+    #     js_time = js_time.gsub('-','/')
+    #     # Replace month abbreviations with numbers
+    #     js_time = js_time.gsub('Jan','01')
+    #     js_time = js_time.gsub('Feb','02')
+    #     js_time = js_time.gsub('Mar','03')
+    #     js_time = js_time.gsub('Apr','04')
+    #     js_time = js_time.gsub('May','05')
+    #     js_time = js_time.gsub('Jun','06')
+    #     js_time = js_time.gsub('Jul','07')
+    #     js_time = js_time.gsub('Aug','08')
+    #     js_time = js_time.gsub('Sep','09')
+    #     js_time = js_time.gsub('Oct','10')
+    #     js_time = js_time.gsub('Nov','11')
+    #     js_time = js_time.gsub('Dec','12')
 
-#     return js_time
+    #     return js_time
 
-#   end
+    #   end
 
-#   # Create an array of arrays of variables
-#   variables_to_graph = []
-#   end_uses.each do |end_use|
-#     fuel_types.each do |fuel_type|
-#       variable_name = if end_use == 'Facility'
-#                         "#{fuel_type}:#{end_use}"
-#                       else
-#                         "#{end_use}:#{fuel_type}"
-#                       end
+    #   # Create an array of arrays of variables
+    #   variables_to_graph = []
+    #   end_uses.each do |end_use|
+    #     fuel_types.each do |fuel_type|
+    #       variable_name = if end_use == 'Facility'
+    #                         "#{fuel_type}:#{end_use}"
+    #                       else
+    #                         "#{end_use}:#{fuel_type}"
+    #                       end
 
-#   puts " VARIABLE _NAME ARE:  #{variable_name}"
+    #   puts " VARIABLE _NAME ARE:  #{variable_name}"
 
-#       variables_to_graph << [variable_name, reporting_frequency,'']
-#       runner.registerInfo("Exporting #{variable_name}")
-#     end
-#   end
+    #       variables_to_graph << [variable_name, reporting_frequency,'']
+    #       runner.registerInfo("Exporting #{variable_name}")
+    #     end
+    #   end
 
-#   # timeseries we want to report
+    #   # timeseries we want to report
     #   variable_name = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate",
     #     "District Cooling Inlet Temperature", "District Cooling Outlet Temperature", "District Heating Hot Water Rate", "District Heating Mass Flow Rate", "District Heating Inlet Temperature", "District Heating Outlet Temperature"]
 
