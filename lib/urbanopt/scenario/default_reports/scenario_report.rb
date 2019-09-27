@@ -50,7 +50,7 @@ module URBANopt
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
       class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports # :nodoc:
         
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
@@ -116,7 +116,7 @@ module URBANopt
         end
         
         ##
-        # Save the 'default_feature_report.json' and 'default_scenario_report.csv' files
+        # Saves the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
         def save()
           
@@ -129,7 +129,6 @@ module URBANopt
           
           File.open(json_path, 'w') do |f|
             f.puts JSON::pretty_generate(hash)
-            # make sure data is written to the disk one way or the other
             begin
               f.fsync
             rescue
@@ -137,14 +136,13 @@ module URBANopt
             end
           end
  
-          # save the csv data
           timeseries_csv.save_data(csv_path)
           
           return true
         end
         
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Converts to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           result = {}
@@ -166,7 +164,6 @@ module URBANopt
           result[:reporting_periods] = []
           @reporting_periods.each{|rp| result[:reporting_periods] << rp.to_hash}
 
-          # validate scenario_report properties against schema
           if @@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result).any?
             raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ScenarioReport][:properties],result)}"
           end 
@@ -174,18 +171,19 @@ module URBANopt
           return result
         end
         
+        #
+        ## Add description
+        # [Parameters]
+        # +feature_report+ - Add description
         def add_feature_report(feature_report)
-          #puts " START ADDING FEATURE REPORT"
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
-            # check that this feature_report was simulated with required timesteps per hour
             if feature_report.timesteps_per_hour != @timesteps_per_hour
               raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
             end
           end
           
-          # check that we have not already added this feature
           id = feature_report.id
           @feature_reports.each do |existing_feature_report|
             if existing_feature_report.id == id
@@ -193,7 +191,6 @@ module URBANopt
             end
           end
           
-          # check feature simulation status
           if feature_report.simulation_status == 'Not Started'
             @number_of_not_started_simulations +=1 
           elsif feature_report.simulation_status == 'Started'
@@ -206,24 +203,18 @@ module URBANopt
             raise "Unknown feature_report simulation_status = '#{feature_report.simulation_status}'"
           end
           
-          # merge timeseries_csv information
           @timeseries_csv.add_timeseries_csv(feature_report.timeseries_csv)
           
           @timeseries_csv.run_dir_name(@directory_name)
           
-          # merge program information
           @program.add_program(feature_report.program)
 
-          # merge construction costs information
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)
 
-          # merge reporting periods information
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
 
-          # add feature_report
           @feature_reports << feature_report
 
-          # assign scenario location to the location of the first feature
           @location = feature_reports[0].location
 
         end

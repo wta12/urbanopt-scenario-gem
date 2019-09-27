@@ -36,12 +36,11 @@ module URBANopt
     module DefaultReports
       class TimeseriesCSV 
         
-        attr_accessor :path, :first_report_datetime, :column_names
+        attr_accessor :path, :first_report_datetime, :column_names # :nodoc:
         
         ##
-        # Intialize timeseries CSV attributes
+        # Intializes timeseries CSV attributes
         ##
-        # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
@@ -52,13 +51,12 @@ module URBANopt
           @first_report_datetime = hash[:first_report_datetime]
           @column_names = hash[:column_names]
           
-          # hash of column_name to array of values, does not get serialized to hash
           @mutex = Mutex.new
           @data = nil
         end
         
         ##
-        # Assign default values if values does not exist
+        # Assigns default values if values does not exist.
         ##
         def defaults
           hash = {}
@@ -69,14 +67,14 @@ module URBANopt
         
 
         ##
-        # Gets run directory
+        # Gets run directory.
         ##
         def run_dir_name(name)
           @run_dir = name
         end
 
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Converts to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           result = {}
@@ -94,7 +92,7 @@ module URBANopt
         
 
         ##
-        # Load data from the CSV file
+        # Loads data from the CSV file.
         ##
         def load_data
           @mutex.synchronize do
@@ -113,14 +111,12 @@ module URBANopt
                   end
                 end
               end
-              #puts "@column_names = #{@column_names}"
-              #puts "@data = #{@data}"
             end
           end
         end
         
         ##
-        # Get data
+        # Gets data.
         ##
         def get_data(column_name)
           load_data
@@ -128,7 +124,7 @@ module URBANopt
         end
         
         ##
-        # Save data
+        # Saves data.
         ##
         def save_data(path)
           File.open(path, 'w') do |f|
@@ -142,7 +138,6 @@ module URBANopt
               end
               f.puts line.join(',')
             end
-            # make sure data is written to the disk one way or the other
             begin
               f.fsync
             rescue
@@ -153,7 +148,7 @@ module URBANopt
         end
         
         ##
-        # Merge timeseries csv to each other
+        # Merges timeseries csv to each other.
         ##
         def add_timeseries_csv(other)
 
@@ -167,10 +162,8 @@ module URBANopt
             raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{other.first_report_datetime}'"
           end
           
-          # merge the column names
           @column_names = @column_names.concat(other.column_names).uniq
           
-          # merge the data
           other.column_names.each do |column_name|
             new_values = other.get_data(column_name)
             

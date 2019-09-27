@@ -37,7 +37,7 @@ module URBANopt
     module DefaultReports
       class ConstructionCost 
 
-        attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost 
+        attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost # :nodoc:
 
         ##
         # Intialize construction cost attributes
@@ -63,7 +63,7 @@ module URBANopt
 
       
         ##
-        # Assign default values if values does not exist
+        # Assigns default values if values do not exist.
         ##
         def defaults
           hash = {}
@@ -78,7 +78,7 @@ module URBANopt
         end
 
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Converts to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           result = {}
@@ -98,7 +98,7 @@ module URBANopt
         end
         
         ##
-        # Merge an existing cost with a new cost
+        # Merges an existing cost with a new cost.
         ## 
         def self.merge_construction_cost(existing_cost, new_cost)
           # modify the existing_cost by adding the :total_cost and :item_quantity
@@ -121,7 +121,7 @@ module URBANopt
         end
         
         ##
-        # Merge muliple construction costs together
+        # Merges muliple construction costs together.
         ## 
         def self.merge_construction_costs(existing_costs, new_costs)
              
@@ -147,8 +147,6 @@ module URBANopt
               existing_costs << x_new
 
             end
-            #puts "final cost = #{existing_costs}"
-                 
           end
           
           return existing_costs

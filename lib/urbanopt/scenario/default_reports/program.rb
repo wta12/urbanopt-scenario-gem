@@ -41,12 +41,12 @@ module URBANopt
         :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces, 
         :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories, 
         :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
-        :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area,:equipment_roof_area, :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio  
+        :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area,:equipment_roof_area, :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc: 
         
         ##
-        # Program class intialize attributes related to the building program
+        # Program class intialize attributes related to the building program.
         ##
-        # perform initialization functions
+        # Performs initialization functions.
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
@@ -81,7 +81,7 @@ module URBANopt
         end
         
         ##
-        # Assign default values if values does not exist
+        # Assigns default values if values do not exist.
         ##
         def defaults
           hash = {}
@@ -111,7 +111,7 @@ module URBANopt
         end
         
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Convert to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           result = {}
@@ -166,7 +166,7 @@ module URBANopt
         end
 
         ##
-        # Takes maximum value
+        # Takes maximum of the +existing_value+ and +new_value+.
         ##
         def max_value(existing_value, new_value)  
           if existing_value && new_value
@@ -178,7 +178,7 @@ module URBANopt
         end
 
         ##
-        # Add up old and new values
+        # Adds exisiting and new values.
         ##
         def add_values(existing_value, new_value)  
           if existing_value && new_value
@@ -190,10 +190,9 @@ module URBANopt
         end
         
         ##
-        # Aggregate the values of each program attribute (specify what is other0)
+        # Aggregates the values of each program attribute. 
         ##
         def add_program(other)
-          #@site_area += other.site_area
           @site_area = add_values(@site_area, other.site_area)
 
           @floor_area = add_values(@floor_area, other.floor_area)

@@ -33,13 +33,16 @@ module URBANopt
     class ScenarioBase 
 
       ##
-      # ScenarioBase is a simulation method agnostic description of a Scenario
+      # ScenarioBase is a simulation method agnostic description of a Scenario.
+      #
       # Each ScenarioBase has a name, root directory, run directory, and an input feature file
-      ##
-      #  @param [String] name Human readable scenario name
-      #  @param [String] root_dir Root directory for the scenario, contains Gemfile describing dependencies
-      #  @param [String] run_dir Directory for simulation of this scenario, deleting run directory clears the scenario
-      #  @param [URBANopt::Core::FeatureFile] feature_file FeatureFile containing features to simulate
+      #
+      # [Parameter]
+      # * +name+ - _Type:String_ Human readable scenario name.
+      # * +root_dir+ - Root directory for the scenario, contains Gemfile describing dependencies.
+      # * +run_dir+ - Directory for simulation of this scenario, deleting run directory clears the scenario.
+      # * +feature_file+ - An instance of +URBANopt::Core::FeatureFile+  containing
+      #   features for simulation.
       def initialize(name, root_dir, run_dir, feature_file)
         @name = name
         @root_dir = root_dir
@@ -47,32 +50,37 @@ module URBANopt
         @feature_file = feature_file
       end
       
-      # Name of this Scenario
+      ##
+      # Name of the Scenario.
       def name
         @name
       end
       
-      # Root directory containing Gemfile
+      ##
+      # Root directory containing Gemfile.
       def root_dir
         @root_dir
       end
       
-      # Directory to run this Scenario in
+      ##
+      # Directory to run this Scenario.
       def run_dir
         @run_dir
       end
       
-      # @return [URBANopt::Core::FeatureFile] FeatureFile associated with this Scenario
+      ##
+      # An instance of +URBANopt::Core::FeatureFile+ associated with this Scenario.
       def feature_file
         @feature_file
       end
       
-      # Array of SimulationDirBase objects
+      # An array of +SimulationDirBase+ objects.
       def simulation_dirs
         raise "simulation_dirs not implemented for ScenarioBase, override in your class"
       end
       
-      # Remove all simulation input and output files by removing this Scenario's run_dir
+      # Removes all simulation input and output files by removing this Scenario's
+      # +run_dir+ .
       def clear
         Dir.glob(File.join(@run_dir, '/*')).each do |f|
           FileUtils.rm_rf(f)

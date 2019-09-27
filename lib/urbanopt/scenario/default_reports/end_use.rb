@@ -37,11 +37,11 @@ module URBANopt
         module DefaultReports
             class EndUse
                 attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment,
-                            :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators
+                            :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators # :nodoc:
 
                             
                 ##
-                # EndUse class intialize all enduse atributes
+                # EndUse class intialize all enduse atributes.
                 ##
                 def initialize(hash={})
                     hash.delete_if {|k, v| v.nil?}
@@ -69,7 +69,7 @@ module URBANopt
                 end
 
                 ##
-                # Assign default values if values does not exist
+                # Assigns default values if values do not exist.
                 ##
                 def defaults
                     
@@ -94,7 +94,7 @@ module URBANopt
                 end
 
                 ##
-                # Convert to a Hash equivalent for JSON serialization
+                # Converts to a hash equivalent for JSON serialization.
                 ##
                 def to_hash
                     
@@ -125,7 +125,7 @@ module URBANopt
                 end
                 
                 ##
-                # Aggregate the values of each EndUse attribute
+                # Aggregates the values of each EndUse attribute.
                 ##
                 def merge_end_use!(new_end_use)
                                         

@@ -36,10 +36,10 @@ module URBANopt
     module Scenario
         module DefaultReports
             class EndUses
-                attr_accessor :electricity, :natural_gas, :additional_fuel, :district_cooling, :district_heating, :water
+                attr_accessor :electricity, :natural_gas, :additional_fuel, :district_cooling, :district_heating, :water # :nodoc:
 
                 ##
-                # EndUses class intialize fuel type attributes that incluse all enduse values
+                # EndUses class intialize fuel type attributes that include all enduse values.
                 ##
                 def initialize(hash = {})
                     hash.delete_if {|k, v| v.nil?}
@@ -59,7 +59,7 @@ module URBANopt
                 end
 
                 ##
-                # Convert to a Hash equivalent for JSON serialization
+                # Converts to a hash equivalent for JSON serialization.
                 ##
                 def to_hash
                     result = {}
@@ -101,7 +101,7 @@ module URBANopt
                 end
 
                 ##
-                # Assign default values if values does not exist
+                # Assigns default values if values do not exist.
                 ##
                 def defaults
                     hash = {}
@@ -117,7 +117,7 @@ module URBANopt
                 end
 
                 ##
-                # Aggregate the values of each EndUse attribute
+                # Aggregates the values of each EndUse attribute.
                 ##
                 def merge_end_uses!(new_end_uses)
                             

@@ -1,4 +1,4 @@
-# UrbanOpt Scenario Gem
+# URBANOpt Scenario Gem
 
 ### <StaticLink href="rdoc/">Rdocs</StaticLink>
 

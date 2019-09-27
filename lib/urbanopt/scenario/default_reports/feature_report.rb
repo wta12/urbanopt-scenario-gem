@@ -42,14 +42,14 @@ module URBANopt
     module DefaultReports
     
       ## 
-      # FeatureReport generate two types of reports in a simulation_dir.  
-      # The 'default_feature_reports' measure writes a 'default_feature_reports.json' file containing 
-      # information on all features in the simulation.  It also writes a 'default_feature_reports.csv'
+      # FeatureReport generates two types of reports in a simulation_dir.  
+      # The +default_feature_reports+ measure writes a 'default_feature_reports.json' file containing 
+      # information on all features in the simulation.  It also writes a +default_feature_reports.csv+
       # containing timeseries data for all features in the simulation.
-      # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
+      # The +DefaultPostProcessor+ reads these +FeatureReports+ and aggregates them to create a +ScenarioReport+.
       ##
       class FeatureReport 
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
         
         ##
         # Each FeatureReport object corresponds to a single Feature.

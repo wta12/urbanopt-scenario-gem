@@ -44,12 +44,11 @@ module URBANopt
                         :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, 
                         :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :electricity_produced, :photovoltaic, :utility_costs, 
                         :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
-                        :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours
+                        :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours # :nodoc:
 
         ##
-        # Intialize reporting period attributes
+        # Intializes the reporting period attributes.
         ##
-        # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
           hash = defaults.merge(hash)
@@ -81,14 +80,13 @@ module URBANopt
 
           @comfort_result = hash[:comfort_result]
           
-          # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
           
         end
         
         ##
-        # Assign default values if values does not exist
+        # Assigns default values if values do not exist.
         ##
         def defaults          
           hash = {}
@@ -108,7 +106,7 @@ module URBANopt
         
 
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Converts to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           
@@ -157,7 +155,7 @@ module URBANopt
           result[:comfort_result] = comfort_result_hash if @comfort_result 
          
             
-          # validate reporting_period properties against schema
+          # validates +reporting_period+ properties against schema for reporting period. 
           if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result).any?
             raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result)}"
           end
@@ -172,7 +170,7 @@ module URBANopt
 
 
         ##
-        # Add up old and new values
+        # Adds up existing and new values.
         ##
         def self.add_values(existing_value, new_value)
           if existing_value && new_value
@@ -184,11 +182,10 @@ module URBANopt
         end
         
         ##
-        # Merge a reporting period with a new reporting period
+        # Merges a reporting period with a new reporting period
         ## 
         def self.merge_reporting_period(existing_period, new_period)
                          
-          # modify the existing_period by summing up the results ; # sum results only if they exist
           existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
           existing_period.total_source_energy = add_values(existing_period.total_source_energy, new_period.total_source_energy)  
           existing_period.net_source_energy = add_values(existing_period.net_source_energy, new_period.net_source_energy) 
@@ -202,7 +199,6 @@ module URBANopt
           existing_period.electricity_produced = add_values(existing_period.electricity_produced, new_period.electricity_produced)
         
           
-            #merge end uses
             new_end_uses = new_period.end_uses
             existing_period.end_uses.merge_end_uses!(new_end_uses) if existing_period.end_uses
           
@@ -237,7 +233,7 @@ module URBANopt
         
 
         ##
-        # Merge muliple reporting periods together
+        # Merges muliple reporting periods together.
         ##
         def self.merge_reporting_periods(existing_periods, new_periods)
                    
