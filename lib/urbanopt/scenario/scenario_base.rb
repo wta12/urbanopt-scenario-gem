@@ -32,13 +32,14 @@ module URBANopt
   module Scenario
     class ScenarioBase
       ##
-      # ScenarioBase is a simulation method agnostic description of a Scenario
+      # ScenarioBase is a simulation method agnostic description of a Scenario.
       # Each ScenarioBase has a name, root directory, run directory, and an input feature file
       ##
-      #  @param [String] name Human readable scenario name
-      #  @param [String] root_dir Root directory for the scenario, contains Gemfile describing dependencies
-      #  @param [String] run_dir Directory for simulation of this scenario, deleting run directory clears the scenario
-      #  @param [URBANopt::Core::FeatureFile] feature_file FeatureFile containing features to simulate
+      #  [parameters]
+      #  * +name+ - _Type:String_ Human readable scenario name
+      #  * +root_dir+ - _Type:String_ Root directory for the scenario, contains Gemfile describing dependencies
+      #  * +run_dir+ - _Type:String_ Directory for simulation of this scenario, deleting run directory clears the scenario
+      #  * +feature_file+ - An instance of +URBANopt::Core::FeatureFile+ containing features for simulation.
       def initialize(name, root_dir, run_dir, feature_file)
         @name = name
         @root_dir = root_dir
