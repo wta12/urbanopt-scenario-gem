@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>db4d7448-c8c2-477c-b7b6-e5215cdb3d51</version_id>
-  <version_modified>20190826T200526Z</version_modified>
+  <version_id>c0251e3c-a331-44ee-9191-db1c4312fc4e</version_id>
+  <version_modified>20190930T050425Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -60,10 +60,6 @@
           <display_name>Daily</display_name>
         </choice>
         <choice>
-          <value>BillingPeriod</value>
-          <display_name>BillingPeriod</display_name>
-        </choice>
-        <choice>
           <value>Monthly</value>
           <display_name>Monthly</display_name>
         </choice>
@@ -111,16 +107,22 @@
       <checksum>703C9964</checksum>
     </file>
     <file>
-      <filename>default_feature_reports_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9E8A0D8F</checksum>
-    </file>
-    <file>
       <filename>example_model.osm</filename>
       <filetype>osm</filetype>
       <usage_type>test</usage_type>
       <checksum>CC4BFFAF</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>FDBC6AE2</checksum>
+    </file>
+    <file>
+      <filename>default_feature_reports_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AB366711</checksum>
     </file>
     <file>
       <version>
@@ -131,13 +133,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>F8A4B676</checksum>
-    </file>
-    <file>
-      <filename>README.md</filename>
-      <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>FDBC6AE2</checksum>
+      <checksum>7BE0443B</checksum>
     </file>
   </files>
 </measure>
