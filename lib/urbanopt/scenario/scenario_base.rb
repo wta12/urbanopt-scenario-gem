@@ -48,36 +48,28 @@ module URBANopt
         @run_dir = run_dir
         @feature_file = feature_file
       end
-      
+
       ##
       # Name of the Scenario.
-      def name
-        @name
-      end
-      
+      attr_reader :name
+
       ##
       # Root directory containing Gemfile.
-      def root_dir
-        @root_dir
-      end
-      
+      attr_reader :root_dir
+
       ##
       # Directory to run this Scenario.
-      def run_dir
-        @run_dir
-      end
-      
+      attr_reader :run_dir
+
       ##
       # An instance of +URBANopt::Core::FeatureFile+ associated with this Scenario.
-      def feature_file
-        @feature_file
-      end
-      
+      attr_reader :feature_file
+
       # An array of +SimulationDirBase+ objects.
       def simulation_dirs
         raise 'simulation_dirs not implemented for ScenarioBase, override in your class'
       end
-      
+
       # Removes all simulation input and output files by removing this Scenario's
       # +run_dir+ .
       def clear

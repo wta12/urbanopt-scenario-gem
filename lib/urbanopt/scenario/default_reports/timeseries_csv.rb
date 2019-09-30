@@ -34,10 +34,9 @@ require 'pathname'
 module URBANopt
   module Scenario
     module DefaultReports
-      class TimeseriesCSV 
-        
+      class TimeseriesCSV
         attr_accessor :path, :first_report_datetime, :column_names # :nodoc:
-        
+
         ##
         # Intializes timeseries CSV attributes
         ##

@@ -40,10 +40,10 @@ module URBANopt
     module DefaultReports
       class ReportingPeriod
         attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy, #:nodoc:
-                        :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, #:nodoc:
-                        :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :electricity_produced, :photovoltaic, :utility_costs, #:nodoc:
-                        :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling, #:nodoc:
-                        :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours # :nodoc:
+                      :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, #:nodoc:
+                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :electricity_produced, :photovoltaic, :utility_costs, #:nodoc:
+                      :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling, #:nodoc:
+                      :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours # :nodoc:
 
         ##
         # Intializes the reporting period attributes.
@@ -156,19 +156,18 @@ module URBANopt
           end
 
           comfort_result_hash = @comfort_result if @comfort_result
-          comfort_result_hash.delete_if {|k,v| v.nil?}    
-          result[:comfort_result] = comfort_result_hash if @comfort_result 
-         
-            
+          comfort_result_hash.delete_if { |k, v| v.nil? }
+          result[:comfort_result] = comfort_result_hash if @comfort_result
+
           # validates +reporting_period+ properties against schema for reporting period.  #:nodoc:
-          if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result).any?
-            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties],result)}"
+          if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result).any?
+            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result)}"
           end
 
           return result
         end
 
-        ### get keys ...not needed 
+        ### get keys ...not needed
         # def self.get_all_keys(h)
         #   h.each_with_object([]){|(k,v),a| v.is_a?(Hash) ? a.push(k,*get_all_keys(v)) : a << k }
         # end

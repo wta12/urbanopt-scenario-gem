@@ -48,9 +48,10 @@ module URBANopt
       # The first is a JSON format saved to 'default_scenario_report.json'.
       # The second is a CSV format saved to 'default_scenario_report.csv'.
       ##
-      class ScenarioReport 
-        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports # :nodoc:
-        
+      class ScenarioReport
+        attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, # :nodoc:
+        :number_of_complete_simulations, :number_of_failed_simulations, :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports # :nodoc:
+
         ##
         # Each ScenarioReport object corresponds to a single Scenario.
         ##
@@ -171,7 +172,6 @@ module URBANopt
         end
 
         def add_feature_report(feature_report)
-          
           if @timesteps_per_hour.nil?
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else

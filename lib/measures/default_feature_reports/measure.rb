@@ -1116,10 +1116,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     runner.registerFinalCondition('Default Feature Reports generated successfully.')
 
     true
-  # end the run method
-  end 
-# end the measure
-end 
+    # end the run method
+  end
+  # end the measure
+end
 
 # register the measure to be used by the application
 DefaultFeatureReports.new.registerWithApplication

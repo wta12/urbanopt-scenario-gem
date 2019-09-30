@@ -35,8 +35,7 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
-      class ConstructionCost 
-
+      class ConstructionCost
         attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost # :nodoc:
 
         ##
@@ -96,7 +95,7 @@ module URBANopt
 
         ##
         # Merges an existing cost with a new cost.
-        ## 
+        ##
         def self.merge_construction_cost(existing_cost, new_cost)
           # modify the existing_cost by adding the :total_cost and :item_quantity
           existing_cost.total_cost += new_cost.total_cost
@@ -119,7 +118,7 @@ module URBANopt
 
         ##
         # Merges muliple construction costs together.
-        ## 
+        ##
         def self.merge_construction_costs(existing_costs, new_costs)
           # puts "existing_costs = #{existing_costs}"
           # puts "new_costs = #{new_costs}"

@@ -35,8 +35,7 @@ require 'json'
 module URBANopt
   module Scenario
     module DefaultReports
-      class Date 
-
+      class Date
         attr_accessor :month, :day_of_month, :year # :nodoc:
 
         ##
