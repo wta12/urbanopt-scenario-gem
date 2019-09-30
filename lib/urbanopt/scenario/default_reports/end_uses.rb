@@ -131,21 +131,20 @@ module URBANopt
                     
                 end
 
+                ##
+                # Aggregate the values of each EndUse attribute
+                ##
+                def merge_end_uses!(new_end_uses)
+                    # modify the existing_period by summing up the results ; # sum results only if they exist
+                    @electricity.merge_end_use!(new_end_uses.electricity)
+                    @natural_gas.merge_end_use!(new_end_uses.natural_gas)
+                    @additional_fuel.merge_end_use!(new_end_uses.additional_fuel)
+                    @district_cooling.merge_end_use!(new_end_uses.district_cooling)
+                    @district_heating.merge_end_use!(new_end_uses.district_heating)
+                    return self
+                end
+                
             end
-
-        ##
-        # Aggregate the values of each EndUse attribute
-        ##
-        def merge_end_uses!(new_end_uses)
-          # modify the existing_period by summing up the results ; # sum results only if they exist
-          @electricity.merge_end_use!(new_end_uses.electricity)
-          @natural_gas.merge_end_use!(new_end_uses.natural_gas)
-          @additional_fuel.merge_end_use!(new_end_uses.additional_fuel)
-          @district_cooling.merge_end_use!(new_end_uses.district_cooling)
-          @district_heating.merge_end_use!(new_end_uses.district_heating)
-          return self
         end
-      end
     end
-  end
 end
