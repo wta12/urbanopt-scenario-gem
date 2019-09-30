@@ -36,29 +36,30 @@ module URBANopt
     module DefaultReports
       class EndUse
         attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment,
-                      :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators
+                    :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators # :nodoc:
 
+                    
         ##
-        # EndUse class intialize all enduse atributes
+        # EndUse class intialize all enduse atributes.
         ##
-        def initialize(hash = {})
-          hash.delete_if { |k, v| v.nil? }
-          hash = defaults.merge(hash)
-
-          @heating = hash[:heating]
-          @cooling = hash[:cooling]
-          @interior_lighting = hash[:interior_lighting]
-          @exterior_lighting = hash[:exterior_lighting]
-          @interior_equipment = hash[:interior_equipment]
-          @exterior_equipment = hash[:exterior_equipment]
-          @fans = hash[:fans]
-          @pumps = hash[:pumps]
-          @heat_rejection = hash[:heat_rejection]
-          @humidification = hash[:humidification]
-          @heat_recovery = hash[:heat_recovery]
-          @water_systems = hash[:water_systems]
-          @refrigeration = hash[:refrigeration]
-          @generators = hash[:generators]
+        def initialize(hash={})
+            hash.delete_if {|k, v| v.nil?}
+            hash = defaults.merge(hash)
+            
+            @heating = hash[:heating]
+            @cooling = hash[:cooling]
+            @interior_lighting = hash[:interior_lighting]
+            @exterior_lighting = hash[:exterior_lighting]
+            @interior_equipment = hash[:interior_equipment]
+            @exterior_equipment = hash[:exterior_equipment]
+            @fans = hash[:fans]
+            @pumps = hash[:pumps]
+            @heat_rejection = hash[:heat_rejection]
+            @humidification = hash[:humidification]
+            @heat_recovery = hash[:heat_recovery]
+            @water_systems = hash[:water_systems]
+            @refrigeration = hash[:refrigeration]
+            @generators = hash[:generators]
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
@@ -90,7 +91,7 @@ module URBANopt
         end
 
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Convert to a Hash equivalent for JSON serialization.
         ##
         def to_hash
           result = {}
@@ -119,7 +120,7 @@ module URBANopt
         end
 
         ##
-        # Aggregate the values of each EndUse attribute
+        # Aggregate the values of each EndUse attribute.
         ##
         def merge_end_use!(new_end_use)
           @heating += new_end_use.heating if new_end_use.heating
