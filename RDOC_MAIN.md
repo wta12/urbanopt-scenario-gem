@@ -1,4 +1,4 @@
-# UrbanOpt GeoJSON Gem
+# URBANopt Scenario Gem
 
 ### [back to main docs](../)
 
