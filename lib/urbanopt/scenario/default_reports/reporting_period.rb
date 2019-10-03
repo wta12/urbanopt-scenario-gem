@@ -187,6 +187,7 @@ module URBANopt
         ##
         # Merges a reporting period with a new reporting period
         ##
+        # rubocop: disable Metrics/AbcSize
         def self.merge_reporting_period(existing_period, new_period)
           # modify the existing_period by summing up the results ; # sum results only if they exist #:nodoc:
           existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
@@ -230,6 +231,7 @@ module URBANopt
 
           return existing_period
         end
+        # rubocop: enable Metrics/AbcSize
 
         ##
         # Merges muliple reporting periods together.

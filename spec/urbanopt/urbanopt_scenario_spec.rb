@@ -33,6 +33,7 @@ require_relative '../files/example_feature_file'
 require 'json'
 require 'json-schema'
 
+# rubocop: disable Metrics/BlockLength
 RSpec.describe URBANopt::Scenario do
   it 'has a version number' do
     expect(URBANopt::Scenario::VERSION).not_to be nil
@@ -129,7 +130,7 @@ RSpec.describe URBANopt::Scenario do
 
     # Read json file
     scenario_json = File.open(scenario_result.json_path)
-    data = JSON.load scenario_json
+    data = JSON.parse(File.read(scenario_json))
 
     # Program results check
     expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map { |h| h['program']['site_area'] }.reduce(:+)) if data['scenario_report']['program']['site_area']
@@ -169,27 +170,30 @@ RSpec.describe URBANopt::Scenario do
     # Reporting periods results check
     expect(data['scenario_report']['reporting_periods'][0]['total_site_energy']).to eq(data['feature_reports'].map { |h| h['reporting_periods'][0]['total_site_energy'] }.reduce(:+))
 
+    # close json file
     scenario_json.close
   end
 
   it 'validate results against shema' do
     schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
-    schema = JSON.load schema_json
+    schema = JSON.parse(File.read(schema_json))
 
     # Read scenario json file and validated againt schema
     scenario_json_file = File.open(File.expand_path('../test/example_scenario/default_scenario_report.json', File.dirname(__FILE__)), 'r')
-    scenario_json = JSON.load scenario_json_file
+    scenario_json = JSON.parse(File.read(scenario_json_file))
 
     puts JSON::Validator.fully_validate(schema, scenario_json)
 
     expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
-
+    # close json file
     scenario_json_file.close
 
     # Read scenario csv file and validate against schema
     scenario_csv_headers = CSV.open(File.expand_path('../test/example_scenario/default_scenario_report.csv', File.dirname(__FILE__)), &:readline)
 
+    # rubocop: disable Security/Open
     scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
+    # rubocop: enable Security/Open
 
     scenario_csv_schema_headers = []
     File.readlines(scenario_csv_schema).each do |line|
@@ -210,3 +214,4 @@ RSpec.describe URBANopt::Scenario do
     schema_json.close
   end
 end
+# rubocop:enable Metrics/BlockLength

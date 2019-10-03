@@ -30,6 +30,7 @@
 
 require_relative '../spec_helper'
 
+# rubocop: disable Metrics/BlockLength
 RSpec.describe URBANopt::Scenario::DefaultReports do
   it 'has a logger' do
     expect(URBANopt::Scenario::DefaultReports.logger).not_to be nil
@@ -224,3 +225,4 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     # puts "\nfinal periods: #{existing_periods}"
   end
 end
+# rubocop: enable Metrics/BlockLength

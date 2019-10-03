@@ -222,6 +222,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
   end
 
   # define what happens when the measure is run
+  # rubocop:disable Metrics/AbcSize
   def run(runner, user_arguments)
     super(runner, user_arguments)
 
@@ -271,13 +272,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # get surfaces
     surfaces = model.getSurfaces
 
-    # get epwFile
-    epwFile = runner.lastEpwFile
-    if epwFile.empty?
+    # get epw_file
+    epw_file = runner.lastEpwFile
+    if epw_file.empty?
       runner.registerError('Cannot find last epw file.')
       return false
     end
-    epwFile = epwFile.get
+    epw_file = epw_file.get
 
     # create output report object
     feature_report = URBANopt::Scenario::DefaultReports::FeatureReport.new
@@ -294,12 +295,12 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Location information
 
     # latitude
-    latitude = epwFile.latitude
+    latitude = epw_file.latitude
     puts "latitude = #{latitude}"
     feature_report.location.latitude = latitude
 
     # longitude
-    longitude = epwFile.longitude
+    longitude = epw_file.longitude
     puts "longitude = #{longitude}"
     feature_report.location.longitude = longitude
 
@@ -315,7 +316,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # weather_file = model.getWeatherFile
     # epw_path = weather_file.path.to_s
     # puts "WEATHER FILE IS : #{epw_path}"
-    # #puts "WEATHER FILE IS : #{epwFile}"
+    # #puts "WEATHER FILE IS : #{epw_file}"
 
     ###########################################################################
     # Program information
@@ -971,6 +972,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     final_timeseries_names = []
 
     # loop over requested timeseries
+    # rubocop: disable Metrics/BlockLength
     requested_timeseries_names.each_with_index do |timeseries_name, j|
       runner.registerInfo("TIMESERIES: #{timeseries_name}")
 
@@ -1042,13 +1044,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         old_units = ts.get.units if ts.is_initialized
         puts "OLD UNIT IS === #{old_units}"
         new_units = case old_units.to_s
-        when 'J'
-          'kBtu'
-        when 'kWh'
-          'kBtu'
-        when 'm3'
-          'gal'
-        end
+                      when 'J'
+                        'kBtu'
+                      when 'kWh'
+                        'kBtu'
+                      when 'm3'
+                        'gal'
+                    end
 
         # UNit conversion here
         os_vec = values[j]
@@ -1068,7 +1070,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         end
       end
     end
-
+    # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
     # Save the 'default_feature_reports.csv' file
@@ -1120,6 +1122,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
   end
   # end the measure
 end
+# rubocop:enable Metrics/AbcSize
 
 # register the measure to be used by the application
 DefaultFeatureReports.new.registerWithApplication

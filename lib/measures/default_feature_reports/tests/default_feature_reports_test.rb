@@ -37,8 +37,8 @@ require_relative '../measure.rb'
 require 'fileutils'
 require 'csv'
 
-class DefaultFeatureReports_Test < MiniTest::Test
-  def is_openstudio_2?
+class DefaultFeatureReportsTest < MiniTest::Test
+  def openstudio_2?
     begin
       workflow = OpenStudio::WorkflowJSON.new
     rescue StandardError
@@ -68,8 +68,9 @@ class DefaultFeatureReports_Test < MiniTest::Test
     "#{run_dir(test_name)}/TestOutput.osm"
   end
 
+  # rubocop: disable Style/GuardClause
   def workspace_path(test_name)
-    if is_openstudio_2?
+    if openstudio_2?
       return "#{run_dir(test_name)}/run/in.idf"
     else
       return "#{run_dir(test_name)}/ModelToIdf/in.idf"
@@ -77,7 +78,7 @@ class DefaultFeatureReports_Test < MiniTest::Test
   end
 
   def sql_path(test_name)
-    if is_openstudio_2?
+    if openstudio_2?
       return "#{run_dir(test_name)}/run/eplusout.sql"
     else
       return "#{run_dir(test_name)}/ModelToIdf/EnergyPlusPreProcess-0/EnergyPlus-0/eplusout.sql"
@@ -154,13 +155,14 @@ class DefaultFeatureReports_Test < MiniTest::Test
     model.addObjects(request_model.objects)
     model.save(model_out_path(test_name), true)
 
-    if is_openstudio_2?
+    if openstudio_2?
       setup_test_2(test_name, epw_path)
     else
       setup_test_1(test_name, epw_path)
     end
   end
 
+  # rubocop: disable Metrics/AbcSize
   def test_good_argument_values
     test_name = 'good_argument_values'
     model_in_path = "#{File.dirname(__FILE__)}/example_model.osm"
@@ -232,3 +234,5 @@ class DefaultFeatureReports_Test < MiniTest::Test
     assert(File.exist?("#{run_dir(test_name)}/default_feature_reports.csv"))
   end
 end
+# rubocop: enable Style/GuardClause
+# rubocop: enable Metrics/AbcSize

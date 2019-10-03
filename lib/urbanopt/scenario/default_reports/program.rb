@@ -191,7 +191,7 @@ module URBANopt
         # Aggregates the values of each program attribute.
         ##
 
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:disable Metrics/AbcSize
         def add_program(other)
           @site_area = add_values(@site_area, other.site_area)
 
@@ -230,7 +230,7 @@ module URBANopt
           @roof_area[:available_roof_area] = add_values(@roof_area[:available_roof_area], other.roof_area[:available_roof_area])
           @roof_area[:total_roof_area] = add_values(@roof_area[:total_roof_area], other.roof_area[:total_roof_area])
         end
-        # rubocop:disable Metrics/BlockLength
+        # rubocop:enable Metrics/AbcSize
       end
     end
   end
