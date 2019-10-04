@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'urbanopt/scenario/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'urbanopt-scenario'
+  spec.name          = 'urbanopt_scenario'
   spec.version       = URBANopt::Scenario::VERSION
   spec.authors       = ['Dan Macumber']
   spec.email         = ['daniel.macumber@nrel.gov']

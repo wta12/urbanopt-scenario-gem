@@ -99,8 +99,8 @@ module URBANopt
         # - raise an error if +:category+ , +:cost_units+ and +:unit_cost+ are not identical
         ##
         # [Parameters]
-        # * +existing_cost+ - _Type:Hash_ - A Construction_cost hash.
-        # * +new_cost+ - _Type:Hash_ - A Construction_cost hash.
+        # +existing_cost+ - _Type:Hash_ - A Construction_cost hash.
+        # +new_cost+ - _Type:Hash_ - A Construction_cost hash.
         def self.merge_construction_cost(existing_cost, new_cost)
           # modify the existing_cost by adding the :total_cost and :item_quantity
           existing_cost.total_cost += new_cost.total_cost

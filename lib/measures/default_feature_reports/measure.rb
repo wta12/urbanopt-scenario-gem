@@ -132,6 +132,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
   end
 
   # return a vector of IdfObject's to request EnergyPlus objects needed by the run method
+  # rubocop:disable Naming/MethodName
   def energyPlusOutputRequests(runner, user_arguments)
     super(runner, user_arguments)
 
@@ -1123,6 +1124,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
   # end the measure
 end
 # rubocop:enable Metrics/AbcSize
+# rubocop:enable Naming/MethodName
 
 # register the measure to be used by the application
 DefaultFeatureReports.new.registerWithApplication
