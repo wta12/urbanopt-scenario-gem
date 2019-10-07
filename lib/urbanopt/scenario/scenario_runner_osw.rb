@@ -43,11 +43,13 @@ module URBANopt
       def initialize; end
 
       ##
-      # Create all OSWs for Scenario
+      # Create all OSWs for Scenario.
       ##
-      #  @param [ScenarioBase] scenario Scenario to create simulation input files for
-      #  @param [Bool] force_clear Clear Scenario before creating simulation input files
-      #  @return [Array] Returns array of all SimulationDirs, even those created previously, for Scenario
+      # [parameters:]
+      # +scenario+ - _ScenarioBase_ - Scenario to create simulation input files for.   
+      # +force_clear+ - _Bool_ - Clear Scenario before creating simulation input files.  
+      # [return:]
+      # _Array_ Returns array of all SimulationDirs, even those created previously, for Scenario.
       def create_simulation_files(scenario, force_clear = false)
         if force_clear
           scenario.clear
@@ -67,15 +69,26 @@ module URBANopt
       end
 
       ##
-      # Create and run all SimulationFileOSW for Scenario
+      # Create and run all SimulationFileOSW for Scenario.
+      # A staged runner is implented to run buildings, then transformers then district systems.
+      # - instantiate openstudio runner to run .osw files.
+      # - create simulation files for this scenario.
+      # - get feature_type value from in.osw files
+      # - cretae 3 groups to store .osw files (+building_osws+ , +transformer_osws+ , +district_system_osws+)
+      # - add each osw file to its corresponding group id +simulation_dir+ is out_of_date
+      # - Run osw file groups in order and store simulation failure in a array.
       ##
-      #  @param [ScenarioBase] scenario Scenario to create and run SimulationFiles for
-      #  @param [Bool] force_clear Clear Scenario before creating SimulationFiles
-      #  @return [Array] Returns array of all SimulationFiles, even those created previously, for Scenario
+      # [parameters:]
+      # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.    
+      # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.    
+      # [return:]
+      # _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
       def run(scenario, force_clear = false)
-        # implement a staged runner here ...building , then trasformers then district systems run
+        
+        # instantiate openstudio runner
         runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
 
+        # create simulation files
         simulation_dirs = create_simulation_files(scenario, force_clear)
 
         # osws = []
@@ -88,6 +101,7 @@ module URBANopt
         #   end
         # end
 
+        # cretae 3 groups to store .osw files (+building_osws+ , +transformer_osws+ , +district_system_osws+)
         building_osws = []
         transformer_osws = []
         district_system_osws = []
@@ -104,6 +118,7 @@ module URBANopt
           feature_type = nil
           in_osw_hash[:steps].each { |x| feature_type = x[:arguments][:feature_type] if x[:arguments][:feature_type] }
 
+          # add each osw file to its corresponding group id +simulation_dir+ is out_of_date
           if simulation_dir.out_of_date?
 
             if feature_type == 'Building'
@@ -119,9 +134,10 @@ module URBANopt
           end
         end
 
-        # failures
-        failures = []
+        # Run osw groups in order and store simulation failure in a array.
 
+        # failures 
+        failures = []
         # run building_osws
         building_failures = runner.run_osws(building_osws)
         failures << building_failures

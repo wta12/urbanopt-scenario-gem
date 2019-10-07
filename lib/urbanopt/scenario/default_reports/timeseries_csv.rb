@@ -30,15 +30,24 @@
 
 require 'csv'
 require 'pathname'
+require 'json-schema'
+require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/logger'
+
 
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # TimeseriesCSV include timesries reults reported in a CSV file.
+      ##
       class TimeseriesCSV
-        attr_accessor :path, :first_report_datetime, :column_names # :nodoc:
+        attr_accessor :path, :first_report_datetime, :column_names #:nodoc:
 
         ##
-        # Intializes timeseries CSV attributes
+        # TimeseriesCSV class initializes timeseries csv attributes: +:path+ , +:first_report_datetime+ , +:column_names+ 
+        ##
+        # +hash+ - _Hash_ - A hash which may contain a deserialized timeseries_csv.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -50,9 +59,17 @@ module URBANopt
           @first_report_datetime = hash[:first_report_datetime]
           @column_names = hash[:column_names]
 
-          # hash of column_name to array of values, does not get serialized to hash #:nodoc:
+          # hash of column_name to array of values, does not get serialized to hash
           @mutex = Mutex.new
           @data = nil
+
+          # initialize class variable @@extension only once
+          @@extension ||= Extension.new
+          @@schema ||= @@extension.schema
+          
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
+
         end
 
         ##
@@ -68,12 +85,18 @@ module URBANopt
         ##
         # Gets run directory.
         ##
+        # [parameters:]
+        # +name+ - _String_ - The name of the scenario (+directory_name+).
+        ##
         def run_dir_name(name)
           @run_dir = name
         end
 
         ##
         # Converts to a Hash equivalent for JSON serialization.
+        ##
+        # - Exclude attributes with nil values.
+        # - Validate reporting_period hash properties against schema.
         ##
         def to_hash
           result = {}
@@ -85,6 +108,11 @@ module URBANopt
           result[:path] = relative_path if @path
           result[:first_report_datetime] = @first_report_datetime if @first_report_datetime
           result[:column_names] = @column_names if @column_names
+
+          # validate timeseries_csv properties against schema
+          if @@extension.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result).any?
+            raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result)}"
+          end
 
           return result
         end
@@ -114,7 +142,10 @@ module URBANopt
         end
 
         ##
-        # Gets data.
+        # Gets data for each column name in the CSV file.
+        ##
+        # [parameters:]
+        # +column_name+ - _String_ - The header of each column in the CSV file.
         ##
         def get_data(column_name)
           load_data
@@ -122,7 +153,10 @@ module URBANopt
         end
 
         ##
-        # Saves data.
+        # Saves data to the the scenario report CSV file.
+        ##
+        # [parameters:]
+        # +path+ - _String_ - The path of the scenario report CSV (default_scenario_report.csv).
         ##
         def save_data(path)
           File.open(path, 'w') do |f|
@@ -147,21 +181,31 @@ module URBANopt
         ##
         # Merges timeseries csv to each other.
         ##
+        # - initialize first_report_datetime with the incoming first_report_datetime if its nil.
+        # - checks if first_report_datetime are identical.
+        # - merge the column names
+        # - merge the column data
+        ##
+        # [parameters:]
+        # +other+ - _TimeseriesCSV_ - An object of TimeseriesCSV class.
+        ##
         def add_timeseries_csv(other)
           @path = other.path
 
+          # initialize first_report_datetime with the incoming first_report_datetime if its nil.
           if @first_report_datetime.nil?
             @first_report_datetime = other.first_report_datetime
           end
 
+          # checks if first_report_datetime are identical.
           if @first_report_datetime != other.first_report_datetime
             raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{other.first_report_datetime}'"
           end
 
-          # merge the column names #:nodoc:
+          # merge the column names
           @column_names = @column_names.concat(other.column_names).uniq
 
-          # merge the data
+          # merge the column data
           other.column_names.each do |column_name|
             new_values = other.get_data(column_name)
 

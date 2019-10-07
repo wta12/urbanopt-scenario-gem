@@ -35,11 +35,17 @@ require 'json'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Date class include information of simulation run date.
+      ##
       class Date
-        attr_accessor :month, :day_of_month, :year # :nodoc:
-
+        attr_accessor :month, :day_of_month, :year #:nodoc:
         ##
-        # Date class intialize date attributes.
+        # Date class intialize all date attributes:
+        # +:month+ , +:day_of_month+ , +:year+
+        ##
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized date.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -57,13 +63,16 @@ module URBANopt
         ##
         # Converts to a hash equivalent for JSON serialization.
         ##
+        # - Exclude attributes with nil values.
+        # - Validate date properties against schema.
+        ##
         def to_hash
           result = {}
           result[:month] = @month if @month
           result[:day_of_month] = @day_of_month if @day_of_month
           result[:year] = @year if @year
 
-          # validate end_uses properties against schema
+          # validate date hash properties against schema
           if @@extension.validate(@@schema[:definitions][:Date][:properties], result).any?
             raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Date][:properties], result)}"
           end

@@ -35,17 +35,26 @@ require 'json'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Program includes all building program related information.
+      ##
       class Program
         attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area, :maximum_roof_height,
                       :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces,
                       :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories,
                       :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
-                      :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area, :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc:
-
+                      :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area, 
+                      :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc:
+        # Program class intialize building program attributes: +:site_area+ , +:floor_area+ , +:conditioned_area+ , +:unconditioned_area+ ,
+        # +:footprint_area+ , +:maximum_roof_height, +:maximum_number_of_stories+ , +:maximum_number_of_stories_above_ground+ , +:parking_area+ ,
+        # +:number_of_parking_spaces+ , +:number_of_parking_spaces_charging+ , +:parking_footprint_area+ , +:maximum_parking_height+ , +:maximum_number_of_parking_stories+ ,
+        # +:maximum_number_of_parking_stories_above_ground+ , +:number_of_residential_units+ , +:building_types+ , +:building_type+ , +:maximum_occupancy+ ,
+        # +:area+ , +:window_area+ , +:north_window_area+ , +:south_window_area+ , +:east_window_area+ , +:west_window_area+ , +:wall_area+ , +:roof_area+ ,
+        # +:equipment_roof_area+ , +:photovoltaic_roof_area+ , +:available_roof_area+ , +:total_roof_area+ , +:orientation+ , +:aspect_ratio+ 
         ##
-        # Program class intialize attributes related to the building program.
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized program.
         ##
-        # Performs initialization functions.
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
@@ -111,6 +120,9 @@ module URBANopt
         ##
         # Convert to a Hash equivalent for JSON serialization.
         ##
+        # - Exclude attributes with nil values.
+        # - Validate program hash properties against schema.
+        ##
         def to_hash
           result = {}
           result[:site_area] = @site_area if @site_area
@@ -164,7 +176,12 @@ module URBANopt
         end
 
         ##
-        # Takes maximum of the +existing_value+ and +new_value+.
+        # Return the maximum value from +existing_value+ and +new_value+.
+        ##
+        #[parameters:]
+        # +existing_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        # +new_value+ - _Float_ - A value corresponding to a Program attribute.
         ##
         def max_value(existing_value, new_value)
           if existing_value && new_value
@@ -176,7 +193,12 @@ module URBANopt
         end
 
         ##
-        # Adds exisiting and new values.
+        # Adds up +existing_value+ and +new_values+ if not nill.   
+        ##
+        # [parameters:]
+        # +existing_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        # +new_value+ - _Float_ - A value corresponding to a Program attribute.
         ##
         def add_values(existing_value, new_value)
           if existing_value && new_value
@@ -188,10 +210,12 @@ module URBANopt
         end
 
         ##
-        # Aggregates the values of each program attribute.
+        # Merges program objects to each other by summing up values or taking the maximum value of the attributes.
         ##
-
-        # rubocop:disable Metrics/AbcSize
+        # [parameters:]
+        # +other+ - _Program_ - An object of Program class.
+        ##
+        # rubocop:disable Metrics/AbcSize # :nodoc:
         def add_program(other)
           @site_area = add_values(@site_area, other.site_area)
 

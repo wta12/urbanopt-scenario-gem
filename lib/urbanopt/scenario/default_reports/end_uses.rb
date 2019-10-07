@@ -35,11 +35,17 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Enduses class inlclude results for each fuel type.
+      ##
       class EndUses
         attr_accessor :electricity, :natural_gas, :additional_fuel, :district_cooling, :district_heating, :water # :nodoc:
-
         ##
-        # EndUses class intialize fuel type attributes that include all enduse values.
+        # EndUses class intialize end_uses(fuel type) attributes: +:electricity+ , +:natural_gas+ , +:additional_fuel+ ,
+        # +:district_cooling+ , +:district_heating+ , +:water+
+        ##
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized end_uses.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -58,7 +64,10 @@ module URBANopt
         end
 
         ##
-        # Converts to a hash equivalent for JSON serialization.
+        # Converts to a Hash equivalent for JSON serialization.
+        ##
+        # - Exclude attributes with nil values.
+        # - Validate end_uses hash properties against schema.
         ##
         def to_hash
           result = {}
@@ -112,6 +121,9 @@ module URBANopt
 
         ##
         # Aggregates the values of each EndUse attribute.
+        ##
+        # [Parameters:]
+        # +new_end_uses+ - _EndUses_ - An object of EndUses class.
         ##
         def merge_end_uses!(new_end_uses)
           # modify the existing_period by summing up the results ; # sum results only if they exist

@@ -35,12 +35,17 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # ConstructionCost include construction cost information. 
+      ##
       class ConstructionCost
         attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost # :nodoc:
-
         ##
-        # Intialize construction cost attributes:
+        # ConstructionCost class intialize all construction_cost attributes:
         # +:category+ , +:item_name+ , +:unit_cost+ , +:cost_units+ , +:item_quantity+ , +:total_cost+
+        ##
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized construction_cost.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -76,6 +81,9 @@ module URBANopt
         ##
         # Converts to a Hash equivalent for JSON serialization.
         ##
+        # - Exclude attributes with nil values.
+        # - Validate construct_cost hash properties against schema.
+        ##
         def to_hash
           result = {}
           result[:category] = @category if @category
@@ -94,13 +102,15 @@ module URBANopt
         end
 
         ##
-        # Merges an +existing_cost+ with a +new_cost+.
-        # - modify the existing_cost by suming +:total_cost+ and +:item_quantity+ of the new cost and existing cost
+        # Merges an +existing_cost+ with a +new_cost+:
+        # - modify the existing_cost by summing the +:total_cost+ and +:item_quantity+ of new_cost and existing_cost.
         # - raise an error if +:category+ , +:cost_units+ and +:unit_cost+ are not identical
         ##
-        # [Parameters]
-        # +existing_cost+ - _Type:Hash_ - A Construction_cost hash.
-        # +new_cost+ - _Type:Hash_ - A Construction_cost hash.
+        # [Parameters:]
+        # +existing_cost+ - _ConstructionCost_ - An object of ConstructionCost class.
+        ##
+        # +new_cost+ - _ConstructionCost_ - An object of ConstructionCost class.
+        ##
         def self.merge_construction_cost(existing_cost, new_cost)
           # modify the existing_cost by adding the :total_cost and :item_quantity
           existing_cost.total_cost += new_cost.total_cost
@@ -123,13 +133,13 @@ module URBANopt
 
         ##
         # Merges muliple construction costs together.
-        # - loops over the new_costs and find the index of the cost with identical +:item_name+
-        # - if +item_name+ is identical then modify the existing_cost array by summing the :total_cost and :item_quantity
-        # else add the new_cost to existing_costs array
+        # - loops over the new_costs and find the index of the cost with identical +:item_name+.
+        # - if +item_name+ is identical then modify the existing_cost array by summing the :total_cost and :item_quantity. Else add the new_cost to existing_costs array. 
         ##
-        # [Parameters]
-        # * +existing_costs+ - _Type:Array_ - An array of construction_costs.
-        # * +new_costs+ - _Type:Array_ - An array of construction_costs.
+        # [Parameters:]
+        # +existing_costs+ - _Array_ - An array of ConstructionCost objects.
+        ##
+        # +new_costs+ - _Array_ - An array of ConstructionCost objects.
         def self.merge_construction_costs(existing_costs, new_costs)
           item_name_list = []
           item_name_list = existing_costs.collect(&:item_name)

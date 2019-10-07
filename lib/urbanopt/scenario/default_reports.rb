@@ -28,6 +28,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
+##
+# Retrieve all default_reports classes.
+##
 require 'urbanopt/scenario/default_reports/construction_cost'
 require 'urbanopt/scenario/default_reports/feature_report'
 require 'urbanopt/scenario/default_reports/logger'

@@ -35,11 +35,16 @@ require 'json'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Location include all location information.
+      ##
       class Location
-        attr_accessor :latitude, :longitude, :surface_elevation, :weather_filename
-
+        attr_accessor :latitude, :longitude, :surface_elevation, :weather_filename #:nodoc:
         ##
-        # Date class intialize date attributes
+        # Location class intialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
+        ##
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized location.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -56,7 +61,10 @@ module URBANopt
         end
 
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Convert to a Hash equivalent for JSON serialization.
+        ##
+        # - Exclude attributes with nil values.
+        # - Validate location hash properties against schema.
         ##
         def to_hash
           result = {}
@@ -65,7 +73,7 @@ module URBANopt
           result[:surface_elevation] = @surface_elevation if @surface_elevation
           result[:weather_filename] = @weather_filename if @weather_filename
 
-          # validate end_uses properties against schema
+          # validate location properties against schema
           if @@extension.validate(@@schema[:definitions][:Location][:properties], result).any?
             raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Location][:properties], result)}"
           end

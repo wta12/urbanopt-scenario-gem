@@ -36,18 +36,21 @@ require 'fileutils'
 
 module URBANopt
   module Scenario
+
     class ScenarioCSV < ScenarioBase
       ##
-      # ScenarioCSV is a ScenarioBase which assigns a Simulation Mapper to each Feature in a FeatureFile using a simple CSV format
+      # ScenarioCSV is a ScenarioBase which assigns a Simulation Mapper to each Feature in a FeatureFile using a simple CSV format.
       # The CSV file has three columns 1) feature_id, 2) feature_name, and 3) mapper_class_name.  There is one row for each Feature.
       ##
-      #  @param [String] name Human readable scenario name
-      #  @param [String] root_dir Root directory for the scenario, contains Gemfile describing dependencies
-      #  @param [String] run_dir Directory for simulation of this scenario, deleting run directory clears the scenario
-      #  @param [URBANopt::Core::FeatureFile] feature_file FeatureFile containing features to simulate
-      #  @param [String] mapper_files_dir Directory containing all mapper class files containing MapperBase definitions
-      #  @param [String] csv_file Path to CSV file assigning a MapperBase class to each feature in feature_file
-      #  @param [String] num_header_rows Number of header rows to skip in CSV file
+      # [parameters:]
+      # +name+ - _String_ - Human readable scenario name.   
+      # +root_dir+ - _String_ - Root directory for the scenario, contains Gemfile describing dependencies.     
+      # +run_dir+ - _String_ - Directory for simulation of this scenario, deleting run directory clears the scenario.   
+      # +feature_file+ - _URBANopt::Core::FeatureFile_ - FeatureFile containing features to simulate.   
+      # +mapper_files_dir+ - _String_ - Directory containing all mapper class files containing MapperBase definitions.   
+      # +csv_file+ - _String_ - Path to CSV file assigning a MapperBase class to each feature in feature_file.  
+      # +num_header_rows+ - _Strng_ - Number of header rows to skip in CSV file.  
+
       def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
         super(name, root_dir, run_dir, feature_file)
 
@@ -61,13 +64,13 @@ module URBANopt
       end
 
       # Path to CSV file
-      attr_reader :csv_file
+      attr_reader :csv_file #:nodoc:
 
       # Number of header rows to skip in CSV file
-      attr_reader :num_header_rows
+      attr_reader :num_header_rows #:nodoc:
 
       # Directory containing all mapper class files
-      attr_reader :mapper_files_dir
+      attr_reader :mapper_files_dir #:nodoc:
 
       # Require all simulation mappers in mapper_files_dir
       def load_mapper_files
@@ -81,6 +84,7 @@ module URBANopt
         end
       end
 
+      # Gets all the simulation directories
       def simulation_dirs
         # DLM: TODO use HeaderConverters from CSV module
 
@@ -94,10 +98,12 @@ module URBANopt
 
           break if row[0].nil?
 
+          # gets +feature_id+ , +feature_name+ and +mapper_class+ from csv_file
           feature_id = row[0].chomp
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
 
+          # gets +features+ from the feature_file.
           features = []
           feature = feature_file.get_feature_by_id(feature_id)
           features << feature

@@ -34,12 +34,20 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Enduse class all enduse energy consumption results.
+      ##
       class EndUse
         attr_accessor :heating, :cooling, :interior_lighting, :exterior_lighting, :interior_equipment, :exterior_equipment,
                       :fans, :pumps, :heat_rejection, :humidification, :heat_recovery, :water_systems, :refrigeration, :generators # :nodoc:
 
         ##
-        # EndUse class intialize all enduse atributes.
+        # EndUse class intialize all enduse atributes: +:heating+ , +:cooling+ , +:interior_lighting+ ,
+        # +:exterior_lighting+ , +:interior_equipment+ , +:exterior_equipment+ ,
+        # +:fans+ , +:pumps+ , +:heat_rejection+ , +:humidification+ , +:heat_recovery+ , +:water_systems+ , +:refrigeration+ , +:generators+
+        ##
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized end_use.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -92,6 +100,9 @@ module URBANopt
         ##
         # Convert to a Hash equivalent for JSON serialization.
         ##
+        # - Exclude attributes with nil values.
+        # - Validate end_use hash properties against schema.
+        ##
         def to_hash
           result = {}
 
@@ -119,7 +130,10 @@ module URBANopt
         end
 
         ##
-        # Aggregate the values of each EndUse attribute.
+        # Aggregate values of each EndUse attribute.
+        ##
+        # [Parameters:]
+        # +new_end_use+ - _EndUse_ - An object of EndUse class.
         ##
         def merge_end_use!(new_end_use)
           @heating += new_end_use.heating if new_end_use.heating

@@ -29,7 +29,6 @@
 # *********************************************************************************
 
 require 'openstudio/extension'
-
 require 'json'
 
 module URBANopt
@@ -38,11 +37,10 @@ module URBANopt
       class Extension < OpenStudio::Extension::Extension
         @@schema = nil
 
-        # Override parent class
+        # Override parent class (OpenStudio::Extension::Extension)
         def initialize
           super
 
-          # @root_dir = File.expand_path File.dirname(__FILE__)
           @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', '..'))
 
           @instance_lock = Mutex.new
@@ -85,6 +83,13 @@ module URBANopt
           @@schema
         end
 
+        ##
+        # validate data against schema
+        ##
+        # [parameters:]
+        # +schema+ - _Hash_ - A hash of the JSON scenario_schema.
+        # +data+ - _Hash_ - A hash of the data to be validated against scenario_schema.
+        ##
         def validate(schema, data)
           JSON::Validator.fully_validate(schema, data)
         end

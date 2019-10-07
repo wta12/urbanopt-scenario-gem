@@ -78,10 +78,10 @@ module URBANopt
       # Create run directory and generate simulation OSW, all previous contents of directory are removed
       # The simulation OSW is created by evaluating the mapper_class's create_osw method
       ##
-      #  @return [String] Path to the simulation OSW
-      # rubocop: disable Security/Eval
-      # rubocop: disable Style/EvalWithLocation
-      # Disable Sceurity/Eval since there is no user input
+      # @return [String] Path to the simulation OSW
+      # rubocop: disable Security/Eval #:nodoc:
+      # rubocop: disable Style/EvalWithLocation #:nodoc:
+      # Disable Sceurity/Eval since there is no user input #:nodoc:
       def create_osw
         osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
         dir = run_dir
@@ -99,8 +99,8 @@ module URBANopt
         end
         return osw_path
       end
-      # rubocop: enable Security/Eval
-      # rubocop: enable Style/EvalWithLocation
+      # rubocop: enable Security/Eval #:nodoc:
+      # rubocop: enable Style/EvalWithLocation #:nodoc:
 
       ##
       # Return true if the datapoint is out of date, false otherwise.  Non-existant files are out of date.

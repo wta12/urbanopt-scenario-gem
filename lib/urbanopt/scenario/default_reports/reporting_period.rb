@@ -38,15 +38,24 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # ReportingPeriod includes all the results of a specific reporting period.
+      ##
       class ReportingPeriod
-        attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy, #:nodoc:
-                      :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling, #:nodoc:
-                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs, #:nodoc:
-                      :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling, #:nodoc:
-                      :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours # :nodoc:
-
+        attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy,
+                      :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling,
+                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs,
+                      :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
+                      :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours #:nodoc:
+        # ReportingPeriod class intializes the reporting period attributes: 
+        # +:id+ , +:name+ , +:multiplier+ , +:start_date+ , +:end_date+ , +:month+ , +:day_of_month+ , +:year+ , +:total_site_energy+ , +:total_source_energy+ ,
+        # +:net_site_energy+ , +:net_source_energy+ , +:net_utility_cost+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
+        # +:district_heating+ , +:water+ , +:electricity_produced+ , +:end_uses+ , +:energy_production+ , +:photovoltaic+ , +:utility_costs+ ,
+        # +:fuel_type+ , +:total_cost+ , +:usage_cost+ , +:demand_cost+ , +:comfort_result+ , +:time_setpoint_not_met_during_occupied_cooling+ ,
+        # +:time_setpoint_not_met_during_occupied_heating+ , +:time_setpoint_not_met_during_occupied_hours+
         ##
-        # Intializes the reporting period attributes.
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized reporting_period.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
@@ -78,7 +87,7 @@ module URBANopt
 
           @comfort_result = hash[:comfort_result]
 
-          # initialize class variable @@extension only once #:nodoc:
+          # initialize class variable @@extension only once
           @@extension ||= Extension.new
           @@schema ||= @@extension.schema
         end
@@ -118,6 +127,9 @@ module URBANopt
         ##
         # Converts to a Hash equivalent for JSON serialization.
         ##
+        # - Exclude attributes with nil values.
+        # - Validate reporting_period hash properties against schema.
+        #
         def to_hash
           result = {}
 
@@ -159,7 +171,7 @@ module URBANopt
           comfort_result_hash.delete_if { |k, v| v.nil? }
           result[:comfort_result] = comfort_result_hash if @comfort_result
 
-          # validates +reporting_period+ properties against schema for reporting period.  #:nodoc:
+          # validates +reporting_period+ properties against schema for reporting period.
           if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result).any?
             raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result)}"
           end
@@ -167,13 +179,13 @@ module URBANopt
           return result
         end
 
-        ### get keys ...not needed
-        # def self.get_all_keys(h)
-        #   h.each_with_object([]){|(k,v),a| v.is_a?(Hash) ? a.push(k,*get_all_keys(v)) : a << k }
-        # end
-
         ##
-        # Adds up existing and new values.
+        # Adds up +existing_value+ and +new_values+ if not nill.   
+        ##
+        # [parameter:]
+        # +existing_value+ - _Float_ - A value corresponding to a ReportingPeriod attribute.
+        ##
+        # +new_value+ - _Float_ - A value corresponding to a ReportingPeriod attribute.
         ##
         def self.add_values(existing_value, new_value)
           if existing_value && new_value
@@ -185,11 +197,16 @@ module URBANopt
         end
 
         ##
-        # Merges a reporting period with a new reporting period
+        # Merges an +existing_period+ with a +new_period+ if not nil.
+        ##
+        # [Parameters:]
+        # +existing_period+ - _ReportingPeriod_ - An object of ReportingPeriod class.
+        ##
+        # +new_period+ - _ReportingPeriod_ - An object of ReportingPeriod class.
         ##
         # rubocop: disable Metrics/AbcSize
         def self.merge_reporting_period(existing_period, new_period)
-          # modify the existing_period by summing up the results ; # sum results only if they exist #:nodoc:
+          # modify the existing_period by summing up the results
           existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
           existing_period.total_source_energy = add_values(existing_period.total_source_energy, new_period.total_source_energy)
           existing_period.net_source_energy = add_values(existing_period.net_source_energy, new_period.net_source_energy)
@@ -202,7 +219,7 @@ module URBANopt
           existing_period.water = add_values(existing_period.water, new_period.water)
           existing_period.electricity_produced = add_values(existing_period.electricity_produced, new_period.electricity_produced)
 
-          # merge end uses #:nodoc:
+          # merge end uses
           new_end_uses = new_period.end_uses
           existing_period.end_uses.merge_end_uses!(new_end_uses) if existing_period.end_uses
 
@@ -231,10 +248,20 @@ module URBANopt
 
           return existing_period
         end
-        # rubocop: enable Metrics/AbcSize
+        # rubocop: enable Metrics/AbcSize # :nodoc:
 
         ##
-        # Merges muliple reporting periods together.
+        # Merges multiple reporting periods together.
+        # - If +existing_periods+ and +new_periods+ ids are equal,  
+        # modify the existing_periods by merging the new periods results
+        # - If existing periods are empty, initialize with new_periods.
+        # - Raise an error if the existing periods are not identical with new periods (cannot have different reporting period ids).
+        ##
+        # [parameters:]
+        ##
+        # +existing_periods+ - _Array_ - An array of ReportingPeriod objects. 
+        ##
+        # +new_periods+ - _Array_ - An array of ReportingPeriod objects.
         ##
         def self.merge_reporting_periods(existing_periods, new_periods)
           id_list_existing = []
@@ -245,15 +272,10 @@ module URBANopt
           if id_list_existing == id_list_new
 
             existing_periods.each_index do |index|
-              # existing_keys = get_all_keys(existing_periods[index])
-              # new_keys = get_all_keys(new_periods[index])
-              # if new_keys == existing_keys
+              # if +existing_periods+ and +new_periods+ ids are equal,  
               # modify the existing_periods by merging the new periods results
               existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
-              # else
-              #   #raise an error if the elements (all keys) in the reporting periods are not identical
-              #   raise "reperting periods with unidentical elements cannot be merged"
-              # end
+
             end
 
           elsif existing_periods.empty?

@@ -43,18 +43,20 @@ module URBANopt
     module DefaultReports
       ##
       # FeatureReport generates two types of reports in a simulation_dir.
-      # The +default_feature_reports+ measure writes a 'default_feature_reports.json' file containing
-      # information on all features in the simulation.  It also writes a +default_feature_reports.csv+
+      # The default_feature_reports measure writes a 'default_feature_reports.json' file containing
+      # information on all features in the simulation.  It also writes a 'default_feature_reports.csv'
       # containing timeseries data for all features in the simulation.
-      # The +DefaultPostProcessor+ reads these +FeatureReports+ and aggregates them to create a +ScenarioReport+.
+      # The DefaultPostProcessor reads these feature reports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
-
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, 
+                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
-        #  @param [Hash] hash A hash which may contain a deserialized feature_report
+        # [parameters:] 
+        # +hash+ - _Hash_ - A hash which may contain a deserialized feature_report.
+        ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
@@ -69,7 +71,7 @@ module URBANopt
           @timeseries_csv.run_dir_name(@directory_name)
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
-          # design_parameters? to add later
+          # design_parameters to add later
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
@@ -86,7 +88,7 @@ module URBANopt
         end
 
         ##
-        # Assign default values if values does not exist
+        # Assign default values if values does not exist.
         ##
         def defaults
           hash = {}
@@ -101,7 +103,12 @@ module URBANopt
         ##
         # Return an Array of FeatureReports for the simulation_dir as multiple Features can be simulated together in a single simulation directory.
         ##
-        #  @param [SimulationDirOSW] simulation_dir A simulation directory from an OSW simulation, must include 'default_feature_reports' measure
+        # - Ensure that +simulation_dir+ include only one feature.
+        # - Read in the reports written by measure if they exist.
+        ##
+        # [parameters:]
+        # +simulation_dir+ - _SimulationDirOSW_ - A simulation directory from an OSW simulation, must include 'default_feature_reports' measure.
+        ##
         def self.from_simulation_dir(simulation_dir)
           result = []
 
@@ -163,6 +170,9 @@ module URBANopt
 
         ##
         # Convert to a Hash equivalent for JSON serialization
+        ##
+        # - Exclude attributes with nil values.
+        # - Validate feature_report hash properties against schema.
         ##
         def to_hash
           result = {}

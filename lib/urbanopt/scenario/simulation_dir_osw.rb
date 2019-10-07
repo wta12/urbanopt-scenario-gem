@@ -34,12 +34,13 @@ module URBANopt
   module Scenario
     class SimulationDirOSW < SimulationDirBase
       ##
-      # SimulationDirOSW creates a OSW file to simulate features, a SimulationMapperBase is invoked to translate features to OSW
+      # SimulationDirOSW creates a OSW file to simulate features, a SimulationMapperBase is invoked to translate features to OSW. 
       ##
-      #  @param [ScenarioBase] scenario Scenario containing this SimulationFileBase
-      #  @param [Array] features Array of Features this SimulationFile represents
-      #  @param [Array] feature_names Array of scenario specific names for these Features
-      #  @param [String] mapper_class Name of class derived frmo SimulationMapperBase used to translate feature to simulation OSW
+      # [parameters:]
+      # +scenario+ - _ScenarioBase_ - Scenario containing this SimulationFileBase.   
+      # +features+ - _Array_ - Array of Features this SimulationFile represents.   
+      # +feature_names+ - _Array_ - Array of scenario specific names for these Features.   
+      # +mapper_class+ - _String_ - Name of class derived frmo SimulationMapperBase used to translate feature to simulation OSW.   
       def initialize(scenario, features, feature_names, mapper_class)
         super(scenario, features, feature_names)
 
@@ -62,7 +63,7 @@ module URBANopt
       attr_reader :mapper_class
 
       ##
-      # Return the directory that this simulation will run in
+      # Return the directory that this simulation will run in.
       ##
       def run_dir
         raise 'Feature ID not set' if @feature_id.nil?
@@ -135,7 +136,7 @@ module URBANopt
       # Return true if the simulation is out of date (input files newer than results), false otherwise.
       # Non-existant simulation input files are out of date.
       ##
-      # rubocop: disable Metrics/AbcSize
+      # rubocop: disable Metrics/AbcSize #:nodoc:
       def out_of_date?
         if !File.exist?(run_dir)
           puts "run_dir '#{run_dir}' does not exist, simulation dir '#{run_dir}' out of date"
@@ -195,12 +196,12 @@ module URBANopt
 
         return false
       end
-      # rubocop: enable Metrics/AbcSize
+      # rubocop: enable Metrics/AbcSize #:nodoc:
 
       ##
       #  Returns simulation status one of {'Not Started', 'Started', 'Complete', 'Failed'}
       ##
-      # rubocop: disable Style/GuardClause
+      # rubocop: disable Style/GuardClause #:nodoc:
       def simulation_status
         if File.exist?(failed_job_path)
           return 'Failed'
@@ -214,7 +215,7 @@ module URBANopt
 
         return 'Not Started'
       end
-      # rubocop: enable Style/GuardClause
+      # rubocop: enable Style/GuardClause #:nodoc:
 
       ##
       # Clear the directory that this simulation runs in
@@ -231,8 +232,8 @@ module URBANopt
       # Create run directory and generate simulation OSW, all previous contents of directory are removed
       # The simulation OSW is created by evaluating the mapper_class's create_osw method
       ##
-      # rubocop: disable Security/Eval
-      # rubocop: disable Style/EvalWithLocation
+      # rubocop: disable Security/Eval #:nodoc:
+      # rubocop: disable Style/EvalWithLocation #:nodoc:
       def create_input_files
         clear
 
@@ -250,8 +251,8 @@ module URBANopt
         end
         return osw_path
       end
-      # rubocop: enable Security/Eval
-      # rubocop: enable Style/EvalWithLocation
+      # rubocop: enable Security/Eval #:nodoc:
+      # rubocop: enable Style/EvalWithLocation #:nodoc:
     end
   end
 end
