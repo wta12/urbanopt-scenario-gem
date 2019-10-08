@@ -31,16 +31,17 @@
 module URBANopt
   module Scenario
     class ScenarioDatapoint
-      attr_reader :scenario, :feature_id, :feature_name, :mapper_class
+      attr_reader :scenario, :feature_id, :feature_name, :mapper_class #:nodoc:#
 
       ##
       # ScenarioDatapoint is an agnostic description of the simulation of a Feature in a Scenario
       # A Simulation Mapper will map the
       ##
-      #  @param [ScenarioBase] scenario Scenario containing this ScenarioDatapoint
-      #  @param [String] feature_id Unique id of the feature for this ScenarioDatapoint
-      #  @param [String] feature_name Human readable name of the feature for this ScenarioDatapoint
-      #  @param [String] mapper_class Name of Ruby class used to translate feature to simulation OSW
+      # [parameters:]
+      #  +scenario+ - _ScenarioBase_ - Scenario containing this ScenarioDatapoint.   
+      #  +feature_id+ - _String_ - Unique id of the feature for this ScenarioDatapoint.   
+      #  +feature_name+ - _String_ - Human readable name of the feature for this ScenarioDatapoint.   
+      #  +mapper_class+ - _String_ - Name of Ruby class used to translate feature to simulation OSW.  
       def initialize(scenario, feature_id, feature_name, mapper_class)
         @scenario = scenario
         @feature_id = feature_id
@@ -49,16 +50,19 @@ module URBANopt
         @mapper_class = mapper_class
       end
 
-      attr_reader :feature
+      attr_reader :feature #:nodoc:
 
+      ##
+      # Gets the type of a feature
+      ##
       def feature_type
         @feature.feature_type
       end
 
       ##
-      # Return the directory that this datapoint will run in
+      # Return the directory that this datapoint will run in.
       ##
-      #  @return [String] Directory that this datapoint will run in
+      # [return:] _String_ - Directory that this datapoint will run in.   
       def run_dir
         raise 'Feature ID not set' if @feature_id.nil?
         raise 'Scenario run dir not set' if @scenario.run_dir.nil?
@@ -66,22 +70,23 @@ module URBANopt
       end
 
       ##
-      # Return the directory that this datapoint will run in
-      ##
+      # Return the directory that this datapoint will run in.
       def clear
         dir = run_dir
         FileUtils.rm_rf(dir) if File.exist?(dir)
         FileUtils.mkdir_p(dir) if !File.exist?(dir)
       end
 
+      # rubocop: disable Security/Eval #:nodoc:
+      # rubocop: disable Style/EvalWithLocation #:nodoc:
+      # Disable Sceurity/Eval since there is no user input #:nodoc:
+
       ##
       # Create run directory and generate simulation OSW, all previous contents of directory are removed
       # The simulation OSW is created by evaluating the mapper_class's create_osw method
       ##
-      # @return [String] Path to the simulation OSW
-      # rubocop: disable Security/Eval #:nodoc:
-      # rubocop: disable Style/EvalWithLocation #:nodoc:
-      # Disable Sceurity/Eval since there is no user input #:nodoc:
+      # [return:] _String_ - Path to the simulation OSW.
+      ##
       def create_osw
         osw = eval("#{@mapper_class}.new.create_osw(@scenario, @feature_id, @feature_name)")
         dir = run_dir
@@ -105,7 +110,7 @@ module URBANopt
       ##
       # Return true if the datapoint is out of date, false otherwise.  Non-existant files are out of date.
       ##
-      #  @return [Boolean] True if the datapoint is out of date, false otherwise
+      # [return:] _Boolean_ - True if the datapoint is out of date, false otherwise.
       def out_of_date?
         dir = run_dir
         if !File.exist?(dir)

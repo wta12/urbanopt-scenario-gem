@@ -44,11 +44,11 @@ module URBANopt
         @feature_names = feature_names
       end
 
-      attr_reader :scenario
+      attr_reader :scenario #:nodoc:
 
-      attr_reader :features
+      attr_reader :features #:nodoc:
 
-      attr_reader :feature_names
+      attr_reader :feature_names #:nodoc:
 
       ##
       # Return the directory that this simulation will run in
