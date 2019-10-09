@@ -46,6 +46,9 @@
 				"number_of_failed_simulations": {
 					"type": "number"
 				},
+				"Location": {
+					"$ref": "#/definitions/Location"
+				},
 				"timeseries_csv": {
 					"$ref": "#/definitions/TimeseriesCSV"
 				},
