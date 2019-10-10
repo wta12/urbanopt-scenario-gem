@@ -33,6 +33,20 @@ require 'openstudio/extension'
 module URBANopt
   module Scenario
     class Extension < OpenStudio::Extension::Extension
+      
+      # max number of datapoints to run
+      MAX_DATAPOINTS = Float::INFINITY
+
+      # number of parallel jobs
+      NUM_PARALLEL = 7
+
+      # do simulations
+      DO_SIMULATIONS = true
+
+      # do simulations
+      VERBOSE = true
+
+      
       def initialize
         super
         @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
