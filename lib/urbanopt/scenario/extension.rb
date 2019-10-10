@@ -38,7 +38,7 @@ module URBANopt
       MAX_DATAPOINTS = Float::INFINITY
 
       # number of parallel jobs
-      NUM_PARALLEL = 7
+      NUM_PARALLEL = 5
 
       # do simulations
       DO_SIMULATIONS = true

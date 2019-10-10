@@ -86,7 +86,7 @@ module URBANopt
       def run(scenario, force_clear = false)
         
         # instantiate openstudio runner
-        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
+        runner = OpenStudio::Extension::Runner.new(scenario.root_dir, bundle_without = [])
 
         # create simulation files
         simulation_dirs = create_simulation_files(scenario, force_clear)
@@ -139,7 +139,7 @@ module URBANopt
         # failures 
         failures = []
         # run building_osws
-        building_failures = runner.run_osws(building_osws, num_parallel = 3, max_to_run = 1000)
+        building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         failures << building_failures
         # run district_system_osws
         district_system_failures = runner.run_osws(district_system_osws, num_parallel = 3, max_to_run = 1000)
