@@ -139,13 +139,13 @@ module URBANopt
         # failures 
         failures = []
         # run building_osws
-        building_failures = runner.run_osws(building_osws)
+        building_failures = runner.run_osws(building_osws, num_parallel = 3, max_to_run = 1000)
         failures << building_failures
         # run district_system_osws
-        district_system_failures = runner.run_osws(district_system_osws)
+        district_system_failures = runner.run_osws(district_system_osws, num_parallel = 3, max_to_run = 1000)
         failures << district_system_failures
         # run transformer_osws
-        transformer_failures = runner.run_osws(transformer_osws)
+        transformer_failures = runner.run_osws(transformer_osws, num_parallel = 3, max_to_run = 1000)
         failures << transformer_failures
 
         # puts "failures = #{failures}"
