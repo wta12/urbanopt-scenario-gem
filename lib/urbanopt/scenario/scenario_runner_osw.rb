@@ -48,8 +48,7 @@ module URBANopt
       # [parameters:]
       # +scenario+ - _ScenarioBase_ - Scenario to create simulation input files for.   
       # +force_clear+ - _Bool_ - Clear Scenario before creating simulation input files.  
-      # [return:]
-      # _Array_ Returns array of all SimulationDirs, even those created previously, for Scenario.
+      # [return:] _Array_ Returns array of all SimulationDirs, even those created previously, for Scenario.
       def create_simulation_files(scenario, force_clear = false)
         if force_clear
           scenario.clear
@@ -81,12 +80,11 @@ module URBANopt
       # [parameters:]
       # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.    
       # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.    
-      # [return:]
-      # _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
+      # [return:] _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
       def run(scenario, force_clear = false)
-        
+
         # instantiate openstudio runner
-        runner = OpenStudio::Extension::Runner.new(scenario.root_dir, bundle_without = [])
+        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
 
         # create simulation files
         simulation_dirs = create_simulation_files(scenario, force_clear)
@@ -135,6 +133,7 @@ module URBANopt
         end
 
         # Run osw groups in order and store simulation failure in a array.
+        # Return simulation_dirs after running all simulations.
 
         # failures 
         failures = []
@@ -142,10 +141,10 @@ module URBANopt
         building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         failures << building_failures
         # run district_system_osws
-        district_system_failures = runner.run_osws(district_system_osws, num_parallel = 3, max_to_run = 1000)
+        district_system_failures = runner.run_osws(district_system_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         failures << district_system_failures
         # run transformer_osws
-        transformer_failures = runner.run_osws(transformer_osws, num_parallel = 3, max_to_run = 1000)
+        transformer_failures = runner.run_osws(transformer_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         failures << transformer_failures
 
         # puts "failures = #{failures}"
