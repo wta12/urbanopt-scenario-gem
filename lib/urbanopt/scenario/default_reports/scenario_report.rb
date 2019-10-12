@@ -80,9 +80,21 @@ module URBANopt
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
-          @construction_costs = hash[:construction_costs]
-          @reporting_periods = hash[:reporting_periods]
-          @feature_reports = hash[:feature_reports]
+          
+          @construction_costs = []
+          hash[:construction_costs].each do |cc|
+            @constructiion_costs << ConstructionCost.new(cc)
+          end
+
+          @reporting_periods = []
+          hash[:reporting_periods].each do |rp|
+            @reporting_periods << ReportingPeriod.new(rp)
+          end
+
+          @feature_reports = []
+          hash[:feature_reports].each do |fr|
+            @feature_reports << FeatureReport.new(fr)
+          end
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new
@@ -182,6 +194,9 @@ module URBANopt
 
           result[:reporting_periods] = []
           @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash } if @reporting_periods
+
+          # result[:feature_reports] = []
+          # @feature_reports.each { |fr| result[:feature_reports] << fr.to_hash } if @feature_reports
 
           # validate scenario_report properties against schema
           if @@extension.validate(@@schema[:definitions][:ScenarioReport][:properties], result).any?
