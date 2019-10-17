@@ -29,7 +29,7 @@
 # *********************************************************************************
 
 require 'json'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 module URBANopt
@@ -58,9 +58,9 @@ module URBANopt
           @item_quantity = hash[:item_quantity]
           @total_cost = hash[:total_cost]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -94,8 +94,8 @@ module URBANopt
           result[:total_cost] = @total_cost if @total_cost
 
           # validate construct_cost properties against schema
-          if @@extension.validate(@@schema[:definitions][:ConstructionCost][:properties], result).any?
-            raise "construction_cost properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ConstructionCost][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:ConstructionCost][:properties], result).any?
+            raise "construction_cost properties does not match schema: #{@@validator.validate(@@schema[:definitions][:ConstructionCost][:properties], result)}"
           end
 
           return result

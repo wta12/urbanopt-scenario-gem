@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 require 'json'
 
@@ -55,9 +55,9 @@ module URBANopt
           @day_of_month = hash[:day_of_month].to_i
           @year = hash[:year].to_i
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -73,8 +73,8 @@ module URBANopt
           result[:year] = @year if @year
 
           # validate date hash properties against schema
-          if @@extension.validate(@@schema[:definitions][:Date][:properties], result).any?
-            raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Date][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:Date][:properties], result).any?
+            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Date][:properties], result)}"
           end
 
           return result

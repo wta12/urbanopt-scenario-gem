@@ -29,7 +29,7 @@
 # *********************************************************************************
 
 require 'urbanopt/scenario/default_reports/end_use'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 module URBANopt
@@ -58,9 +58,9 @@ module URBANopt
           @district_heating = EndUse.new(hash[:district_heating])
           @water = EndUse.new(hash[:water])
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -97,8 +97,8 @@ module URBANopt
           result[:water] = water_hash if @water
 
           # validate end_uses properties against schema
-          if @@extension.validate(@@schema[:definitions][:EndUses][:properties], result).any?
-            raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:EndUses][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:EndUses][:properties], result).any?
+            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:EndUses][:properties], result)}"
           end
 
           return result

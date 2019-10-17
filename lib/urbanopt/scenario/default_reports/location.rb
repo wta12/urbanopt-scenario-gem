@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 require 'json'
 
@@ -55,9 +55,9 @@ module URBANopt
           @surface_elevation = hash[:surface_elevation]
           @weather_filename = hash[:weather_filename]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -74,8 +74,8 @@ module URBANopt
           result[:weather_filename] = @weather_filename if @weather_filename
 
           # validate location properties against schema
-          if @@extension.validate(@@schema[:definitions][:Location][:properties], result).any?
-            raise "end_uses properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Location][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:Location][:properties], result).any?
+            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Location][:properties], result)}"
           end
 
           return result

@@ -34,7 +34,7 @@ require 'urbanopt/scenario/default_reports/logger'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 require 'json'
@@ -96,9 +96,9 @@ module URBANopt
             @feature_reports << FeatureReport.new(fr)
           end
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
           
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
@@ -199,8 +199,8 @@ module URBANopt
           # @feature_reports.each { |fr| result[:feature_reports] << fr.to_hash } if @feature_reports
 
           # validate scenario_report properties against schema
-          if @@extension.validate(@@schema[:definitions][:ScenarioReport][:properties], result).any?
-            raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ScenarioReport][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:ScenarioReport][:properties], result).any?
+            raise "scenario_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:ScenarioReport][:properties], result)}"
           end
 
           return result

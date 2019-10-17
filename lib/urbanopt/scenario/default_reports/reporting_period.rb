@@ -32,7 +32,7 @@ require 'json'
 require 'urbanopt/scenario/default_reports/end_uses'
 require 'urbanopt/scenario/default_reports/end_use'
 require 'urbanopt/scenario/default_reports/date'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 module URBANopt
@@ -87,9 +87,9 @@ module URBANopt
 
           @comfort_result = hash[:comfort_result]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -172,8 +172,8 @@ module URBANopt
           result[:comfort_result] = comfort_result_hash if @comfort_result
 
           # validates +reporting_period+ properties against schema for reporting period.
-          if @@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result).any?
-            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:ReportingPeriod][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:ReportingPeriod][:properties], result).any?
+            raise "feature_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:ReportingPeriod][:properties], result)}"
           end
 
           return result

@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 require 'json'
 
@@ -82,9 +82,9 @@ module URBANopt
           @orientation = hash[:orientation]
           @aspect_ratio = hash[:aspect_ratio]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -168,8 +168,8 @@ module URBANopt
           result[:aspect_ratio] = @aspect_ratio if @aspect_ratio
 
           # validate program properties against schema
-          if @@extension.validate(@@schema[:definitions][:Program][:properties], result).any?
-            raise "program properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Program][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:Program][:properties], result).any?
+            raise "program properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Program][:properties], result)}"
           end
 
           return result

@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 module URBANopt
@@ -68,9 +68,9 @@ module URBANopt
           @refrigeration = hash[:refrigeration]
           @generators = hash[:generators]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -122,8 +122,8 @@ module URBANopt
           result[:generators] = @generators
 
           # validate end_use properties against schema
-          if @@extension.validate(@@schema[:definitions][:EndUse][:properties], result).any?
-            raise "end_use properties does not match schema: #{@@extension.validate(@@schema[:definitions][:EndUse][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:EndUse][:properties], result).any?
+            raise "end_use properties does not match schema: #{@@validator.validate(@@schema[:definitions][:EndUse][:properties], result)}"
           end
 
           return result

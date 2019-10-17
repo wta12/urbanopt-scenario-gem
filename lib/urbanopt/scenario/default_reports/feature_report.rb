@@ -33,7 +33,7 @@ require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/location'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 require 'json'
@@ -82,9 +82,9 @@ module URBANopt
             @reporting_periods << ReportingPeriod.new(rp)
           end
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
 
         ##
@@ -161,8 +161,8 @@ module URBANopt
           end
 
           # validate feature_report json against schema
-          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json).any?
-            raise "default_feature_report_json properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json)}"
+          if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json).any?
+            raise "default_feature_report_json properties does not match schema: #{@@validator.validate(@@schema[:definitions][:FeatureReport][:properties], default_feature_reports_json)}"
           end
 
           return result
@@ -195,8 +195,8 @@ module URBANopt
           @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash }
 
           # validate feature_report properties against schema
-          if @@extension.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?
-            raise "feature_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:FeatureReport][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?
+            raise "feature_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result)}"
           end
 
           return result

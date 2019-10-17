@@ -31,7 +31,7 @@
 require 'csv'
 require 'pathname'
 require 'json-schema'
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'urbanopt/scenario/default_reports/logger'
 
 
@@ -64,8 +64,8 @@ module URBANopt
           @data = nil
 
           # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
           
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
@@ -110,8 +110,8 @@ module URBANopt
           result[:column_names] = @column_names if @column_names
 
           # validate timeseries_csv properties against schema
-          if @@extension.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result).any?
-            raise "scenario_report properties does not match schema: #{@@extension.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result)}"
+          if @@validator.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result).any?
+            raise "scenario_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:TimeseriesCSV][:properties], result)}"
           end
 
           return result
