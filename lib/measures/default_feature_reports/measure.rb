@@ -410,7 +410,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # create a hash for space_type_occupancy (spcace types as keys and their occupancy as values)
     space_type_occupancy = {}
     spaces.each do |space|
-      building_type = space.spaceType.get.standardsBuildingType
+      if space.spaceType.empty?
+        raise "space.spaceType is empty. Make sure spaces have a space type"
+      else
+        building_type = space.spaceType.get.standardsBuildingType
+      end
       if building_type.empty?
         building_type = 'unknown'
       else
@@ -419,9 +423,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       space_type_occupancy[building_type] = 0 if space_type_occupancy[building_type].nil?
       space_type_occupancy[building_type] += space.numberOfPeople
     end
-
-    puts "SPACE TYPE AREAS ====== #{space_type_areas}"
-    puts "SPACE TYPE OCCUPANCY ====== #{space_type_occupancy}"
 
     # combine all in a building_types array
     building_types = []
