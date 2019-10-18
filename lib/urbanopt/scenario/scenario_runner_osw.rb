@@ -83,7 +83,8 @@ module URBANopt
       # [return:] _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
       def run(scenario, force_clear = false)
 
-        # instantiate openstudio runner
+        # instantiate openstudio runner - use the defaults for now. If need to change then create
+        # the runner.conf file (i.e. run `rake openstudio:runner:init`)
         runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
 
         # create simulation files
@@ -138,13 +139,16 @@ module URBANopt
         # failures 
         failures = []
         # run building_osws
-        building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        # building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        building_failures = runner.run_osws(building_osws)
         failures << building_failures
         # run district_system_osws
-        district_system_failures = runner.run_osws(district_system_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        # district_system_failures = runner.run_osws(district_system_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        district_system_failures = runner.run_osws(district_system_osws)
         failures << district_system_failures
         # run transformer_osws
-        transformer_failures = runner.run_osws(transformer_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        # transformer_failures = runner.run_osws(transformer_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
+        transformer_failures = runner.run_osws(transformer_osws)
         failures << transformer_failures
 
         # puts "failures = #{failures}"

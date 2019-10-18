@@ -28,7 +28,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'openstudio/extension'
 require 'json'
 
 module URBANopt

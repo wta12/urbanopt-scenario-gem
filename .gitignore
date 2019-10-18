@@ -21,3 +21,5 @@ Gemfile.lock
 
 # Ignore IDE files
 /.idea
+runner.conf
+
