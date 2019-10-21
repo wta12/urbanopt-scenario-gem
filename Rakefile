@@ -27,7 +27,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
-
+#
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 
@@ -38,6 +38,7 @@ require 'openstudio/extension/rake_task'
 require 'urbanopt/scenario'
 rake_task = OpenStudio::Extension::RakeTask.new
 rake_task.set_extension_class(URBANopt::Scenario::Extension)
+
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
 
