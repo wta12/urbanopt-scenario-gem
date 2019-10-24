@@ -63,8 +63,6 @@ module URBANopt
         # +hash+ - _Hash_ - A hash of a previously serialized ScenarioReport.
         ##
         def initialize(hash = {})
-          # have to use the module method because we have not yet initialized the class one
-          URBANopt::Scenario::DefaultReports.logger.debug("Scenario report hash is == #{hash}")
 
           hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
@@ -91,6 +89,7 @@ module URBANopt
             @reporting_periods << ReportingPeriod.new(rp)
           end
 
+          # intialized here to be used in the add_feature_report method
           @feature_reports = []
           hash[:feature_reports].each do |fr|
             @feature_reports << FeatureReport.new(fr)
@@ -103,7 +102,6 @@ module URBANopt
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
 
-          @@logger.info("Run directory: #{@directory_name}")
         end
 
         ##
@@ -202,6 +200,9 @@ module URBANopt
           if @@validator.validate(@@schema[:definitions][:ScenarioReport][:properties], result).any?
             raise "scenario_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:ScenarioReport][:properties], result)}"
           end
+
+          # have to use the module method because we have not yet initialized the class one
+          @@logger.info("Scenario name: #{@name}")
 
           return result
         end

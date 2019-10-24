@@ -63,7 +63,7 @@ module URBANopt
           @mutex = Mutex.new
           @data = nil
 
-          # initialize class variable @@extension only once
+          # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
           

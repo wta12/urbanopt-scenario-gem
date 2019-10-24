@@ -78,7 +78,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs << 'Hourly'
     reporting_frequency_chs << 'Daily'
     # reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
-    ###### Utility report here to report the start and end for each fueltype
+    ## Utility report here to report the start and end for each fueltype
     reporting_frequency_chs << 'Monthly'
     reporting_frequency_chs << 'Runperiod'
 
@@ -173,20 +173,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       return result
     end
 
-    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Electricity:Facility,Timestep;").get
-    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,ElectricityProduced:Facility,Timestep;").get
-    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Gas:Facility,Timestep;").get
-    # #result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,DistrictCooling:Facility,Timestep;").get
-
-    # timeseries = ["District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate",
-    #               "District Cooling Inlet Temperature", "District Cooling Outlet Temperature",
-    #               "District Heating Hot Water Rate", "District Heating Mass Flow Rate",
-    #               "District Heating Inlet Temperature", "District Heating Outlet Temperature"]
-
-    timeseries_data.each do |ts|
-      result << OpenStudio::IdfObject.load("Output:Variable,*,#{ts},#{reporting_frequency};").get
-    end
-
     return result
   end
 
@@ -218,7 +204,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       @runner.registerError("Was not able to convert #{value} from #{from_units} to #{to_units}.")
       value = nil
     end
-
     return value
   end
 
@@ -247,7 +232,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # cache runner for this instance of the measure
     @runner = runner
 
-    #### FROM MODEL ########
     # get the WorkflowJSON object
     workflow = runner.workflow
 
@@ -267,10 +251,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     sql_file = sql_file.get
     model.setSqlFile(sql_file)
 
-    # get building
+    # get building from model
     building = model.getBuilding
 
-    # get surfaces
+    # get surfaces from model
     surfaces = model.getSurfaces
 
     # get epw_file
@@ -281,7 +265,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     end
     epw_file = epw_file.get
 
-    # create output report object
+    # create output feature_report report object 
     feature_report = URBANopt::Scenario::DefaultReports::FeatureReport.new
     feature_report.id = feature_id
     feature_report.name = feature_name
@@ -292,39 +276,28 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     feature_report.reporting_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new
 
-    ############################# REPORTING RESULTS FOR JSON #########################################
-    # Location information
+
+    ###########################################################################
+    ##
+    # Get Location information and store in the feature_report
+    ##
 
     # latitude
     latitude = epw_file.latitude
-    puts "latitude = #{latitude}"
     feature_report.location.latitude = latitude
 
     # longitude
     longitude = epw_file.longitude
-    puts "longitude = #{longitude}"
     feature_report.location.longitude = longitude
 
     # surface_elevation
     elev = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
     feature_report.location.surface_elevation = elev
 
-    # weather_filename
-    weather_file = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='General' AND RowName='Weather File' AND ColumnName='Value'")
-    puts "WEATHER FILE IS = #{weather_file}"
-    # feature_report.location[:weather_file] = weather_file
-
-    # weather_file = model.getWeatherFile
-    # epw_path = weather_file.path.to_s
-    # puts "WEATHER FILE IS : #{epw_path}"
-    # #puts "WEATHER FILE IS : #{epw_file}"
-
-    ###########################################################################
-    # Program information
-
-    # site_area
-    # DLM: currently site area is not available (this would be the size of the lot the building is on)
-    # feature_report.program.site_area = 0
+    ##########################################################################
+    ##
+    # Get program information and store in the feature_report
+    ##
 
     # floor_area
     floor_area = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Building Area' AND RowName='Total Building Area' AND ColumnName='Area'")
@@ -339,54 +312,29 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.program.unconditioned_area = convert_units(unconditioned_area, 'm^2', 'ft^2')
 
     # footprint_area
-    # DLM: we can attach footprint_area to the building as an additional property, until then use floor_area
-    # DLM: measures like the GeoJSON to OSM measure can set this value
     feature_report.program.footprint_area = convert_units(floor_area, 'm^2', 'ft^2')
 
     # maximum_number_of_stories
     number_of_stories = building.standardsNumberOfStories.get if building.standardsNumberOfStories.is_initialized
     number_of_stories ||= 1
-    puts "number of stories = #{number_of_stories}"
     feature_report.program.maximum_number_of_stories = number_of_stories
 
     # maximum_roof_height
-    floor_to_floor_height = building.nominalFloortoFloorHeight.to_f ## why floor_to_floor_height = 0 !?
-    puts "floor_to_floor_height = #{floor_to_floor_height}"
+    floor_to_floor_height = building.nominalFloortoFloorHeight.to_f
     maximum_roof_height = number_of_stories * floor_to_floor_height
     feature_report.program.maximum_roof_height = maximum_roof_height
 
     # maximum_number_of_stories_above_ground
     number_of_stories_above_ground = building.standardsNumberOfAboveGroundStories.get if building.standardsNumberOfAboveGroundStories.is_initialized
     number_of_stories_above_ground ||= 1
-    puts "number_of_stories_above_ground = #{number_of_stories_above_ground}"
     feature_report.program.maximum_number_of_stories_above_ground = number_of_stories_above_ground
-
-    # maximum_number_of_parking_stories_above_ground
-    # #####need to add parking to model
-    # parking_area
-    # #####need to add parking to model
-    # number_of_parking_spaces
-    # #####need to add parking to model
-
-    # number_of_parking_spaces_charging
-    # #####need to add parking to model
-
-    # parking_footprint_area
-    # #####need to add parking to model
-
-    # maximum_parking_height
-    # #####need to add parking to model
-
-    # maximum_number_of_parking_stories
-    # #####need to add parking to model
 
     # number_of_residential_units
     number_of_living_units = building.standardsNumberOfLivingUnits.to_i.get if building.standardsNumberOfLivingUnits.is_initialized
     number_of_living_units ||= 1
-    puts "number_of_residential_units = #{number_of_living_units}"
     feature_report.program.number_of_residential_units = number_of_living_units
 
-    #### building_types
+    ## building_types
 
     # get an array of the model spaces
     spaces = model.getSpaces
@@ -429,12 +377,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     for i in 0..(space_type_areas.size - 1)
       building_types << { building_type: space_type_areas.keys[i], floor_area: space_type_areas.values[i], maximum_occupancy: space_type_occupancy.values[i] }
     end
-    puts "BUILDING TYPE ARRAY IS == #{building_types}"
-
     # add results to the feature report JSON
     feature_report.program.building_types = building_types
 
-    ### window_area
+    ## window_area
     # north_window_area
     north_window_area = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='Window-Wall Ratio' AND RowName='Window Opening Area' AND ColumnName='North (315 to 45 deg)'").to_f
     feature_report.program.window_area[:north_window_area] = convert_units(north_window_area, 'm^2', 'ft^2')
@@ -468,14 +414,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     total_wall_area = north_wall_area + south_wall_area + east_wall_area + west_wall_area
     feature_report.program.wall_area[:total_wall_area] = convert_units(total_wall_area, 'm^2', 'ft^2')
 
-    # #roof_area
-    # equipment_roof_area
-    # #####to be added
-    # photovoltaic_roof_area
-
-    # available_roof_area
-    # available_roof_area = total_roof_area - equipment_roof_area
-
     # total_roof_area
     total_roof_area = 0.0
     surfaces.each do |surface|
@@ -483,12 +421,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         total_roof_area += surface.netArea
       end
     end
-    # ###another way####
-    # total_roof_area = sql_query(runner, sql_file, "InputVerificationandResultsSummary", "TableName='Skylight-Roof Ratio' AND RowName='Gross Roof Area' AND ColumnName='Total'").to_f
     feature_report.program.roof_area[:total_roof_area] = convert_units(total_roof_area, 'm^2', 'ft^2')
 
     # orientation
-    # to check!
+    # RK: a more robust method should be implemented to find orientation(finding main axis of the building using aspect ratio)
     building_rotation = model.getBuilding.northAxis
     feature_report.program.orientation = building_rotation
 
@@ -499,93 +435,79 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     aspect_ratio ||= nil
     feature_report.program.aspect_ratio = aspect_ratio
 
-    ###########################################################################
-    ### Construction Cost information
+    ############################################################################
+    ##
+    # Get Reporting Periods information and store in the feature_report
+    ##
 
-    # ###########################################################################
-    # #### Reporting Periods information
-
-    ### id
-
-    ### name
-
-    ### multiplier
-
-    ### start_date
-    ## month
+    # start_date
+    # month
     begin_month = model.getRunPeriod.getBeginMonth
     feature_report.reporting_periods[0].start_date.month = begin_month
-    ## day_of_month
+    # day_of_month
     begin_day_of_month = model.getRunPeriod.getBeginDayOfMonth
     feature_report.reporting_periods[0].start_date.day_of_month = begin_day_of_month
-    ## year
+    # year
     begin_year = model.getYearDescription.calendarYear
     feature_report.reporting_periods[0].start_date.year = begin_year
 
-    ### end_date
-    ## month
+    # end_date
+    # month
     end_month = model.getRunPeriod.getEndMonth
     feature_report.reporting_periods[0].end_date.month = end_month
-    ## day_of_month
+    # day_of_month
     end_day_of_month = model.getRunPeriod.getEndDayOfMonth
     feature_report.reporting_periods[0].end_date.day_of_month = end_day_of_month
-    ## year
+    # year
     end_year = model.getYearDescription.calendarYear
     feature_report.reporting_periods[0].end_date.year = end_year
 
-    ### total_site_energy
+    # total_site_energy
     total_site_energy = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Site and Source Energy' AND RowName='Total Site Energy' AND ColumnName='Total Energy'")
-    # puts "hello"
-    # puts feature_report.reporting_periods[0]
-    # puts feature_report.reporting_periods[0].class
     feature_report.reporting_periods[0].total_site_energy = convert_units(total_site_energy, 'GJ', 'kBtu')
-    # feature_report.reporting_periods[0].total_site_energy = total_site_energy
 
-    ### total_source_energy
+    # total_source_energy
     total_source_energy = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Site and Source Energy' AND RowName='Total Source Energy' AND ColumnName='Total Energy'")
     feature_report.reporting_periods[0].total_source_energy = convert_units(total_source_energy, 'GJ', 'kBtu')
 
-    ### net_site_energy
+    # net_site_energy
     net_site_energy = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Site and Source Energy' AND RowName='Net Site Energy' AND ColumnName='Total Energy'")
     feature_report.reporting_periods[0].net_site_energy = convert_units(net_site_energy, 'GJ', 'kBtu')
 
-    ### net_source_energy
+    # net_source_energy
     net_source_energy = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Site and Source Energy' AND RowName='Net Source Energy' AND ColumnName='Total Energy'")
     feature_report.reporting_periods[0].net_source_energy = convert_units(net_source_energy, 'GJ', 'kBtu')
 
-    ### net_utility_cost
-    # should be requested before simulation
-
-    ### electricity
+    # electricity
     electricity = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Electricity'")
     feature_report.reporting_periods[0].electricity = convert_units(electricity, 'GJ', 'kBtu')
 
-    ### natural_gas
+    # natural_gas
     natural_gas = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Natural Gas'")
     feature_report.reporting_periods[0].natural_gas = convert_units(natural_gas, 'GJ', 'kBtu')
 
-    ### additional_fuel
+    # additional_fuel
     additional_fuel = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Additional Fuel'")
     feature_report.reporting_periods[0].additional_fuel = convert_units(additional_fuel, 'GJ', 'kBtu')
 
-    ### district_cooling
+    # district_cooling
     district_cooling = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='District Cooling'")
     feature_report.reporting_periods[0].district_cooling = convert_units(district_cooling, 'GJ', 'kBtu')
 
-    ### district_heating
+    # district_heating
     district_heating = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='District Heating'")
     feature_report.reporting_periods[0].district_heating = convert_units(district_heating, 'GJ', 'kBtu')
 
-    ### water
+    # water
     water = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='End Uses' AND RowName='Total End Uses' AND ColumnName='Water'")
     # feature_report.reporting_periods[0].water = convert_units(water, 'm3', 'ft3')
     feature_report.reporting_periods[0].water = water
 
-    ### electricity_produced
+    # electricity_produced
     electricity_produced = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Electric Loads Satisfied' AND RowName='Total On-Site and Utility Electric Sources' AND ColumnName='Electricity'")
     feature_report.reporting_periods[0].electricity_produced = convert_units(electricity_produced, 'GJ', 'kBtu')
 
-    ######## end_uses
+    ## end_uses
 
     # get fuel type as listed in the sql file
     fuel_type = ['Electricity', 'Natural Gas', 'Additional Fuel', 'District Cooling', 'District Heating', 'Water']
@@ -623,323 +545,20 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     photovoltaic_power = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Electric Loads Satisfied' AND RowName='Photovoltaic Power' AND ColumnName='Electricity'")
     feature_report.reporting_periods[0].energy_production[:electricity_produced][:photovoltaic] = convert_units(photovoltaic_power, 'GJ', 'kBtu')
 
-    ### utility_costs
-    ## fuel_type
-    # feature_report.reporting_periods[0].utility_costs[0][:fuel_type] = "Electricity"
-    ## total_cost
-
-    ## usage_cost
-
-    ## demand_cost
-
-    # ##comfort_result
-    ## time_setpoint_not_met_during_occupied_cooling
+    ## comfort_result
+    # time_setpoint_not_met_during_occupied_cooling
     time_setpoint_not_met_during_occupied_cooling = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Cooling' AND ColumnName='Facility'")
     feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_cooling] = time_setpoint_not_met_during_occupied_cooling
 
-    ## time_setpoint_not_met_during_occupied_heating
+    # time_setpoint_not_met_during_occupied_heating
     time_setpoint_not_met_during_occupied_heating = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Heating' AND ColumnName='Facility'")
     feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_heating] = time_setpoint_not_met_during_occupied_heating
 
-    ## time_setpoint_not_met_during_occupied_hour
+    # time_setpoint_not_met_during_occupied_hour
     time_setpoint_not_met_during_occupied_hours = time_setpoint_not_met_during_occupied_heating + time_setpoint_not_met_during_occupied_cooling
     feature_report.reporting_periods[0].comfort_result[:time_setpoint_not_met_during_occupied_hours] = time_setpoint_not_met_during_occupied_hours
 
-    # ####################################### REPORTING RESULTS FOR CSV ######################################
-    # # # Timeseries csv enduses METHOD
-
-    #   # Get the weather file run period (as opposed to design day run period)
-    #   ann_env_pd = nil
-    #   sql_file.availableEnvPeriods.each do |env_pd|
-    #     env_type = sql_file.environmentType(env_pd)
-    #     if env_type.is_initialized
-    #       if env_type.get == OpenStudio::EnvironmentType.new("WeatherRunPeriod")
-    #         ann_env_pd = env_pd
-    #       end
-    #     end
-    #   end
-
-    #   if ann_env_pd == false
-    #     runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
-    #     return false
-    #   end
-
-    #   # Method to translate from OpenStudio's time formatting
-    #   # to Javascript time formatting
-    #   # OpenStudio time
-    #   # 2009-May-14 00:10:00   Raw string
-    #   # Javascript time
-    #   # 2009/07/12 12:34:56
-    #   def to_JSTime(os_time)
-    #     js_time = os_time.to_s
-    #     # Replace the '-' with '/'
-    #     js_time = js_time.gsub('-','/')
-    #     # Replace month abbreviations with numbers
-    #     js_time = js_time.gsub('Jan','01')
-    #     js_time = js_time.gsub('Feb','02')
-    #     js_time = js_time.gsub('Mar','03')
-    #     js_time = js_time.gsub('Apr','04')
-    #     js_time = js_time.gsub('May','05')
-    #     js_time = js_time.gsub('Jun','06')
-    #     js_time = js_time.gsub('Jul','07')
-    #     js_time = js_time.gsub('Aug','08')
-    #     js_time = js_time.gsub('Sep','09')
-    #     js_time = js_time.gsub('Oct','10')
-    #     js_time = js_time.gsub('Nov','11')
-    #     js_time = js_time.gsub('Dec','12')
-
-    #     return js_time
-
-    #   end
-
-    #   # Create an array of arrays of variables
-    #   variables_to_graph = []
-    #   end_uses.each do |end_use|
-    #     fuel_types.each do |fuel_type|
-    #       variable_name = if end_use == 'Facility'
-    #                         "#{fuel_type}:#{end_use}"
-    #                       else
-    #                         "#{end_use}:#{fuel_type}"
-    #                       end
-
-    #   puts " VARIABLE _NAME ARE:  #{variable_name}"
-
-    #       variables_to_graph << [variable_name, reporting_frequency,'']
-    #       runner.registerInfo("Exporting #{variable_name}")
-    #     end
-    #   end
-
-    #   # timeseries we want to report
-    #   variable_name = ["Electricity:Facility", "ElectricityProduced:Facility", "Gas:Facility", "DistrictCooling:Facility", "DistrictHeating:Facility", "District Cooling Chilled Water Rate", "District Cooling Mass Flow Rate",
-    #     "District Cooling Inlet Temperature", "District Cooling Outlet Temperature", "District Heating Hot Water Rate", "District Heating Mass Flow Rate", "District Heating Inlet Temperature", "District Heating Outlet Temperature"]
-
-    #     variable_name.each do |vn|
-    #       variables_to_graph << [vn, reporting_frequency,'']
-    #       runner.registerInfo("Exporting #{variable_name}")
-    #     end
-
-    #     # number of values in each timeseries
-    #     n = nil
-
-    #     # all numeric timeseries values, transpose of CSV file (e.g. values[j] is column, values[j][i] is column and row)
-    #     values = []
-
-    #   # Since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
-    #   # this is recording the name of these final timeseries to write in the header of the CSV
-    #     final_timeseries_names = []
-
-    #     # loop over requested timeseries
-    #     variable_name.each_with_index do |timeseries_name, j|
-
-    #       runner.registerInfo("TIMESERIES: #{timeseries_name}")
-
-    #       # get all the key values that this timeseries can be reported for (e.g. if power is requested for each zone)
-    #       key_values = sql_file.availableKeyValues("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name)
-    #       runner.registerInfo("KEY VALUES: #{key_values}")
-    #       if key_values.empty?
-    #           key_values = [""]
-    #       end
-
-    #       # sort keys
-    #       sorted_keys = key_values.sort
-    #       requested_keys = ['SUMMED ELECTRICITY:FACILITY', 'SUMMED ELECTRICITY:FACILITY POWER', 'SUMMED ELECTRICITYPRODUCED:FACILITY', 'SUMMED ELECTRICITYPRODUCED:FACILITY POWER', 'SUMMED NET APPARENT POWER', 'SUMMED NET ELECTRIC ENERGY', 'SUMMED NET POWER', 'TRANSFORMER OUTPUT ELECTRIC ENERGY SCHEDULE']
-    #       final_keys = []
-    #       # make sure aggregated timeseries are listed in sorted order before all individual feature timeseries
-    #       sorted_keys.each do |k|
-    #           if requested_keys.include? k
-    #           final_keys << k
-    #           end
-    #       end
-    #       sorted_keys.each do |k|
-    #           if !requested_keys.include? k
-    #           final_keys << k
-    #           end
-    #       end
-
-    #       # loop over final keys
-    #       final_keys.each_with_index do |key_value, key_i|
-
-    #         new_timeseries_name = ''
-
-    #         runner.registerInfo("!! TIMESERIES NAME: #{timeseries_name} AND key_value: #{key_value}")
-
-    #         # check if we have to come up with a new name for the timeseries in our CSV header
-    #         if key_values.size == 1
-    #         # use timeseries name when only 1 keyvalue
-    #         new_timeseries_name = timeseries_name
-    #         else
-    #         # use key_value name
-    #         # special case for Zone Thermal Comfort: use both timeseries_name and key_value
-    #         if timeseries_name.include? 'Zone Thermal Comfort'
-    #             new_timeseries_name = timeseries_name + ' ' + key_value
-    #         else
-    #             new_timeseries_name = key_value
-    #         end
-    #         end
-    #         final_timeseries_names << new_timeseries_name
-
-    #         # get the actual timeseries
-    #         ts = sql_file.timeSeries("#{ann_env_pd}", "#{reporting_frequency}", timeseries_name, key_value)
-
-    #         if n.nil?
-    #         # first timeseries should always be set
-    #         runner.registerInfo("First timeseries")
-    #         values[j] = ts.get.values
-    #         n = values[j].size
-    #         elsif ts.is_initialized
-    #         runner.registerInfo('Is Initialized')
-    #         values[j] = ts.get.values
-    #         else
-    #         runner.registerInfo('Is NOT Initialized')
-    #         values[j] = Array.new(n, 0)
-    #         end
-    #       end
-    #     end
-
-    #   runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
-
-    #   # Create a new series like this
-    #   # for each condition series we want to plot
-    #   # {"name" : "series 1",
-    #   # "color" : "purple",
-    #   # "data" :[{ "x": 20, "y": 0.015, "time": "2009/07/12 12:34:56"},
-    #           # { "x": 25, "y": 0.008, "time": "2009/07/12 12:34:56"},
-    #           # { "x": 30, "y": 0.005, "time": "2009/07/12 12:34:56"}]
-    #   # }
-    #   all_series = []
-    #   # Sort by fuel, putting the total (Facility) column at the end of the fuel.
-    #   variables_to_graph.sort_by! do |i|
-    #     fuel_type = if i[0].include?('Facility')
-    #                   i[0].gsub(/:Facility/, '')
-    #                 else
-    #                   i[0].gsub(/.*:/, '')
-    #                 end
-    #     end_use = if i[0].include?('Facility')
-    #                 'ZZZ' # so it will be last
-    #               else
-    #                 i[0].gsub(/:.*/, '')
-    #               end
-    #     sort_key = "#{fuel_type}#{end_use}"
-    #   end
-
-    #   variables_to_graph.each_with_index do |var_to_graph, j|
-
-    #     var_name = var_to_graph[0]
-    #     freq = var_to_graph[1]
-    #     kv = var_to_graph[2]
-
-    #     # Get the y axis values
-    #     y_timeseries = sql_file.timeSeries(ann_env_pd, freq, var_name, kv)
-    #     if y_timeseries.empty?
-    #       runner.registerWarning("No data found for #{freq} #{var_name} #{kv}.")
-    #       next
-    #     else
-    #       y_timeseries = y_timeseries.get
-    #     end
-    #     y_vals = y_timeseries.values
-
-    #     # Convert time stamp format to be more readable
-    #     js_date_times = []
-    #     y_timeseries.dateTimes.each do |date_time|
-    #       js_date_times << to_JSTime(date_time)
-    #     end
-
-    #     # Store the timeseries data to hash for later
-    #     # export to the HTML file
-    #     series = {}
-    #     series["name"] = "#{kv}"
-    #     series["type"] = "#{var_name}"
-    #     # Unit conversion
-    #     old_units = y_timeseries.units
-    #     new_units = case old_units
-    #                 when "J"
-    #                   if var_name.include?('Facility')
-    #                     "kBtu"
-    #                   # elsif var_name.include?('Electricity')
-    #                   #   "kBtu"
-    #                   # else
-    #                   #   "kBtu"
-    #                   end
-
-    #                 when "kWh"
-    #                   if var_name.include?('Gas')
-    #                     "kBtu"
-    #                   else
-    #                     "kBtu"
-    #                   end
-
-    #                 when "m3"
-    #                   old_units = "m^3"
-    #                   "gal"
-    #                 else
-    #                   old_units
-    #                 end
-    #     series["units"] = new_units
-    #     data = []
-    #     for i in 0..(js_date_times.size - 1)
-    #       point = {}
-    #       val_i = y_vals[i]
-    #       # Unit conversion
-    #       unless new_units == old_units
-    #        # val_i = OpenStudio.convert(val_i, old_units, new_units).get
-    #       end
-    #       time_i = js_date_times[i]
-    #       point["y"] = val_i
-    #       point["time"] = time_i
-    #       data << point
-    #     end
-    #     series["data"] = data
-    #     all_series << series
-
-    #     # increment color selection
-    #     j += 1
-
-    #   end
-
-    #   # Transform the data to CSV
-    #   cols = []
-    #   all_series.each_with_index do |series, k|
-    #     data = series['data']
-    #     units = series['units']
-    #     # Record the timestamps and units on the first pass only
-    #     if k == 0
-    #       time_col = ['Time']
-    #       time_col << "#{reporting_frequency}"
-    #       data.each do |entry|
-    #         time_col << entry['time']
-    #       end
-    #       cols << time_col
-    #     end
-    #     # Record the data
-    #     col_name = "#{series['type']} #{series['name']} " #[{series['units']}]
-    #     data_col = [col_name]
-    #     data_col << units
-    #     data.each do |entry|
-    #       data_col << entry['y']
-    #     end
-    #     cols << data_col
-    #   end
-    #   rows = cols.transpose
-
-    #   # Write the rows out to CSV
-    #   #csv_path = File.expand_path("./enduse_timeseries.csv")
-    #   CSV.open("enduse_timeseries.csv", "w") do |csv|
-    #     rows.each do |row|
-    #       csv << row
-    #     end
-    #   end
-
-    #       # # Save the 'default_feature_reports.csv' file
-    #       # File.open("default_feature_reports_2.csv", 'w') do |file|
-
-    #       #   file.puts(final_timeseries_names.join(','))
-    #       #   # rows.each do |row|
-    #       #   #   file << row
-    #       #   # end
-    #       # end
-
-    ###########################################################################
-    # # Timeseries ORIGINAL METHOD
+    ######################################## Reporting TImeseries Results FOR CSV File ######################################
 
     # Get the weather file run period (as opposed to design day run period)
     ann_env_pd = nil
@@ -1022,10 +641,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         end
         final_timeseries_names << new_timeseries_name
 
-        # timeseries_name_n = timeseries_name[0]
-        # freq = timeseries_name[1]
-        # kv = timeseries_name[2]
-
         # get the actual timeseries
         ts = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, timeseries_name, key_value)
 
@@ -1044,7 +659,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
         # ##Unit conversion
         old_units = ts.get.units if ts.is_initialized
-        puts "OLD UNIT IS === #{old_units}"
         new_units = case old_units.to_s
                       when 'J'
                         'kBtu'
@@ -1054,20 +668,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                         'gal'
                     end
 
-        # UNit conversion here
+        # Unit conversion here
         os_vec = values[j]
 
-        # ##loop through each value to retrieve it
-        # puts "os_vector LEGTH IS ========= #{os_vec.length}"
+        # loop through each value to retrieve it
         for i in 0..os_vec.length - 1
-          points = {}
-          # puts os_vec[i]
           unless new_units == old_units
-            # puts "FIRST VALUES OS_VEC ===== #{os_vec[i]}"
-            # puts "OLD UNITS #{old_units}"
-            # puts "NEW UNITS = #{new_units}"
             os_vec[i] = OpenStudio.convert(os_vec[i], old_units, new_units).get
-            # puts "os_vector ISSSSSS ======== #{os_vec[i]}"
           end
         end
       end
@@ -1090,20 +697,14 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # closing the sql file
     sql_file.close
 
-    ############# ADDING timeseries_csv info to json report and saving CSV######
+    ############################# Adding timeseries_csv info to json report and saving CSV ################################
     # add csv info to feature_report
     feature_report.timeseries_csv.path = File.join(Dir.pwd, 'default_feature_reports.csv')
     feature_report.timeseries_csv.first_report_datetime = '0'
     feature_report.timeseries_csv.column_names = final_timeseries_names
 
     ##### Save the 'default_feature_reports.json' file
-    # hash = {}
-    # hash[:feature_reports] = []
-    # hash[:feature_reports] << feature_report.to_hash
-
-    # feature_report_array = []
-    # feature_report_array << feature_report.to_hash
-
+    
     feature_report_hash = feature_report.to_hash
 
     File.open('default_feature_reports.json', 'w') do |f|
