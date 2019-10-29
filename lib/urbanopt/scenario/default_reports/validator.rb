@@ -28,19 +28,69 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
+require 'json'
+
 module URBANopt
   module Scenario
-    class SimulationMapperBase
-      # perform initialization functions
-      def initialize; end
+    module DefaultReports
+      class Validator
+        @@schema = nil
 
-      # create osw file given a ScenarioBase object, features, and feature_names
-      # [parameters:]
-      # +scenario+ - _ScenarioBase_ - An object of ScenarioBase class.  
-      # +features+ - _Array_ - Array of Features.  
-      # +feature_names+ - _Array_ - Array of scenario specific names for these Features.   
-      def create_osw(scenario, features, feature_names)
-        raise 'create_osw not implemented for SimulationMapperBase, override in your class'
+        # initialize the root directory
+        def initialize
+          super
+
+          @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', '..'))
+
+          @instance_lock = Mutex.new
+          @@schema ||= schema
+        end
+
+        # Return the absolute path of the default reports files
+        def files_dir
+          File.absolute_path(File.join(@root_dir, 'lib/urbanopt/scenario/default_reports/'))
+        end
+
+        # return path to schema file
+        def schema_file
+          File.join(files_dir, 'schema/scenario_schema.json')
+        end
+
+        # return schema
+        def schema
+          @instance_lock.synchronize do
+            if @@schema.nil?
+              File.open(schema_file, 'r') do |f|
+                @@schema = JSON.parse(f.read, symbolize_names: true)
+              end
+            end
+          end
+
+          @@schema
+        end
+
+        ##
+        # validate data against schema
+        ##
+        # [parameters:]
+        # +schema+ - _Hash_ - A hash of the JSON scenario_schema.
+        # +data+ - _Hash_ - A hash of the data to be validated against scenario_schema.
+        ##
+        def validate(schema, data)
+          JSON::Validator.fully_validate(schema, data)
+        end
+
+        # check if the schema is valid
+        def schema_valid?
+          metaschema = JSON::Validator.validator_for_name('draft6').metaschema
+          JSON::Validator.validate(metaschema, @@schema)
+        end
+
+        # return detailed schema validation errors
+        def schema_validation_errors
+          metaschema = JSON::Validator.validator_for_name('draft6').metaschema
+          JSON::Validator.fully_validate(metaschema, @@schema)
+        end
       end
     end
   end
