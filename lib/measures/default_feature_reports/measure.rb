@@ -265,7 +265,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     end
     epw_file = epw_file.get
 
-    # create output feature_report report object 
+    # create output feature_report report object
     feature_report = URBANopt::Scenario::DefaultReports::FeatureReport.new
     feature_report.id = feature_id
     feature_report.name = feature_name
@@ -275,7 +275,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.simulation_status = 'Complete'
 
     feature_report.reporting_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new
-
 
     ###########################################################################
     ##
@@ -359,7 +358,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     space_type_occupancy = {}
     spaces.each do |space|
       if space.spaceType.empty?
-        raise "space.spaceType is empty. Make sure spaces have a space type"
+        raise 'space.spaceType is empty. Make sure spaces have a space type'
       else
         building_type = space.spaceType.get.standardsBuildingType
       end
@@ -704,7 +703,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.timeseries_csv.column_names = final_timeseries_names
 
     ##### Save the 'default_feature_reports.json' file
-    
+
     feature_report_hash = feature_report.to_hash
 
     File.open('default_feature_reports.json', 'w') do |f|
