@@ -12,7 +12,8 @@ gemspec
 allow_local = ENV['FAVOR_LOCAL_GEMS']
 
 # Uncomment the extension and common measures gem if you need to test local development versions. Otherwise
-# These are included in the model articulation gem.
+# these are included in the model articulation gem.
+#
 # if allow_local && File.exist?('../OpenStudio-extension-gem')
 #   gem 'openstudio-extension', path: '../OpenStudio-extension-gem'
 # elsif allow_local
