@@ -56,7 +56,11 @@
 				},
 				"reporting_periods": {
 					"$ref": "#/definitions/ReportingPeriods"
+				},
+				"distributed_generation": {
+					"$ref": "#/definitions/DistributedGeneration"
 				}
+				
 			},
 			"required": [
 				"id",
@@ -69,6 +73,87 @@
 				"number_of_failed_simulations",
 				"program"
 			]
+		},
+		"DistributedGeneration": {
+			"type": "object",
+			"properties": {
+				"lcc_us_dollars": {
+					"type": "number", 
+					"description": "Optimal lifecycle cost"
+				},
+				"npv_us_dollars": {
+					"type": "number", 
+					"description": "Net present value of savings realized by the project"
+				},
+				"year_one_energy_cost_us_dollars": {
+					"type": "number", 
+					"description": "Optimal year one utility energy cost"
+				},
+				"year_one_demand_cost_us_dollars": {
+					"type": "number", 
+					"description": "Optimal year one utility demand cost"
+				},
+				"year_one_bill_us_dollars": {
+					"type": "number", 
+					"description": "Optimal year one utility bill"
+				},
+				"total_energy_cost_us_dollars": {
+					"type": "number", 
+					"description": "Total utility energy cost over the lifecycle, after-tax"
+				},
+				"PV" : {
+					"$ref": "#/definitions/PV"
+				},
+				"Wind" : {
+					"$ref": "#/definitions/Wind"
+				},
+				"Generator" : {
+					"$ref": "#/definitions/Generator"
+				},
+				"Storage" : {
+					"$ref": "#/definitions/Storage"
+				}
+			 }
+		},
+		"PV": {
+			"type": "object",
+			"properties": {
+				"size_kw": {
+					"description": "rated power in kW",
+					"type": "string"
+				}
+			}
+		},
+		"Wind": {
+			"type": "object",
+			"properties": {
+				"size_kw": {
+					"description": "rated power in kW",
+					"type": "string"
+				}
+			}
+		},
+		"Generator": {
+			"type": "object",
+			"properties": {
+				"size_kw": {
+					"description": "rated power in kW",
+					"type": "string"
+				}
+			}
+		},
+		"Storage": {
+			"type": "object",
+			"properties": {
+				"size_kw": {
+					"description": "rated power in kW",
+					"type": "string"
+				},
+				"size_kw": {
+					"description": "rated capacity in kWh",
+					"type": "string"
+				}
+			}
 		},
 		"FeatureReport": {
 			"type": "object",
@@ -121,6 +206,9 @@
 				},
 				"reporting_periods": {
 					"$ref": "#/definitions/ReportingPeriods"
+				},
+				"distributed_generation": {
+					"$ref": "#/definitions/DistributedGeneration"
 				}
 			},
 			"required": [

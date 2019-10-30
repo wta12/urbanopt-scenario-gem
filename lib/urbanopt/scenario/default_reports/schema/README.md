@@ -7,6 +7,7 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 **JSON Output Units**
 
 - energy outputs: kbtu
+- electricity dispatches: kWh
 - water rate outputs : GPM (gallon per minute)
 - mass flow rate outputs : lbs/min
 - Temperature outputs : &deg;F
@@ -16,18 +17,57 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 
 **CSV Output Units**
 
-|            output                   |  unit   |
-| ----------------------------------- | ------- |
-| Electricity:Facility                | kbtu    |
-| ElectricityProduced:Facility        | kbtu    |
-| Gas:Facility                        | kbtu    |
-| DistrictCooling:Facility            | kbtu    |
-| DistrictHeating:Facility            | kbtu    |
-| District Cooling Chilled Water Rate | GPM     |
-| District Cooling Mass Flow Rate     | lbs/min |
-| District Cooling Inlet Temperature  | &deg;F  |
-| District Cooling Outlet Temperature | &deg;F  |
-| District Heating Hot Water Rate     | GPM     |
-| District Heating Mass Flow Rate     | lbs/min |
-| District Heating Inlet Temperature  | &deg;F  |
-| District Heating Outlet Temperature | &deg;F  |
+|            output                        |  unit   |
+| -----------------------------------------| ------- |
+| Electricity:Facility                     | kWh     |
+| ElectricityProduced:Facility             | kWh     |
+| Electricity:Grid:ToBattery               | kWh     |
+| Electricity:Storage:ToLoad               | kWh     |
+| Electricity:Storage:ToGrid               | kWh     |
+| Electricity:Storage:StateOfCharge        | kWh     |
+| ElectricityProduced:Generator:Total      | kWh     |
+| ElectricityProduced:Generator:ToBattery  | kWh     |
+| ElectricityProduced:Generator:ToLoad     | kWh     |
+| ElectricityProduced:Generator:ToGrid     | kWh     |
+| ElectricityProduced:PV:Total             | kWh     |
+| ElectricityProduced:PV:ToBattery         | kWh     |
+| ElectricityProduced:PV:ToLoad            | kWh     |
+| ElectricityProduced:PV:ToGrid            | kWh     |
+| ElectricityProduced:Wind:Total           | kWh     |
+| ElectricityProduced:Wind:ToBattery       | kWh     |
+| ElectricityProduced:Wind:ToLoad          | kWh     |
+| ElectricityProduced:Wind:ToGrid          | kWh     |
+| Gas:Facility                             | kbtu    |
+| DistrictCooling:Facility                 | kbtu    |
+| DistrictHeating:Facility                 | kbtu    |
+| District Cooling Chilled Water Rate      | GPM     |
+| District Cooling Mass Flow Rate          | lbs/min |
+| District Cooling Inlet Temperature       | &deg;F  |
+| District Cooling Outlet Temperature      | &deg;F  |
+| District Heating Hot Water Rate          | GPM     |
+| District Heating Mass Flow Rate          | lbs/min |
+| District Heating Inlet Temperature       | &deg;F  |
+| District Heating Outlet Temperature      | &deg;F  |
+| Electricity:Grid:ToLoad                  | kWh.    |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

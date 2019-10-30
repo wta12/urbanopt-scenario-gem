@@ -65,7 +65,9 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     #feature_report_1.reporting_periods[0][:total_site_energy] = 100
 
     scenario_report = URBANopt::Scenario::DefaultReports::ScenarioReport.new()
-    
+    binding.pry
+
+
     expect(scenario_report.feature_reports.size).to eq(0)
     expect(scenario_report.timesteps_per_hour).to be_nil
     expect(scenario_report.number_of_not_started_simulations).to eq(0)

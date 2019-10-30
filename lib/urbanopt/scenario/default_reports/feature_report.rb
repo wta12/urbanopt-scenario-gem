@@ -33,6 +33,7 @@ require "urbanopt/scenario/default_reports/program"
 require "urbanopt/scenario/default_reports/reporting_period"
 require "urbanopt/scenario/default_reports/timeseries_csv"
 require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/distributed_generation'
 require 'json-schema'
 
 require 'json'
@@ -49,7 +50,7 @@ module URBANopt
       # The DefaultPostProcessor reads in these FeatureReports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport 
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation
         
         ##
         # Each FeatureReport object corresponds to a single Feature.
@@ -81,7 +82,8 @@ module URBANopt
           hash[:reporting_periods].each do |rp|
              @reporting_periods << ReportingPeriod.new(rp)
           end
-          
+
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation])
 
           # initialize class variable @@extension only once
           @@extension ||= Extension.new

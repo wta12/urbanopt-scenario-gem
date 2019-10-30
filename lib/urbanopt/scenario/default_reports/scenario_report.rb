@@ -34,6 +34,7 @@ require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
 require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/distributed_generation'
 require 'json-schema'
 
 require 'json'
@@ -52,7 +53,7 @@ module URBANopt
       ##
       class ScenarioReport 
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations, :number_of_started_simulations, :number_of_complete_simulations, 
-                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports
+                      :number_of_failed_simulations, :timeseries_csv, :location,  :program, :construction_costs, :reporting_periods, :feature_reports, :distributed_generation
         
 
         
@@ -105,7 +106,7 @@ module URBANopt
           @construction_costs = hash[:construction_costs]
           @reporting_periods = hash[:reporting_periods]
           @feature_reports = hash[:feature_reports]
-
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation])
           @scenario = hash
 
           #@scenario_csv = @@scenario_csv
@@ -266,7 +267,8 @@ module URBANopt
           
           # merge reporting periods information
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
-          
+
+          @distributed_generation = DistributedGeneration.merge_distributed_generation d(@distributed_generation, feature_report.distributed_generation)
           
           # add feature_report
           @feature_reports << feature_report
