@@ -49,12 +49,12 @@ module URBANopt
       # The DefaultPostProcessor reads these feature reports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, 
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
                       :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
-        # [parameters:] 
+        # [parameters:]
         # +hash+ - _Hash_ - A hash which may contain a deserialized feature_report.
         ##
         def initialize(hash = {})

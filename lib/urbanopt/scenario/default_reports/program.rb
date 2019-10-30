@@ -43,14 +43,14 @@ module URBANopt
                       :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces,
                       :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories,
                       :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
-                      :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area, 
+                      :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area,
                       :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc:
         # Program class intialize building program attributes: +:site_area+ , +:floor_area+ , +:conditioned_area+ , +:unconditioned_area+ ,
         # +:footprint_area+ , +:maximum_roof_height, +:maximum_number_of_stories+ , +:maximum_number_of_stories_above_ground+ , +:parking_area+ ,
         # +:number_of_parking_spaces+ , +:number_of_parking_spaces_charging+ , +:parking_footprint_area+ , +:maximum_parking_height+ , +:maximum_number_of_parking_stories+ ,
         # +:maximum_number_of_parking_stories_above_ground+ , +:number_of_residential_units+ , +:building_types+ , +:building_type+ , +:maximum_occupancy+ ,
         # +:area+ , +:window_area+ , +:north_window_area+ , +:south_window_area+ , +:east_window_area+ , +:west_window_area+ , +:wall_area+ , +:roof_area+ ,
-        # +:equipment_roof_area+ , +:photovoltaic_roof_area+ , +:available_roof_area+ , +:total_roof_area+ , +:orientation+ , +:aspect_ratio+ 
+        # +:equipment_roof_area+ , +:photovoltaic_roof_area+ , +:available_roof_area+ , +:total_roof_area+ , +:orientation+ , +:aspect_ratio+
         ##
         # [parameters:]
         # +hash+ - _Hash_ - A hash which may contain a deserialized program.
@@ -178,7 +178,7 @@ module URBANopt
         ##
         # Return the maximum value from +existing_value+ and +new_value+.
         ##
-        #[parameters:]
+        # [parameters:]
         # +existing_value+ - _Float_ - A value corresponding to a Program attribute.
         ##
         # +new_value+ - _Float_ - A value corresponding to a Program attribute.
@@ -193,7 +193,7 @@ module URBANopt
         end
 
         ##
-        # Adds up +existing_value+ and +new_values+ if not nill.   
+        # Adds up +existing_value+ and +new_values+ if not nill.
         ##
         # [parameters:]
         # +existing_value+ - _Float_ - A value corresponding to a Program attribute.

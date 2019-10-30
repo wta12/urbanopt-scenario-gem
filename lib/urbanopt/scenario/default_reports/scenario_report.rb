@@ -50,9 +50,9 @@ module URBANopt
       ##
       class ScenarioReport
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations,
-                      :number_of_started_simulations,:number_of_complete_simulations, :number_of_failed_simulations,
+                      :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations,
                       :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports # :nodoc:
-        # ScenarioReport class intializes the scenario report attributes: 
+        # ScenarioReport class intializes the scenario report attributes:
         # +:id+ , +:name+ , +:directory_name+, +:timesteps_per_hour+ , +:number_of_not_started_simulations+ ,
         # +:number_of_started_simulations+ , +:number_of_complete_simulations+ , +:number_of_failed_simulations+ ,
         # +:timeseries_csv+ , +:location+ , +:program+ , +:construction_costs+ , +:reporting_periods+ , +:feature_reports+
@@ -63,7 +63,6 @@ module URBANopt
         # +hash+ - _Hash_ - A hash of a previously serialized ScenarioReport.
         ##
         def initialize(hash = {})
-
           hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
 
@@ -78,7 +77,7 @@ module URBANopt
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
-          
+
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
@@ -98,10 +97,9 @@ module URBANopt
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
-          
+
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
-
         end
 
         ##
@@ -208,7 +206,7 @@ module URBANopt
         end
 
         ##
-        # Add feature reports to each other. 
+        # Add feature reports to each other.
         ##
         # - check if a feature report have been already added.
         # - check feature simulation status
@@ -259,7 +257,6 @@ module URBANopt
 
           # merge program information
           @program.add_program(feature_report.program)
-
 
           # merge construction_cost information
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)

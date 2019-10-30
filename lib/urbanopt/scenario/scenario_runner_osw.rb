@@ -46,8 +46,8 @@ module URBANopt
       # Create all OSWs for Scenario.
       ##
       # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario to create simulation input files for.   
-      # +force_clear+ - _Bool_ - Clear Scenario before creating simulation input files.  
+      # +scenario+ - _ScenarioBase_ - Scenario to create simulation input files for.
+      # +force_clear+ - _Bool_ - Clear Scenario before creating simulation input files.
       # [return:] _Array_ Returns array of all SimulationDirs, even those created previously, for Scenario.
       def create_simulation_files(scenario, force_clear = false)
         if force_clear
@@ -78,11 +78,10 @@ module URBANopt
       # - Run osw file groups in order and store simulation failure in a array.
       ##
       # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.    
-      # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.    
+      # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.
+      # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.
       # [return:] _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
       def run(scenario, force_clear = false)
-
         # instantiate openstudio runner - use the defaults for now. If need to change then create
         # the runner.conf file (i.e. run `rake openstudio:runner:init`)
         runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
@@ -136,7 +135,7 @@ module URBANopt
         # Run osw groups in order and store simulation failure in a array.
         # Return simulation_dirs after running all simulations.
 
-        # failures 
+        # failures
         failures = []
         # run building_osws
         # building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)

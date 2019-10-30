@@ -33,7 +33,6 @@ require 'openstudio/extension'
 module URBANopt
   module Scenario
     class Extension < OpenStudio::Extension::Extension
-
       def initialize
         super
         @root_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))

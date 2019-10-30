@@ -47,7 +47,7 @@ module URBANopt
                       :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs,
                       :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
                       :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours #:nodoc:
-        # ReportingPeriod class intializes the reporting period attributes: 
+        # ReportingPeriod class intializes the reporting period attributes:
         # +:id+ , +:name+ , +:multiplier+ , +:start_date+ , +:end_date+ , +:month+ , +:day_of_month+ , +:year+ , +:total_site_energy+ , +:total_source_energy+ ,
         # +:net_site_energy+ , +:net_source_energy+ , +:net_utility_cost+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
         # +:district_heating+ , +:water+ , +:electricity_produced+ , +:end_uses+ , +:energy_production+ , +:photovoltaic+ , +:utility_costs+ ,
@@ -180,7 +180,7 @@ module URBANopt
         end
 
         ##
-        # Adds up +existing_value+ and +new_values+ if not nill.   
+        # Adds up +existing_value+ and +new_values+ if not nill.
         ##
         # [parameter:]
         # +existing_value+ - _Float_ - A value corresponding to a ReportingPeriod attribute.
@@ -252,14 +252,14 @@ module URBANopt
 
         ##
         # Merges multiple reporting periods together.
-        # - If +existing_periods+ and +new_periods+ ids are equal,  
+        # - If +existing_periods+ and +new_periods+ ids are equal,
         # modify the existing_periods by merging the new periods results
         # - If existing periods are empty, initialize with new_periods.
         # - Raise an error if the existing periods are not identical with new periods (cannot have different reporting period ids).
         ##
         # [parameters:]
         ##
-        # +existing_periods+ - _Array_ - An array of ReportingPeriod objects. 
+        # +existing_periods+ - _Array_ - An array of ReportingPeriod objects.
         ##
         # +new_periods+ - _Array_ - An array of ReportingPeriod objects.
         ##
@@ -272,10 +272,9 @@ module URBANopt
           if id_list_existing == id_list_new
 
             existing_periods.each_index do |index|
-              # if +existing_periods+ and +new_periods+ ids are equal,  
+              # if +existing_periods+ and +new_periods+ ids are equal,
               # modify the existing_periods by merging the new periods results
               existing_periods[index] = merge_reporting_period(existing_periods[index], new_periods[index])
-
             end
 
           elsif existing_periods.empty?

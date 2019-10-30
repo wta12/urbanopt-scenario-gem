@@ -34,7 +34,6 @@ require 'json-schema'
 require 'urbanopt/scenario/default_reports/validator'
 require 'urbanopt/scenario/default_reports/logger'
 
-
 module URBANopt
   module Scenario
     module DefaultReports
@@ -45,7 +44,7 @@ module URBANopt
         attr_accessor :path, :first_report_datetime, :column_names #:nodoc:
 
         ##
-        # TimeseriesCSV class initializes timeseries csv attributes: +:path+ , +:first_report_datetime+ , +:column_names+ 
+        # TimeseriesCSV class initializes timeseries csv attributes: +:path+ , +:first_report_datetime+ , +:column_names+
         ##
         # +hash+ - _Hash_ - A hash which may contain a deserialized timeseries_csv.
         ##
@@ -66,10 +65,9 @@ module URBANopt
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
-          
+
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
-
         end
 
         ##

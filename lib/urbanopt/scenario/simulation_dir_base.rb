@@ -35,8 +35,8 @@ module URBANopt
       # SimulationDirBase is the agnostic representation of a directory of simulation input files.
       ##
       # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario containing this SimulationDirBase.   
-      # +features+ - _Array_ - Array of Features that this SimulationDirBase represents.  
+      # +scenario+ - _ScenarioBase_ - Scenario containing this SimulationDirBase.
+      # +features+ - _Array_ - Array of Features that this SimulationDirBase represents.
       # +feature_names+ - _Array_ - Array of scenario specific names for these Features.
       def initialize(scenario, features, feature_names)
         @scenario = scenario
