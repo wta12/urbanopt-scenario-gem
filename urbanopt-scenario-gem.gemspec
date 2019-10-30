@@ -23,14 +23,15 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 1.14'
-  spec.add_development_dependency 'openstudio-common-measures', '~> 0.0'
-  spec.add_development_dependency 'openstudio-model-articulation', '~> 0.0'
   spec.add_development_dependency 'rake', '12.3.1'
   spec.add_development_dependency 'rspec', '3.7.0'
 
+  spec.add_dependency 'openstudio-model-articulation', '~> 0.1.0'
   spec.add_dependency 'json-schema'
   spec.add_dependency 'json_pure'
-  spec.add_dependency 'openstudio-extension', '~> 0.1.0'
-  spec.add_dependency 'public_suffix', '~> 3.0.3'
   spec.add_dependency 'urbanopt-core', '~> 0.1.0'
+
+  # lock the version of these dependencies due to using older version of Ruby.
+  spec.add_dependency 'public_suffix', '3.1.1'
+
 end
