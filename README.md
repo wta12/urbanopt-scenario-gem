@@ -31,7 +31,9 @@ Check out the repository and then execute:
     
 ## Releasing
 
-* Update change log
+* Update CHANGELOG.md
+* Run `rake rubocop:auto_correct`
 * Update version in `/lib/urbanopt/scenario/version.rb`
-* Merge down to master
-* run `rake release` from master
+* Create PR to master, after tests and reviews complete, then merge
+* Locally - from the master branch, run `rake release`
+* On GitHub, go to the releases page and update the latest release tag. Name it “Version x.y.z” and copy the CHANGELOG entry into the description box.
