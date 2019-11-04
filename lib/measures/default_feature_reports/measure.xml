@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>cb6430d4-ae9e-4723-96d7-780f9653decd</version_id>
-  <version_modified>20190502T024607Z</version_modified>
+  <version_id>6f45985e-6614-408e-a5f3-4ce3a4fd2ba0</version_id>
+  <version_modified>20191008T193241Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -34,6 +34,41 @@
       <model_dependent>false</model_dependent>
       <default_value>Building</default_value>
     </argument>
+    <argument>
+      <name>reporting_frequency</name>
+      <display_name>Reporting Frequency</display_name>
+      <description>The frequency at which to report timeseries output data.</description>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>Hourly</default_value>
+      <choices>
+        <choice>
+          <value>Detailed</value>
+          <display_name>Detailed</display_name>
+        </choice>
+        <choice>
+          <value>Timestep</value>
+          <display_name>Timestep</display_name>
+        </choice>
+        <choice>
+          <value>Hourly</value>
+          <display_name>Hourly</display_name>
+        </choice>
+        <choice>
+          <value>Daily</value>
+          <display_name>Daily</display_name>
+        </choice>
+        <choice>
+          <value>Monthly</value>
+          <display_name>Monthly</display_name>
+        </choice>
+        <choice>
+          <value>Runperiod</value>
+          <display_name>Runperiod</display_name>
+        </choice>
+      </choices>
+    </argument>
   </arguments>
   <outputs/>
   <provenances/>
@@ -54,12 +89,6 @@
   </attributes>
   <files>
     <file>
-      <filename>example_model.osm</filename>
-      <filetype>osm</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A0199A45</checksum>
-    </file>
-    <file>
       <filename>USA_CO_Golden-NREL.724666_TMY3.epw</filename>
       <filetype>epw</filetype>
       <usage_type>test</usage_type>
@@ -78,10 +107,22 @@
       <checksum>703C9964</checksum>
     </file>
     <file>
+      <filename>example_model.osm</filename>
+      <filetype>osm</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CC4BFFAF</checksum>
+    </file>
+    <file>
       <filename>README.md</filename>
       <filetype>md</filetype>
       <usage_type>readme</usage_type>
-      <checksum>79D10A68</checksum>
+      <checksum>FDBC6AE2</checksum>
+    </file>
+    <file>
+      <filename>default_feature_reports_test.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8E37E2D9</checksum>
     </file>
     <file>
       <version>
@@ -92,13 +133,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>93A86B25</checksum>
-    </file>
-    <file>
-      <filename>default_feature_reports_test.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>9E8A0D8F</checksum>
+      <checksum>6E1A9B7B</checksum>
     </file>
   </files>
 </measure>

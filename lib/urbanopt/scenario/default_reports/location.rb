@@ -36,24 +36,24 @@ module URBANopt
   module Scenario
     module DefaultReports
       ##
-      # Date class include information of simulation run date.
+      # Location include all location information.
       ##
-      class Date
-        attr_accessor :month, :day_of_month, :year #:nodoc:
+      class Location
+        attr_accessor :latitude, :longitude, :surface_elevation, :weather_filename #:nodoc:
         ##
-        # Date class intialize all date attributes:
-        # +:month+ , +:day_of_month+ , +:year+
+        # Location class intialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
         ##
         # [parameters:]
-        # +hash+ - _Hash_ - A hash which may contain a deserialized date.
+        # +hash+ - _Hash_ - A hash which may contain a deserialized location.
         ##
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
 
-          @month = hash[:month].to_i
-          @day_of_month = hash[:day_of_month].to_i
-          @year = hash[:year].to_i
+          @latitude = hash[:latitude]
+          @longitude = hash[:longitude]
+          @surface_elevation = hash[:surface_elevation]
+          @weather_filename = hash[:weather_filename]
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -61,33 +61,35 @@ module URBANopt
         end
 
         ##
-        # Converts to a hash equivalent for JSON serialization.
+        # Convert to a Hash equivalent for JSON serialization.
         ##
         # - Exclude attributes with nil values.
-        # - Validate date properties against schema.
+        # - Validate location hash properties against schema.
         ##
         def to_hash
           result = {}
-          result[:month] = @month if @month
-          result[:day_of_month] = @day_of_month if @day_of_month
-          result[:year] = @year if @year
+          result[:latitude] = @latitude if @latitude
+          result[:longitude] = @longitude if @longitude
+          result[:surface_elevation] = @surface_elevation if @surface_elevation
+          result[:weather_filename] = @weather_filename if @weather_filename
 
-          # validate date hash properties against schema
-          if @@validator.validate(@@schema[:definitions][:Date][:properties], result).any?
-            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Date][:properties], result)}"
+          # validate location properties against schema
+          if @@validator.validate(@@schema[:definitions][:Location][:properties], result).any?
+            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Location][:properties], result)}"
           end
 
           return result
         end
 
         ##
-        # Assigns default values if values do not exist.
+        # Assign default values if values does not exist
         ##
         def defaults
           hash = {}
-          hash[:month] = nil
-          hash[:day_of_month] = nil
-          hash[:year] = nil
+          hash[:latitude] = nil
+          hash[:longitude] = nil
+          hash[:surface_elevation] = nil
+          hash[:weather_filename] = nil
 
           return hash
         end

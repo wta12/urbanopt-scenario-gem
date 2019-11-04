@@ -44,14 +44,15 @@ module URBANopt
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
-          hash = defaults.merge(hash)
                     
           @size_kw = hash[:size_kw]
           
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
           
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
         
       
@@ -71,15 +72,18 @@ module URBANopt
         ##
         # Merge Generator systems
         ## 
-        def add_generator(existing_generator, new_generator)
-          
-          existing_generator.size_kw = existing_generator.size_kw + new_generator.size_kw
+        def self.add_generator(existing_generator, new_generator)
+          if existing_generator.size_kw.nil? and new_generator.size_kw.nil?
+            existing_generator.size_kw = nil
+          else
+            existing_generator.size_kw = (existing_generator.size_kw || 0) + (new_generator.size_kw || 0)
+          end
           
           return existing_generator
          
         end
         
-        end
+        
       end
     end
   end

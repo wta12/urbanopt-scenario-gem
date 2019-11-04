@@ -17,6 +17,7 @@
 	"required": [
 		"scenario_report"
 	],
+	"additionalProperties": false,
 	"definitions": {
 		"ScenarioReport": {
 			"type": "object",
@@ -45,6 +46,9 @@
 				"number_of_failed_simulations": {
 					"type": "number"
 				},
+				"location": {
+					"$ref": "#/definitions/Location"
+				},
 				"timeseries_csv": {
 					"$ref": "#/definitions/TimeseriesCSV"
 				},
@@ -72,7 +76,8 @@
 				"number_of_complete_simulations",
 				"number_of_failed_simulations",
 				"program"
-			]
+			],
+			"additionalProperties": false
 		},
 		"DistributedGeneration": {
 			"type": "object",
@@ -218,7 +223,8 @@
 				"feature_type",
 				"timesteps_per_hour",
 				"simulation_status"
-			]
+			],
+			"additionalProperties": false
 		},
 		"ReportingPeriods": {
 			"type": "array",
@@ -310,9 +316,11 @@
 								"photovoltaic": {
 									"type": "number"
 								}
-							}
+							},
+							"additionalProperties": false
 						}
-					}
+					},
+					"additionalProperties": false
 				},
 				"utility_costs": {
 					"type": "array",
@@ -323,7 +331,8 @@
 				"comfort_result": {
 					"$ref": "#/definitions/ComfortResult"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"Date": {
 			"type": "object",
@@ -337,7 +346,8 @@
 				"year": {
 					"type": "integer"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"EndUses": {
 			"description": "End uses for reporting period.  Does not include energy produced. Electricity reported in kWh, water in m^3, all others in kBtu.",
@@ -361,7 +371,8 @@
 				"water": {
 					"$ref": "#/definitions/EndUse"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"EndUse": {
 			"type": "object",
@@ -408,7 +419,8 @@
 				"generators": {
 					"type": "number"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"ComfortResult": {
 			"type": "object",
@@ -425,7 +437,8 @@
 					"description": "(hrs)",
 					"type": "number"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"ConstructionCosts": {
 			"type": "array",
@@ -480,7 +493,8 @@
 					"description": "Total cost is unit_cost multiplied by item_quantity. Can be updated if unit_cost is changed.",
 					"type": "number"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"UtilityCost": {
 			"type": "object",
@@ -508,7 +522,8 @@
 					"description": "($)",
 					"type": "number"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"Location": {
 			"type": "object",
@@ -529,7 +544,8 @@
 					"description": "Name of EPW weather file.",
 					"type": "string"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"TimestepsPerHour": {
 			"type": "integer",
@@ -631,7 +647,8 @@
 					},
 					"required": [
 						"total_window_area"
-					]
+					],
+					"additionalProperties": false
 				},
 				"wall_area": {
 					"description": "exterior walls gross area (ft^2)",
@@ -659,7 +676,8 @@
 						"east_wall_area",
 						"west_wall_area",
 						"total_wall_area"
-					]
+					],
+					"additionalProperties": false
 				},
 				"roof_area": {
 					"type": "object",
@@ -681,7 +699,8 @@
 					},
 					"required": [
 						"total_roof_area"
-					]
+					],
+					"additionalProperties": false
 				},
 				"orientation": {
 					"description": "Rotation of longest axis from East-West,about up axis (deg)",
@@ -703,7 +722,8 @@
 				"window_area",
 				"wall_area",
 				"roof_area"
-			]
+			],
+			"additionalProperties": false
 		},
 		"BuildingType": {
 			"type": "object",
@@ -750,7 +770,8 @@
 				"building_type",
 				"maximum_occupancy",
 				"floor_area"
-			]
+			],
+			"additionalProperties": false
 		},
 		"DesignParameters": {
 			"type": "object",
@@ -779,7 +800,8 @@
 				"district_heating_outlet_temperature": {
 					"type": "number"
 				}
-			}
+			},
+			"additionalProperties": false
 		},
 		"TimeseriesCSV": {
 			"type": "object",
@@ -801,7 +823,8 @@
 				"path",
 				"first_report_datetime",
 				"column_names"
-			]
+			],
+			"additionalProperties": false
 		}
 	}
 }

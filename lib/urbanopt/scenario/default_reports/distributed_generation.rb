@@ -40,33 +40,35 @@ module URBANopt
     module DefaultReports
       class DistributedGeneration 
 
-        attr_accessor :lcc_us_dollars, :npv_us_dollars, :year_one_energy_cost_us_dollars, :year_one_demand_cost_us_dollars, :year_one_demand_cost_us_dollars, :total_energy_cost_us_dollars, :PV, :Wind, :Generator, :Storage
+        attr_accessor :lcc_us_dollars, :npv_us_dollars, :year_one_energy_cost_us_dollars, :year_one_demand_cost_us_dollars, :year_one_demand_cost_us_dollars, :year_one_bill_us_dollars, :total_energy_cost_us_dollars, :pv, :wind, :generator, :storage
         
         ##
         # Intialize reporting period attributes
         ##
         # perform initialization functions
         def initialize(hash = {})
+          
           hash.delete_if {|k, v| v.nil?}
-          hash = defaults.merge(hash)
-                    
+            
           @lcc_us_dollars = hash[:lcc_us_dollars]
           @npv_us_dollars = hash[:npv_us_dollars]
           @year_one_energy_cost_us_dollars = hash[:year_one_energy_cost_us_dollars]
           @year_one_demand_cost_us_dollars = hash[:year_one_demand_cost_us_dollars]
           @year_one_bill_us_dollars = hash[:year_one_bill_us_dollars]
           @total_energy_cost_us_dollars = hash[:total_energy_cost_us_dollars]
-
-          @PV = PV.new hash[:pv]
-          @Wind = Wind.new hash[:wind]
-          @Generator = Generator.new hash[:generator]
-          @Storage = Storage.new hash[:storage]
+          
+          @pv = PV.new(hash[:pv] || {})
+          @wind = Wind.new(hash[:wind] || {})
+          @generator = Generator.new(hash[:generator] || {})
+          @storage = Storage.new(hash[:storage] || {})
           
           
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
           
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
         
       
@@ -83,10 +85,10 @@ module URBANopt
           result[:year_one_demand_cost_us_dollars] = @year_one_demand_cost_us_dollars if @year_one_demand_cost_us_dollars
           result[:year_one_bill_us_dollars] = @year_one_bill_us_dollars if @year_one_bill_us_dollars 
           result[:total_energy_cost_us_dollars] = @total_energy_cost_us_dollars if @total_energy_cost_us_dollars 
-          result[:pv] = @PV.to_hash if @PV
-          result[:wind] = @Wind.to_hash if @Wind
-          result[:generator] = @Generator.to_hash if @Generator
-          result[:storage] = @Storage.to_hash if @Storage
+          result[:pv] = @pv.to_hash if @pv
+          result[:wind] = @wind.to_hash if @wind
+          result[:generator] = @generator.to_hash if @generator
+          result[:storage] = @storage.to_hash if @storage
           
           return result
         end
@@ -120,16 +122,16 @@ module URBANopt
           existing_dgen.year_one_bill_us_dollars = add_values(existing_dgen.year_one_bill_us_dollars, new_dgen.year_one_bill_us_dollars)
           existing_dgen.total_energy_cost_us_dollars = add_values(existing_dgen.total_energy_cost_us_dollars, new_dgen.total_energy_cost_us_dollars)
           
-          existing_dgen.PV = PV.add_pv @PV new_dgen.PV
-          existing_dgen.Wind = Wind.add_wind @Wind new_dgen.Wind
-          existing_dgen.Generator = Generator.add_generator @Generator new_dgen.Generator
-          existing_dgen.Storage = Storage.add_storage @Storage new_dgen.Storage
+          existing_dgen.pv = PV.add_pv existing_dgen.pv, new_dgen.pv
+          existing_dgen.wind = Wind.add_wind existing_dgen.wind, new_dgen.wind
+          existing_dgen.generator = Generator.add_generator existing_dgen.generator, new_dgen.generator
+          existing_dgen.storage = Storage.add_storage existing_dgen.storage, new_dgen.storage
 
           return existing_dgen
          
         end
         
-        end
+        
       end
     end
   end

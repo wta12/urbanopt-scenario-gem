@@ -21,6 +21,8 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 | -----------------------------------------| ------- |
 | Electricity:Facility                     | kWh     |
 | ElectricityProduced:Facility             | kWh     |
+| Electricity:Grid:Total				   | kWh     |
+| Electricity:Grid:ToLoad                  | kWh     |
 | Electricity:Grid:ToBattery               | kWh     |
 | Electricity:Storage:ToLoad               | kWh     |
 | Electricity:Storage:ToGrid               | kWh     |

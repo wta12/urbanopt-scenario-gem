@@ -36,7 +36,7 @@ module URBANopt
     module DefaultReports
       class Storage 
 
-        attr_accessor :size_kw
+        attr_accessor :size_kw,:size_kwh
         
         ##
         # Intialize Storage attributes
@@ -44,14 +44,16 @@ module URBANopt
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
-          hash = defaults.merge(hash)
                     
           @size_kw = hash[:size_kw]
           @size_kwh = hash[:size_kwh]
           
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
+          
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
           
         end
         
@@ -72,16 +74,26 @@ module URBANopt
         ##
         # Merge Storage systems
         ## 
-        def add_storage(existing_storage, new_storage)
+        def self.add_storage(existing_storage, new_storage)
           
-          existing_storage.size_kw = existing_storage.size_kw + new_storage.size_kw
-          existing_storage.size_kwh = existing_storage.size_kwh + new_storage.size_kwh
+          if existing_storage.size_kw.nil?
+            existing_storage.size_kw = new_storage.size_kw
+          else
+            existing_storage.size_kw = (existing_storage.size_kw || 0) + (new_storage.size_kw || 0)
+          end
+
+          if existing_storage.size_kw.nil?
+            existing_storage.size_kwh = new_storage.size_kwh
+          else
+            existing_storage.size_kwh = (existing_storage.size_kwh || 0) + (new_storage.size_kwh || 0)
+          end
+          
           
           return existing_storage
          
         end
         
-        end
+        
       end
     end
   end

@@ -63,6 +63,7 @@ export default {
   background-color: #282c34;
   padding: 1.25rem 1.5rem;
   border-radius: 6px;
+  width: fit-content
 }
 .json-formatter-row a {
   color: white;
@@ -76,5 +77,8 @@ export default {
 }
 .json-schema-view .object .inner.oneOf b {
   color: aqua;
+}
+.json-schema-view .default {
+  color:  #5f96df
 }
 </style>

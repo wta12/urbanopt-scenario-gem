@@ -1,57 +1,63 @@
-#*********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other 
+# *********************************************************************************
+# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
-# 
-# Redistribution and use in source and binary forms, with or without modification, 
+#
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
-# Redistributions of source code must retain the above copyright notice, this list 
+#
+# Redistributions of source code must retain the above copyright notice, this list
 # of conditions and the following disclaimer.
-# 
-# Redistributions in binary form must reproduce the above copyright notice, this 
-# list of conditions and the following disclaimer in the documentation and/or other 
+#
+# Redistributions in binary form must reproduce the above copyright notice, this
+# list of conditions and the following disclaimer in the documentation and/or other
 # materials provided with the distribution.
-# 
-# Neither the name of the copyright holder nor the names of its contributors may be 
-# used to endorse or promote products derived from this software without specific 
+#
+# Neither the name of the copyright holder nor the names of its contributors may be
+# used to endorse or promote products derived from this software without specific
 # prior written permission.
-# 
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-#*********************************************************************************
+# *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/extension'
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 require 'json'
 
 module URBANopt
   module Scenario
     module DefaultReports
-      class Program 
-        
-        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area, :maximum_roof_height, 
-        :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces, 
-        :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories, 
-        :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
-        :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area,:equipment_roof_area, :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio  
-        
+      ##
+      # Program includes all building program related information.
+      ##
+      class Program
+        attr_accessor :site_area, :floor_area, :conditioned_area, :unconditioned_area, :footprint_area, :maximum_roof_height,
+                      :maximum_number_of_stories, :maximum_number_of_stories_above_ground, :parking_area, :number_of_parking_spaces,
+                      :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories,
+                      :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
+                      :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area, 
+                      :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc:
+        # Program class intialize building program attributes: +:site_area+ , +:floor_area+ , +:conditioned_area+ , +:unconditioned_area+ ,
+        # +:footprint_area+ , +:maximum_roof_height, +:maximum_number_of_stories+ , +:maximum_number_of_stories_above_ground+ , +:parking_area+ ,
+        # +:number_of_parking_spaces+ , +:number_of_parking_spaces_charging+ , +:parking_footprint_area+ , +:maximum_parking_height+ , +:maximum_number_of_parking_stories+ ,
+        # +:maximum_number_of_parking_stories_above_ground+ , +:number_of_residential_units+ , +:building_types+ , +:building_type+ , +:maximum_occupancy+ ,
+        # +:area+ , +:window_area+ , +:north_window_area+ , +:south_window_area+ , +:east_window_area+ , +:west_window_area+ , +:wall_area+ , +:roof_area+ ,
+        # +:equipment_roof_area+ , +:photovoltaic_roof_area+ , +:available_roof_area+ , +:total_roof_area+ , +:orientation+ , +:aspect_ratio+ 
         ##
-        # Program class intialize attributes related to the building program
+        # [parameters:]
+        # +hash+ - _Hash_ - A hash which may contain a deserialized program.
         ##
-        # perform initialization functions
-          def initialize(hash = {})
-          #puts "PROGRAM HASHSHSHSHSHSH IS  +++++========= #{hash}"
-          hash.delete_if {|k, v| v.nil?}
+        def initialize(hash = {})
+          hash.delete_if { |k, v| v.nil? }
           hash = defaults.merge(hash)
-          #hash = defaults
 
           @site_area = hash[:site_area]
           @floor_area = hash[:floor_area]
@@ -70,42 +76,19 @@ module URBANopt
           @maximum_number_of_parking_stories_above_ground = hash[:maximum_number_of_parking_stories_above_ground]
           @number_of_residential_units = hash[:number_of_residential_units]
           @building_types = hash[:building_types]
-
-
           @window_area = hash[:window_area]
-          # @north_window_area = hash[:window_area][:north_wall_area]
-          # @south_window_area = hash[:window_area][:south_wall_area]
-          # @east_window_area = hash[:window_area][:east_wall_area]
-          # @west_window_area = hash[:window_area][:west_wall_area]
-          # @total_window_area = hash[:window_area][:total_wall_area]
-
           @wall_area = hash[:wall_area]
-
-          # @north_wall_area = hash[:wall_area][:north_wall_area]
-          # @south_wall_area = hash[:wall_area][:south_wall_area]
-          # @east_wall_area = hash[:wall_area][:east_wall_area]
-          # @west_wall_area = hash[:wall_area][:west_wall_area]
-          # @total_wall_area = hash[:wall_area][:total_wall_area]
-
           @roof_area = hash[:roof_area]
-
-          #puts "roof_area is ====== :) :) === #{@roof_area}"
-          #@equipment_roof_area = hash[:roof_area][:equipment_roof_area]
-          #@photovoltaic_roof_area = hash[:roof_area][:photovoltaic_roof_area]
-          #@available_roof_area = hash[:roof_area][:available_roof_area]
-          #@total_roof_area = hash[:roof_area][:total_roof_area]
-          
           @orientation = hash[:orientation]
           @aspect_ratio = hash[:aspect_ratio]
 
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
-
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
         end
-        
+
         ##
-        # Assign default values if values does not exist
+        # Assigns default values if values do not exist.
         ##
         def defaults
           hash = {}
@@ -125,17 +108,20 @@ module URBANopt
           hash[:maximum_number_of_parking_stories] = nil
           hash[:maximum_number_of_parking_stories_above_ground] = nil
           hash[:number_of_residential_units] = nil
-          hash[:building_types] = [{:building_type => nil, :maximum_occupancy => nil , :floor_area => nil }]
-          hash[:window_area] = {:north_window_area => nil, :south_window_area => nil, :east_window_area => nil, :west_window_area => nil, :total_window_area => nil}
-          hash[:wall_area] = {:north_wall_area => nil, :south_wall_area => nil, :east_wall_area => nil, :west_wall_area => nil, :total_wall_area => nil}
-          hash[:roof_area] = {:equipment_roof_area => nil, :photovoltaic_roof_area => nil, :available_roof_area => nil, :total_roof_area => nil}
+          hash[:building_types] = [{ building_type: nil, maximum_occupancy: nil, floor_area: nil }]
+          hash[:window_area] = { north_window_area: nil, south_window_area: nil, east_window_area: nil, west_window_area: nil, total_window_area: nil }
+          hash[:wall_area] = { north_wall_area: nil, south_wall_area: nil, east_wall_area: nil, west_wall_area: nil, total_wall_area: nil }
+          hash[:roof_area] = { equipment_roof_area: nil, photovoltaic_roof_area: nil, available_roof_area: nil, total_roof_area: nil }
           hash[:orientation] = nil
           hash[:aspect_ratio] = nil
           return hash
         end
-        
+
         ##
-        # Convert to a Hash equivalent for JSON serialization
+        # Convert to a Hash equivalent for JSON serialization.
+        ##
+        # - Exclude attributes with nil values.
+        # - Validate program hash properties against schema.
         ##
         def to_hash
           result = {}
@@ -146,8 +132,8 @@ module URBANopt
           result[:footprint_area] = @footprint_area if @footprint_area
           result[:maximum_roof_height] = @maximum_roof_height if @maximum_roof_height
           result[:maximum_number_of_stories] = @maximum_number_of_stories if @maximum_number_of_stories
-          result[:maximum_number_of_stories_above_ground] = @maximum_number_of_stories_above_ground if @maximum_number_of_parking_stories_above_ground 
-          result[:parking_area] = @parking_area if @parking_area 
+          result[:maximum_number_of_stories_above_ground] = @maximum_number_of_stories_above_ground if @maximum_number_of_parking_stories_above_ground
+          result[:parking_area] = @parking_area if @parking_area
           result[:number_of_parking_spaces] = @number_of_parking_spaces if @number_of_parking_spaces
           result[:number_of_parking_spaces_charging] = @number_of_parking_spaces_charging if @number_of_parking_spaces_charging
           result[:parking_footprint_area] = @parking_footprint_area if @parking_footprint_area
@@ -155,45 +141,49 @@ module URBANopt
           result[:maximum_number_of_parking_stories] = @maximum_number_of_parking_stories if @maximum_number_of_parking_stories
           result[:maximum_number_of_parking_stories_above_ground] = @maximum_number_of_parking_stories_above_ground if @maximum_number_of_parking_stories_above_ground
           result[:number_of_residential_units] = @number_of_residential_units if @number_of_residential_units
-          
+
           if @building_types.any?
-            result[:building_types] = @building_types 
+            result[:building_types] = @building_types
             @building_types.each do |bt|
-              bt.delete_if {|k,v| v.nil?} if bt
+              bt.delete_if { |k, v| v.nil? } if bt
             end
           end
-          
-          #result[:window_area] = @window_area if @window_area
-          window_area_hash = @window_area if @window_area 
-          window_area_hash.delete_if {|k, v| v.nil?}
+
+          # result[:window_area] = @window_area if @window_area
+          window_area_hash = @window_area if @window_area
+          window_area_hash.delete_if { |k, v| v.nil? }
           result[:window_area] = window_area_hash if @window_area
 
-          #result[:wall_area] = @wall_area if @wall_area
+          # result[:wall_area] = @wall_area if @wall_area
           wall_area_hash = @wall_area if @wall_area
-          wall_area_hash.delete_if {|k,v| v.nil?}
+          wall_area_hash.delete_if { |k, v| v.nil? }
           result[:wall_area] = wall_area_hash if @wall_area
 
-          #result[:roof_area] = @roof_area if @roof_area
+          # result[:roof_area] = @roof_area if @roof_area
           roof_area_hash = @roof_area if @roof_area
-          roof_area_hash.delete_if {|k,v| v.nil?}
+          roof_area_hash.delete_if { |k, v| v.nil? }
           result[:roof_area] = roof_area_hash if @roof_area
 
-
           result[:orientation] = @orientation if @orientation
-          result[:aspect_ratio] = @aspect_ratio if @aspect_ratio 
+          result[:aspect_ratio] = @aspect_ratio if @aspect_ratio
 
           # validate program properties against schema
-          if @@extension.validate(@@schema[:definitions][:Program][:properties],result).any?
-            raise "program properties does not match schema: #{@@extension.validate(@@schema[:definitions][:Program][:properties],result)}"
+          if @@validator.validate(@@schema[:definitions][:Program][:properties], result).any?
+            raise "program properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Program][:properties], result)}"
           end
 
           return result
         end
 
         ##
-        # Takes maximum value
+        # Return the maximum value from +existing_value+ and +new_value+.
         ##
-        def max_value(existing_value, new_value)  
+        #[parameters:]
+        # +existing_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        # +new_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        def max_value(existing_value, new_value)
           if existing_value && new_value
             [existing_value, new_value].max
           elsif new_value
@@ -203,9 +193,14 @@ module URBANopt
         end
 
         ##
-        # Add up old and new values
+        # Adds up +existing_value+ and +new_values+ if not nill.   
         ##
-        def add_values(existing_value, new_value)  
+        # [parameters:]
+        # +existing_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        # +new_value+ - _Float_ - A value corresponding to a Program attribute.
+        ##
+        def add_values(existing_value, new_value)
           if existing_value && new_value
             existing_value += new_value
           elsif new_value
@@ -213,12 +208,15 @@ module URBANopt
           end
           return existing_value
         end
-        
+
         ##
-        # Aggregate the values of each program attribute (specify what is other0)
+        # Merges program objects to each other by summing up values or taking the maximum value of the attributes.
         ##
+        # [parameters:]
+        # +other+ - _Program_ - An object of Program class.
+        ##
+        # rubocop:disable Metrics/AbcSize # :nodoc:
         def add_program(other)
-          #@site_area += other.site_area
           @site_area = add_values(@site_area, other.site_area)
 
           @floor_area = add_values(@floor_area, other.floor_area)
@@ -236,12 +234,12 @@ module URBANopt
           @maximum_number_of_parking_stories = max_value(@maximum_number_of_parking_stories, other.maximum_number_of_parking_stories)
           @maximum_number_of_parking_stories_above_ground = max_value(maximum_number_of_parking_stories_above_ground, other.maximum_number_of_parking_stories_above_ground)
           @number_of_residential_units = add_values(@number_of_residential_units, other.number_of_residential_units)
-          
+
           @building_types = other.building_types
 
           @window_area[:north_window_area] = add_values(@window_area[:north_window_area], other.window_area[:north_window_area])
           @window_area[:south_window_area] = add_values(@window_area[:south_window_area], other.window_area[:south_window_area])
-          @window_area[:east_window_area] = add_values(@window_area[:east_window_area], other.window_area[:east_window_area]) 
+          @window_area[:east_window_area] = add_values(@window_area[:east_window_area], other.window_area[:east_window_area])
           @window_area[:west_window_area] = add_values(@window_area[:west_window_area], other.window_area[:west_window_area])
           @window_area[:total_window_area] =  add_values(@window_area[:total_window_area], other.window_area[:total_window_area])
 
@@ -255,9 +253,8 @@ module URBANopt
           @roof_area[:photovoltaic_roof_area] = add_values(@roof_area[:photovoltaic_roof_area], other.roof_area[:photovoltaic_roof_area])
           @roof_area[:available_roof_area] = add_values(@roof_area[:available_roof_area], other.roof_area[:available_roof_area])
           @roof_area[:total_roof_area] = add_values(@roof_area[:total_roof_area], other.roof_area[:total_roof_area])
-
         end
-       
+        # rubocop:enable Metrics/AbcSize
       end
     end
   end

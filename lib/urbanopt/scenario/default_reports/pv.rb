@@ -44,13 +44,15 @@ module URBANopt
         # perform initialization functions
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
-          hash = defaults.merge(hash)
                     
           @size_kw = hash[:size_kw]
           
-          # initialize class variable @@extension only once
-          @@extension ||= Extension.new
-          @@schema ||= @@extension.schema
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
+          
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
           
         end
         
@@ -71,15 +73,18 @@ module URBANopt
         ##
         # Merge sPV systems
         ## 
-        def add_pv(existing_pv, new_pv)
-          
-          existing_pv.size_kw = existing_pv.size_kw + new_pv.size_kw
+        def self.add_pv(existing_pv, new_pv)
+          if existing_pv.size_kw.nil? and new_pv.size_kw.nil? 
+            existing_pv.size_kw = nil
+          else            
+            existing_pv.size_kw = (existing_pv.size_kw || 0) + (new_pv.size_kw || 0)
+          end
           
           return existing_pv
          
         end
         
-        end
+        
       end
     end
   end
