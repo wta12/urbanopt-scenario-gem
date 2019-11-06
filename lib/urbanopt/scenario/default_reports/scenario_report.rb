@@ -51,7 +51,7 @@ module URBANopt
       class ScenarioReport
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations,
                       :number_of_started_simulations,:number_of_complete_simulations, :number_of_failed_simulations,
-                      :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports # :nodoc:
+                      :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports, :file_name # :nodoc:
         # ScenarioReport class intializes the scenario report attributes: 
         # +:id+ , +:name+ , +:directory_name+, +:timesteps_per_hour+ , +:number_of_not_started_simulations+ ,
         # +:number_of_started_simulations+ , +:number_of_complete_simulations+ , +:number_of_failed_simulations+ ,
@@ -89,11 +89,14 @@ module URBANopt
             @reporting_periods << ReportingPeriod.new(rp)
           end
 
-          # intialized here to be used in the add_feature_report method
+          # feature_report is intialized here to be used in the add_feature_report method
           @feature_reports = []
           hash[:feature_reports].each do |fr|
             @feature_reports << FeatureReport.new(fr)
           end
+
+          # initialize file_name 
+          @file_name = 'default_feature_report'
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -130,20 +133,26 @@ module URBANopt
         # Gets the saved JSON file path.
         ##
         def json_path
-          File.join(@directory_name, 'default_scenario_report.json')
+          File.join(@directory_name, @file_name  + '.json' )
         end
 
         ##
         # Gets the saved CSV file path.
         ##
         def csv_path
-          File.join(@directory_name, 'default_scenario_report.csv')
+          File.join(@directory_name, @file_name + '.csv')
         end
 
         ##
         # Saves the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
-        def save
+        # [parameters]:
+        # +file_name+ - _String_ - Assign a name to the saved scenario results file
+        def save(file_name)
+
+          # reassign the initialize local variable @file_name to the file name input. 
+          @file_name = file_name
+
           hash = {}
           hash[:scenario_report] = to_hash
           hash[:feature_reports] = []
@@ -151,9 +160,11 @@ module URBANopt
             hash[:feature_reports] << feature_report.to_hash
           end
 
-          File.open(json_path, 'w') do |f|
+          json_name_path = File.join(@directory_name, file_name + '.json')
+
+          File.open(json_name_path, 'w') do |f|
             f.puts JSON.pretty_generate(hash)
-            # make sure data is written to the disk one way or the other #:nodoc:
+            # make sure data is written to the disk one way or the other
             begin
               f.fsync
             rescue StandardError
@@ -161,8 +172,9 @@ module URBANopt
             end
           end
 
-          # save the csv data #:nodoc:
-          timeseries_csv.save_data(csv_path)
+          # save the csv data 
+          csv_name_path = File.join(@directory_name, file_name + '.csv')
+          timeseries_csv.save_data(csv_name_path)
 
           return true
         end
