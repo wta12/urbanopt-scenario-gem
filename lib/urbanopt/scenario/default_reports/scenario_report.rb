@@ -96,7 +96,7 @@ module URBANopt
           end
 
           # initialize file_name 
-          @file_name = 'default_feature_report'
+          @file_name = 'default_scenario_report'
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -148,7 +148,7 @@ module URBANopt
         ##
         # [parameters]:
         # +file_name+ - _String_ - Assign a name to the saved scenario results file
-        def save(file_name)
+        def save(file_name = 'default_scenario_report')
 
           # reassign the initialize local variable @file_name to the file name input. 
           @file_name = file_name
