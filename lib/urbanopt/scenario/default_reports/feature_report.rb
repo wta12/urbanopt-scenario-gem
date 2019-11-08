@@ -57,7 +57,7 @@ module URBANopt
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
-        # [parameters:] 
+        # [parameters:]
         # +hash+ - _Hash_ - A hash which may contain a deserialized feature_report.
         ##
         def initialize(hash = {})

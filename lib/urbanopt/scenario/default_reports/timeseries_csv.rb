@@ -34,7 +34,6 @@ require 'json-schema'
 require 'urbanopt/scenario/default_reports/validator'
 require 'urbanopt/scenario/default_reports/logger'
 
-
 module URBANopt
   module Scenario
     module DefaultReports
@@ -45,7 +44,7 @@ module URBANopt
         attr_accessor :path, :first_report_datetime, :column_names #:nodoc:
 
         ##
-        # TimeseriesCSV class initializes timeseries csv attributes: +:path+ , +:first_report_datetime+ , +:column_names+ 
+        # TimeseriesCSV class initializes timeseries csv attributes: +:path+ , +:first_report_datetime+ , +:column_names+
         ##
         # +hash+ - _Hash_ - A hash which may contain a deserialized timeseries_csv.
         ##
@@ -66,10 +65,9 @@ module URBANopt
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
-          
+
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
-
         end
 
         ##
@@ -116,11 +114,20 @@ module URBANopt
 
           return result
         end
+        
+        ##
+        # Reloads data from the CSV file.
+        ##        
+        def reload_data      
+          @data = nil
+          load_data
+        end
+
 
         ##
         # Loads data from the CSV file.
         ##
-        def load_data
+        def load_data      
           @mutex.synchronize do
             if @data.nil?
               @data = {}
@@ -165,9 +172,9 @@ module URBANopt
 
             (0..n).each do |i|
               line = []
-              @column_names.each do |column_name|
-                line << @data[column_name][i]
-              end
+            @column_names.each do |column_name|
+              line << @data[column_name][i]
+            end
               f.puts line.join(',')
             end
             begin
@@ -207,6 +214,11 @@ module URBANopt
 
           # merge the column data
           other.column_names.each do |column_name|
+
+            if !@column_names.include? column_name
+              @column_names.push column_name
+            end
+
             new_values = other.get_data(column_name)
 
             if @data.nil?

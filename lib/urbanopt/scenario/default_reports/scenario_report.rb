@@ -51,6 +51,7 @@ module URBANopt
       ##
       class ScenarioReport
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations,
+
                       :number_of_started_simulations,:number_of_complete_simulations, :number_of_failed_simulations,
                       :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports, :distributed_generation # :nodoc:
         # ScenarioReport class intializes the scenario report attributes: 
@@ -78,7 +79,7 @@ module URBANopt
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
-          
+
           @construction_costs = []
           hash[:construction_costs].each do |cc|
             @constructiion_costs << ConstructionCost.new(cc)
@@ -100,10 +101,9 @@ module URBANopt
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
-          
+
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
-
         end
 
         ##
@@ -210,7 +210,7 @@ module URBANopt
         end
 
         ##
-        # Add feature reports to each other. 
+        # Add feature reports to each other.
         ##
         # - check if a feature report have been already added.
         # - check feature simulation status
@@ -229,6 +229,7 @@ module URBANopt
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
             if feature_report.timesteps_per_hour != @timesteps_per_hour
+              binding.pry
               raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
             end
           end
@@ -261,7 +262,6 @@ module URBANopt
 
           # merge program information
           @program.add_program(feature_report.program)
-
 
           # merge construction_cost information
           @construction_costs = ConstructionCost.merge_construction_costs(@construction_costs, feature_report.construction_costs)

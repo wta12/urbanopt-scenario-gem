@@ -34,13 +34,13 @@ module URBANopt
   module Scenario
     class SimulationDirOSW < SimulationDirBase
       ##
-      # SimulationDirOSW creates a OSW file to simulate features, a SimulationMapperBase is invoked to translate features to OSW. 
+      # SimulationDirOSW creates a OSW file to simulate features, a SimulationMapperBase is invoked to translate features to OSW.
       ##
       # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario containing this SimulationFileBase.   
-      # +features+ - _Array_ - Array of Features this SimulationFile represents.   
-      # +feature_names+ - _Array_ - Array of scenario specific names for these Features.   
-      # +mapper_class+ - _String_ - Name of class derived frmo SimulationMapperBase used to translate feature to simulation OSW.   
+      # +scenario+ - _ScenarioBase_ - Scenario containing this SimulationFileBase.
+      # +features+ - _Array_ - Array of Features this SimulationFile represents.
+      # +feature_names+ - _Array_ - Array of scenario specific names for these Features.
+      # +mapper_class+ - _String_ - Name of class derived frmo SimulationMapperBase used to translate feature to simulation OSW.
       def initialize(scenario, features, feature_names, mapper_class)
         super(scenario, features, feature_names)
 
@@ -133,7 +133,7 @@ module URBANopt
       end
 
       # rubocop: disable Metrics/AbcSize #:nodoc:
-      
+
       ##
       # Return true if the simulation is out of date (input files newer than results), false otherwise.
       # Non-existant simulation input files are out of date.

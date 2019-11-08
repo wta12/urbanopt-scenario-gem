@@ -36,7 +36,7 @@ module URBANopt
   module Scenario
     module DefaultReports
       ##
-      # ConstructionCost include construction cost information. 
+      # ConstructionCost include construction cost information.
       ##
       class ConstructionCost
         attr_accessor :category, :item_name, :unit_cost, :cost_units, :item_quantity, :total_cost # :nodoc:
@@ -134,7 +134,7 @@ module URBANopt
         ##
         # Merges muliple construction costs together.
         # - loops over the new_costs and find the index of the cost with identical +:item_name+.
-        # - if +item_name+ is identical then modify the existing_cost array by summing the :total_cost and :item_quantity. Else add the new_cost to existing_costs array. 
+        # - if +item_name+ is identical then modify the existing_cost array by summing the :total_cost and :item_quantity. Else add the new_cost to existing_costs array.
         ##
         # [Parameters:]
         # +existing_costs+ - _Array_ - An array of ConstructionCost objects.
