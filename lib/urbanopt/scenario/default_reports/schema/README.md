@@ -32,25 +32,3 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 | District Heating Inlet Temperature       | &deg;F  |
 | District Heating Outlet Temperature      | &deg;F  |
 | Electricity:Grid:ToLoad                  | kWh.    |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
