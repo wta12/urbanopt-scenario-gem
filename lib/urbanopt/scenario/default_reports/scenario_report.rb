@@ -238,7 +238,6 @@ module URBANopt
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
             if feature_report.timesteps_per_hour != @timesteps_per_hour
-              binding.pry
               raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
             end
           end
