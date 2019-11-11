@@ -159,7 +159,7 @@ module URBANopt
         ##
         # Add up old and new values
         ##
-        def self.add_values(existing_value, new_value). #:nodoc:
+        def self.add_values(existing_value, new_value) #:nodoc:
           if existing_value && new_value
             existing_value += new_value
           elsif new_value
@@ -180,7 +180,7 @@ module URBANopt
           existing_dgen.year_one_bill_us_dollars = add_values(existing_dgen.year_one_bill_us_dollars, new_dgen.year_one_bill_us_dollars)
           existing_dgen.total_energy_cost_us_dollars = add_values(existing_dgen.total_energy_cost_us_dollars, new_dgen.total_energy_cost_us_dollars)
           
-          existing_dgen.pv = PV.add_pv existing_dgen.pv, new_dgen.pv
+          existing_dgen.solar_pv = SolarPV.add_pv existing_dgen.solar_pv, new_dgen.solar_pv
           existing_dgen.wind = Wind.add_wind existing_dgen.wind, new_dgen.wind
           existing_dgen.generator = Generator.add_generator existing_dgen.generator, new_dgen.generator
           existing_dgen.storage = Storage.add_storage existing_dgen.storage, new_dgen.storage
