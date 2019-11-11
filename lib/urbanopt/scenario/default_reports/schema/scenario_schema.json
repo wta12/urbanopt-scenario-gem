@@ -106,8 +106,8 @@
 					"type": "number", 
 					"description": "Total utility energy cost over the lifecycle, after-tax"
 				},
-				"PV" : {
-					"$ref": "#/definitions/PV"
+				"SolarPV" : {
+					"$ref": "#/definitions/SolarPV"
 				},
 				"Wind" : {
 					"$ref": "#/definitions/Wind"
@@ -120,7 +120,7 @@
 				}
 			 }
 		},
-		"PV": {
+		"SolarPV": {
 			"type": "object",
 			"properties": {
 				"size_kw": {

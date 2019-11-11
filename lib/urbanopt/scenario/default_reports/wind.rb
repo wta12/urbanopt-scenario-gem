@@ -34,14 +34,23 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Onsite wind system attributes
+      ##
       class Wind 
 
+        ##
+        # _Float_ - power capacity in kilowatts
+        #
         attr_accessor :size_kw
         
         ##
-        # Intialize Wind attributes
+        # Initialize Wind attributes from a hash. Wind attributes currently are limited to power capacity. 
         ##
-        # perform initialization functions
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting a +:size_kw+ key/value pair which represents the nameplate capacity in kilowatts (kW)
+        #
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
                     

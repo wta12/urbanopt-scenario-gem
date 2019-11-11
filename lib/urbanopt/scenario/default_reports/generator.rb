@@ -34,14 +34,23 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Onsite generator system attributes
+      ##
       class Generator 
 
+        ##
+        # _Float_ - power capacity in kilowatts
+        #
         attr_accessor :size_kw
         
         ##
-        # Intialize Generator attributes
+        # Intialize Generator attributes from a hash. Generator attributes currently are limited to power capacity. 
         ##
-        # perform initialization functions
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting a +:size_kw+ key/value pair which represents the nameplate capacity in kilowatts (kW)
+        #
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
                     

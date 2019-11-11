@@ -43,5 +43,5 @@ end
 # simplecov has an unnecessary dependency on native json gem, use fork that does not require this
 gem 'simplecov', github: 'NREL/simplecov'
 
-gem 'pry'
+gem 'rdoc'
 

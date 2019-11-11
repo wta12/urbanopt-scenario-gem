@@ -29,7 +29,7 @@
 #*********************************************************************************
 
 require 'json'
-require 'urbanopt/scenario/default_reports/pv'
+require 'urbanopt/scenario/default_reports/solar_pv'
 require 'urbanopt/scenario/default_reports/wind'
 require 'urbanopt/scenario/default_reports/generator'
 require 'urbanopt/scenario/default_reports/storage'
@@ -38,14 +38,72 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Onsite distributed generation system (i.e. SolarPV, Wind, Storage, Generator) design attributes and financial metrics. 
+      ##
       class DistributedGeneration 
 
-        attr_accessor :lcc_us_dollars, :npv_us_dollars, :year_one_energy_cost_us_dollars, :year_one_demand_cost_us_dollars, :year_one_demand_cost_us_dollars, :year_one_bill_us_dollars, :total_energy_cost_us_dollars, :pv, :wind, :generator, :storage
+        ##
+        # _Float_ - Lifecycle costs for the complete distributed generation system in US Dollars
+        # 
+        attr_accessor :lcc_us_dollars
         
         ##
-        # Intialize reporting period attributes
+        # _Float_ - Net present value of the complete distributed generation system in US Dollars
+        # 
+        attr_accessor :npv_us_dollars
+        
         ##
-        # perform initialization functions
+        # _Float_ - Total amount paid for utility energy in US Dollars in the first year of operation
+        # 
+        attr_accessor :year_one_energy_cost_us_dollars
+        
+        ##
+        # _Float_ - Total amount paid in utility demand charges in US Dollars in the first year of operation
+        # 
+        attr_accessor :year_one_demand_cost_us_dollars
+        
+        ##
+        # _Float_ - Total amount paid to the utility in US Dollars in the first year of operation
+        # 
+        attr_accessor :year_one_bill_us_dollars
+        
+        ##
+        # _Float_ - Total amount paid to the utility in US Dollars over the life of the system
+        # 
+        attr_accessor :total_energy_cost_us_dollars
+        
+        ##
+        # _SolarPV_ - Installed \solar PV attributes
+        # 
+        attr_accessor :solar_pv
+        
+        ##
+        # _Wind_ -  Installed \wind attributes
+        # 
+        attr_accessor :wind
+        
+        ##
+        # _Generator_ - Installed \generator attributes
+        # 
+        attr_accessor :generator
+        
+        ##
+        # _Storage_ - Installed \storage attributes
+        # 
+        attr_accessor :storage
+        
+        ##
+        # Initialize distributed generation system design and financial metrics.
+        # 
+        # * Technologies include +:solar_pv+, +:wind+, +:generator+, and +:storage+. 
+        # * Financial metrics include +:lcc_us_dollars+, +:npv_us_dollars+, +:year_one_energy_cost_us_dollars+, +:year_one_demand_cost_us_dollars+, 
+        # +:year_one_bill_us_dollars+, and +:total_energy_cost_us_dollars+
+        ##
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting key/value pairs for the distributed generation system attributes listed above.
+        #
         def initialize(hash = {})
           
           hash.delete_if {|k, v| v.nil?}
@@ -57,7 +115,7 @@ module URBANopt
           @year_one_bill_us_dollars = hash[:year_one_bill_us_dollars]
           @total_energy_cost_us_dollars = hash[:total_energy_cost_us_dollars]
           
-          @pv = PV.new(hash[:pv] || {})
+          @solar_pv = SolarPV.new(hash[:solar_pv] || {})
           @wind = Wind.new(hash[:wind] || {})
           @generator = Generator.new(hash[:generator] || {})
           @storage = Storage.new(hash[:storage] || {})
@@ -101,7 +159,7 @@ module URBANopt
         ##
         # Add up old and new values
         ##
-        def self.add_values(existing_value, new_value)
+        def self.add_values(existing_value, new_value). #:nodoc:
           if existing_value && new_value
             existing_value += new_value
           elsif new_value

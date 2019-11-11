@@ -34,14 +34,27 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
+      ##
+      # Onsite storage system attributes
+      ##
       class Storage 
-
-        attr_accessor :size_kw,:size_kwh
+        ##
+        # _Float_ - power capacity in kilowatts
+        #
+        attr_accessor :size_kw
         
         ##
-        # Intialize Storage attributes
+        # _Float_ - storage capacity in kilowatt-hours
+        #
+        attr_accessor :size_kwh
+
         ##
-        # perform initialization functions
+        # Initialize Storage attributes from a hash. Storage attributes currently are limited to power and storage capacity.
+        ##
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting +:size_kw+ and +:size_kwh+ key/value pair which represents the power and storage capacity in kilowatts (kW) and kilowatt-hours respectively. 
+        #
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
                     

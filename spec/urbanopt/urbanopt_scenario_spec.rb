@@ -122,15 +122,17 @@ RSpec.describe URBANopt::Scenario do
     expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
-    scenario_result.save
+    
+    
+    scenario_result.save('change_my_name')
 
     # TODO: Rawad, add test assertions on scenario_result
 
     ## Check scenario_report JSON file
 
     # Read json file
-    scenario_json = File.open(scenario_result.json_path)
-    data = JSON.parse(File.read(scenario_json))
+    scenario_json_file = File.open(scenario_result.json_path)
+    data = JSON.parse(File.read(scenario_json_file))
 
     # Program results check
     expect(data['scenario_report']['program']['site_area']).to eq(data['feature_reports'].map { |h| h['program']['site_area'] }.reduce(:+)) if data['scenario_report']['program']['site_area']
@@ -170,26 +172,27 @@ RSpec.describe URBANopt::Scenario do
     # Reporting periods results check
     expect(data['scenario_report']['reporting_periods'][0]['total_site_energy']).to eq(data['feature_reports'].map { |h| h['reporting_periods'][0]['total_site_energy'] }.reduce(:+))
 
-    # close json file
-    scenario_json.close
-  end
 
-  it 'validate results against shema' do
+    ##
+    # validate all results against schema 
+    ##
+
+    # Read scenario schema file
     schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
     schema = JSON.parse(File.read(schema_json))
 
     # Read scenario json file and validated againt schema
-    scenario_json_file = File.open(File.expand_path('../test/example_scenario/default_scenario_report.json', File.dirname(__FILE__)), 'r')
     scenario_json = JSON.parse(File.read(scenario_json_file))
 
     puts JSON::Validator.fully_validate(schema, scenario_json)
 
     expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
+    
     # close json file
     scenario_json_file.close
 
     # Read scenario csv file and validate against schema
-    scenario_csv_headers = CSV.open(File.expand_path('../test/example_scenario/default_scenario_report.csv', File.dirname(__FILE__)), &:readline)
+    scenario_csv_headers = CSV.open(File.expand_path( scenario_result.csv_path , File.dirname(__FILE__)), &:readline)
 
     # rubocop: disable Security/Open
     scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
@@ -212,6 +215,8 @@ RSpec.describe URBANopt::Scenario do
 
     # close schema file
     schema_json.close
+
   end
+
 end
 # rubocop:enable Metrics/BlockLength

@@ -34,14 +34,23 @@ require 'json-schema'
 module URBANopt
   module Scenario
     module DefaultReports
-      class PV 
+      ##
+      # Onsite solar PV system attributes
+      ##
+      class SolarPV 
 
+        ##
+        # _Float_ - power capacity in kilowatts
+        # 
         attr_accessor :size_kw
         
         ##
-        # Intialize PV attributes
+        # Initialize SolarPV attributes from a hash. Solar PV attributes currently are limited to power capacity. 
         ##
-        # perform initialization functions
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting a +:size_kw+ key/value pair which represents the nameplate capacity in kilowatts (kW)
+        #
         def initialize(hash = {})
           hash.delete_if {|k, v| v.nil?}
                     
@@ -71,7 +80,7 @@ module URBANopt
 
         
         ##
-        # Merge sPV systems
+        # Merge PV systems
         ## 
         def self.add_pv(existing_pv, new_pv)
           if existing_pv.size_kw.nil? and new_pv.size_kw.nil? 

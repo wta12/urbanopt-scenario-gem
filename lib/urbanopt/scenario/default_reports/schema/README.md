@@ -7,7 +7,6 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 **JSON Output Units**
 
 - energy outputs: kbtu
-- electricity dispatches: kWh
 - water rate outputs : GPM (gallon per minute)
 - mass flow rate outputs : lbs/min
 - Temperature outputs : &deg;F
@@ -19,26 +18,8 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 
 |            output                        |  unit   |
 | -----------------------------------------| ------- |
-| Electricity:Facility                     | kWh     |
-| ElectricityProduced:Facility             | kWh     |
-| Electricity:Grid:Total				   | kWh     |
-| Electricity:Grid:ToLoad                  | kWh     |
-| Electricity:Grid:ToBattery               | kWh     |
-| Electricity:Storage:ToLoad               | kWh     |
-| Electricity:Storage:ToGrid               | kWh     |
-| Electricity:Storage:StateOfCharge        | kWh     |
-| ElectricityProduced:Generator:Total      | kWh     |
-| ElectricityProduced:Generator:ToBattery  | kWh     |
-| ElectricityProduced:Generator:ToLoad     | kWh     |
-| ElectricityProduced:Generator:ToGrid     | kWh     |
-| ElectricityProduced:PV:Total             | kWh     |
-| ElectricityProduced:PV:ToBattery         | kWh     |
-| ElectricityProduced:PV:ToLoad            | kWh     |
-| ElectricityProduced:PV:ToGrid            | kWh     |
-| ElectricityProduced:Wind:Total           | kWh     |
-| ElectricityProduced:Wind:ToBattery       | kWh     |
-| ElectricityProduced:Wind:ToLoad          | kWh     |
-| ElectricityProduced:Wind:ToGrid          | kWh     |
+| Electricity:Facility                     | kbtu     |
+| ElectricityProduced:Facility             | kbtu     |
 | Gas:Facility                             | kbtu    |
 | DistrictCooling:Facility                 | kbtu    |
 | DistrictHeating:Facility                 | kbtu    |
