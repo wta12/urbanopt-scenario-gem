@@ -197,6 +197,7 @@ module URBANopt
           result[:timeseries_csv] = @timeseries_csv.to_hash if @timeseries_csv
           result[:location] = @location.to_hash if @location
           result[:program] = @program.to_hash if @program
+          result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
 
           result[:construction_costs] = []
           @construction_costs.each { |cc| result[:construction_costs] << cc.to_hash } if @construction_costs

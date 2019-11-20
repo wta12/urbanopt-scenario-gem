@@ -79,6 +79,7 @@ module URBANopt
           result = {}
 
           result[:size_kw] =  @size_kw if @size_kw
+          result[:size_kwh] =  @size_kwh if @size_kwh
           
           return result
         end
