@@ -143,7 +143,7 @@ module URBANopt
           result[:year_one_demand_cost_us_dollars] = @year_one_demand_cost_us_dollars if @year_one_demand_cost_us_dollars
           result[:year_one_bill_us_dollars] = @year_one_bill_us_dollars if @year_one_bill_us_dollars 
           result[:total_energy_cost_us_dollars] = @total_energy_cost_us_dollars if @total_energy_cost_us_dollars 
-          result[:pv] = @pv.to_hash if @pv
+          result[:solar_pv] = @solar_pv.to_hash if @solar_pv
           result[:wind] = @wind.to_hash if @wind
           result[:generator] = @generator.to_hash if @generator
           result[:storage] = @storage.to_hash if @storage
