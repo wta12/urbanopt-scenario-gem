@@ -199,6 +199,8 @@ module URBANopt
           result[:reporting_periods] = []
           @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash }
 
+          result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
+
           # validate feature_report properties against schema
           if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?
             raise "feature_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result)}"
