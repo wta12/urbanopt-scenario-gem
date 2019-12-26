@@ -188,7 +188,6 @@ module URBANopt
         # +other+ - _TimeseriesCSV_ - An object of TimeseriesCSV class.
         ##
         def add_timeseries_csv(other)
-          @path = other.path
 
           # initialize first_report_datetime with the incoming first_report_datetime if its nil.
           if @first_report_datetime.nil?
@@ -223,6 +222,9 @@ module URBANopt
             else
               @data[column_name] = new_values
             end
+          end
+          if !@data.nil?
+            save_data(@path)
           end
         end
       end
