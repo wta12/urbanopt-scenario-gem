@@ -168,7 +168,7 @@ module URBANopt
         def save_data(path)
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
-            n = @data[@column_names[0]].size
+            n = @data[@column_names[0]].size - 1
 
             (0..n).each do |i|
               line = []
