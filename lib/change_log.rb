@@ -40,7 +40,7 @@ puts options
 
 ### Repository options
 repo_owner = 'URBANopt'
-repo = 'uo-cli'
+repo = 'urbanopt-scenario-gem'
 
 github = Github.new
 if options[:token]
