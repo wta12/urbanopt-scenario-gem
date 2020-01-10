@@ -123,10 +123,10 @@ RSpec.describe URBANopt::Scenario do
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
     
-    
-    scenario_result.save('change_my_name')
+    # set a name for the results file 
+    scenario_result.save()
 
-    # TODO: Rawad, add test assertions on scenario_result
+    # Add test assertions on scenario_result
 
     ## Check scenario_report JSON file
 

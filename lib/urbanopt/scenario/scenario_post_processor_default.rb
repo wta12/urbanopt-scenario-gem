@@ -91,7 +91,7 @@ module URBANopt
       # +file_name+ - _String_ - Assign a name to the saved scenario results file
       def save(file_name = 'default_scenario_report')
 
-        @scenario_result.save(file_name)
+        @scenario_result.save()
         
         return @scenario_result
       end
