@@ -237,9 +237,9 @@ module URBANopt
               @data[column_name] = new_values
             end
           end
-          # if !@data.nil?
-          #   save_data(@path)
-          # end
+          if !@data.nil?
+            save_data(@path)
+          end
         end
       end
     end
