@@ -576,10 +576,21 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     end
 
     # timeseries we want to report
-    requested_timeseries_names = ['Electricity:Facility', 'ElectricityProduced:Facility', 'Gas:Facility',
-                                  'DistrictCooling:Facility', 'DistrictHeating:Facility', 'District Cooling Chilled Water Rate',
-                                  'District Cooling Mass Flow Rate', 'District Cooling Inlet Temperature', 'District Cooling Outlet Temperature',
-                                  'District Heating Hot Water Rate', 'District Heating Mass Flow Rate', 'District Heating Inlet Temperature', 'District Heating Outlet Temperature']
+    requested_timeseries_names = [
+          "Electricity:Facility",
+          "ElectricityProduced:Facility",
+          "Gas:Facility",
+          "DistrictCooling:Facility",
+          "DistrictHeating:Facility",
+          "District Cooling Chilled Water Rate",
+          "District Cooling Mass Flow Rate",
+          "District Cooling Inlet Temperature",
+          "District Cooling Outlet Temperature",
+          "District Heating Hot Water Rate",
+          "District Heating Mass Flow Rate",
+          "District Heating Inlet Temperature",
+          "District Heating Outlet Temperature"
+      ]
 
     # number of values in each timeseries
     n = nil
