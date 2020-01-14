@@ -165,7 +165,10 @@ module URBANopt
         # [parameters:]
         # +path+ - _String_ - The path of the scenario report CSV (default_scenario_report.csv).
         ##
-        def save_data(path)
+        def save_data(path=nil)
+          if path.isnil?
+            path = @path
+          end
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
             n = @data[@column_names[0]].size - 1
