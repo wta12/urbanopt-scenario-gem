@@ -118,9 +118,23 @@ module URBANopt
         ##
         # Reloads data from the CSV file.
         ##        
-        def reload_data      
-          @data = nil
-          load_data
+        def reload_data(new_data)      
+          @mutex.synchronize do
+            @data = {}
+            @column_names = []
+            new_data.each do |row|
+              if @column_names.empty?
+                @column_names = row
+                @column_names.each do |column_name|
+                  @data[column_name] = []
+                end
+              else
+                row.each_with_index do |value, i|
+                  @data[@column_names[i]] << value.to_f
+                end
+              end
+            end
+          end
         end
 
 
