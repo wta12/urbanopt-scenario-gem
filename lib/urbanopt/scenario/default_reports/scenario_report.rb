@@ -173,7 +173,7 @@ module URBANopt
 
           # save the csv data 
           csv_name_path = nil
-          if timeseries_csv.path.isnil?
+          if timeseries_csv.path.nil?
             csv_name_path = File.join(@directory_name, file_name + '.csv')
           end
           timeseries_csv.save_data(csv_name_path)
