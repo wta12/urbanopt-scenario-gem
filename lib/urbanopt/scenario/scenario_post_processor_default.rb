@@ -48,7 +48,7 @@ module URBANopt
         super(scenario_base)
         
         initialization_hash = {:directory_name => scenario_base.run_dir, :name => scenario_base.name, :id => scenario_base.name,
-          :timeseries_csv => {:path => File.join(scenario_base.run_dir, 'scenario_timeseries.csv') }}
+          :timeseries_csv => {:path => File.join(scenario_base.run_dir, 'default_scenario_report.csv') }}
         @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(initialization_hash)
         
         @@logger ||= URBANopt::Scenario::DefaultReports.logger
@@ -91,7 +91,7 @@ module URBANopt
       # +file_name+ - _String_ - Assign a name to the saved scenario results file
       def save(file_name = 'default_scenario_report')
 
-        @scenario_result.save(file_name)
+        @scenario_result.save()
         
         return @scenario_result
       end
