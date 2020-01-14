@@ -41,7 +41,7 @@ module URBANopt
       class Location
         attr_accessor :latitude, :longitude, :surface_elevation, :weather_filename #:nodoc:
         ##
-        # Location class intialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
+        # Location class initialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
         ##
         # [parameters:]
         # +hash+ - _Hash_ - A hash which may contain a deserialized location.
