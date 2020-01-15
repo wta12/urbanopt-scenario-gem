@@ -31,6 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'openstudio-model-articulation', '~> 0.1.0'
   spec.add_dependency 'urbanopt-core', '~> 0.1.0'
 
+  spec.add_dependency 'github_api'
+  
   # lock the version of these dependencies due to using older version of Ruby.
   spec.add_dependency 'public_suffix', '3.1.1'
 end
