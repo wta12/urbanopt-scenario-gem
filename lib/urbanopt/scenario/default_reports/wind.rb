@@ -28,35 +28,64 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
+require 'json'
+require 'json-schema'
+
 module URBANopt
   module Scenario
-    class ScenarioRunnerBase
+    module DefaultReports
       ##
-      # ScenarioRunnerBase is the agnostic interface for a class which can create and run SimulationFiles.
+      # Onsite wind system attributes
       ##
-      def initialize; end
+      class Wind
+        ##
+        # _Float_ - power capacity in kilowatts
+        #
+        attr_accessor :size_kw
 
-      ##
-      # Create all SimulationDirs for Scenario.
-      ##
-      # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario to create simulation input files for scenario.
-      # +force_clear+ - _Bool_ - Clear Scenario before creating simulation input files
-      # [return:] _Array_ Returns an array of all SimulationDirs, even those created previously, for Scenario.
-      def create_simulation_files(scenario, force_clear = false)
-        raise 'create_input_files is not implemented for ScenarioRunnerBase, override in your class'
-      end
+        ##
+        # Initialize Wind attributes from a hash. Wind attributes currently are limited to power capacity.
+        ##
+        # [parameters:]
+        #
+        # * +hash+ - _Hash_ - A hash containting a +:size_kw+ key/value pair which represents the nameplate capacity in kilowatts (kW)
+        #
+        def initialize(hash = {})
+          hash.delete_if { |k, v| v.nil? }
 
-      ##
-      # Create and run all SimulationFiles for Scenario.
-      ##
-      # [parameters:]
-      # +scenario+ - _ScenarioBase_ - Scenario to create and run simulation input files for.
-      # +force_clear+ - _Bool_ - Clear Scenario before creating Simulation input files.
-      #
-      # [return:] _Array_ Returns an array of all SimulationDirs, even those created previously, for Scenario.
-      def run(scenario, force_clear = false)
-        raise 'run is not implemented for ScenarioRunnerBase, override in your class'
+          @size_kw = hash[:size_kw]
+
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
+
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
+        end
+
+        ##
+        # Convert to a Hash equivalent for JSON serialization
+        ##
+        def to_hash
+          result = {}
+
+          result[:size_kw] = @size_kw if @size_kw
+
+          return result
+        end
+
+        ##
+        # Merge Wind systems
+        ##
+        def self.add_wind(existing_wind, new_wind)
+          if existing_wind.size_kw.nil? && new_wind.size_kw.nil?
+            existing_wind.size_kw = nil
+          else
+            existing_wind.size_kw = (existing_wind.size_kw || 0) + (new_wind.size_kw || 0)
+          end
+
+          return existing_wind
+        end
       end
     end
   end

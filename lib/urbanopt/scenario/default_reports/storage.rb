@@ -28,68 +28,76 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario/default_reports/validator'
-require 'json-schema'
 require 'json'
+require 'json-schema'
 
 module URBANopt
   module Scenario
     module DefaultReports
       ##
-      # Date class include information of simulation run date.
+      # Onsite storage system attributes
       ##
-      class Date
-        attr_accessor :month, :day_of_month, :year #:nodoc:
+      class Storage
         ##
-        # Date class intialize all date attributes:
-        # +:month+ , +:day_of_month+ , +:year+
+        # _Float_ - power capacity in kilowatts
+        #
+        attr_accessor :size_kw
+
+        ##
+        # _Float_ - storage capacity in kilowatt-hours
+        #
+        attr_accessor :size_kwh
+
+        ##
+        # Initialize Storage attributes from a hash. Storage attributes currently are limited to power and storage capacity.
         ##
         # [parameters:]
-        # +hash+ - _Hash_ - A hash which may contain a deserialized date.
-        ##
+        #
+        # * +hash+ - _Hash_ - A hash containting +:size_kw+ and +:size_kwh+ key/value pair which represents the power and storage capacity in kilowatts (kW) and kilowatt-hours respectively.
+        #
         def initialize(hash = {})
           hash.delete_if { |k, v| v.nil? }
-          hash = defaults.merge(hash)
 
-          @month = hash[:month].to_i
-          @day_of_month = hash[:day_of_month].to_i
-          @year = hash[:year].to_i
+          @size_kw = hash[:size_kw]
+          @size_kwh = hash[:size_kwh]
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
+
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
 
         ##
-        # Converts to a hash equivalent for JSON serialization.
-        ##
-        # - Exclude attributes with nil values.
-        # - Validate date properties against schema.
+        # Convert to a Hash equivalent for JSON serialization
         ##
         def to_hash
           result = {}
-          result[:month] = @month if @month
-          result[:day_of_month] = @day_of_month if @day_of_month
-          result[:year] = @year if @year
 
-          # validate date hash properties against schema
-          if @@validator.validate(@@schema[:definitions][:Date][:properties], result).any?
-            raise "end_uses properties does not match schema: #{@@validator.validate(@@schema[:definitions][:Date][:properties], result)}"
-          end
+          result[:size_kw] = @size_kw if @size_kw
+          result[:size_kwh] = @size_kwh if @size_kwh
 
           return result
         end
 
         ##
-        # Assigns default values if values do not exist.
+        # Merge Storage systems
         ##
-        def defaults
-          hash = {}
-          hash[:month] = nil
-          hash[:day_of_month] = nil
-          hash[:year] = nil
+        def self.add_storage(existing_storage, new_storage)
+          if existing_storage.size_kw.nil?
+            existing_storage.size_kw = new_storage.size_kw
+          else
+            existing_storage.size_kw = (existing_storage.size_kw || 0) + (new_storage.size_kw || 0)
+          end
 
-          return hash
+          if existing_storage.size_kw.nil?
+            existing_storage.size_kwh = new_storage.size_kwh
+          else
+            existing_storage.size_kwh = (existing_storage.size_kwh || 0) + (new_storage.size_kwh || 0)
+          end
+
+          return existing_storage
         end
       end
     end

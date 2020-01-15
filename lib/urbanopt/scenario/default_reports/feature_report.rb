@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,8 @@ require 'urbanopt/scenario/default_reports/location'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
 require 'urbanopt/scenario/default_reports/validator'
+require 'urbanopt/scenario/default_reports/distributed_generation'
+
 require 'json-schema'
 
 require 'json'
@@ -50,7 +52,7 @@ module URBANopt
       ##
       class FeatureReport
         attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
-                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
+                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
@@ -81,6 +83,8 @@ module URBANopt
           hash[:reporting_periods].each do |rp|
             @reporting_periods << ReportingPeriod.new(rp)
           end
+
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -193,6 +197,8 @@ module URBANopt
 
           result[:reporting_periods] = []
           @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash }
+
+          result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
 
           # validate feature_report properties against schema
           if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?

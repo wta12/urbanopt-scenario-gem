@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -41,7 +41,7 @@ module URBANopt
       class Location
         attr_accessor :latitude, :longitude, :surface_elevation, :weather_filename #:nodoc:
         ##
-        # Location class intialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
+        # Location class initialize location attributes: +:latitude+ , +:longitude+ , +:surface_elevation+ , +:weather_filename+
         ##
         # [parameters:]
         # +hash+ - _Hash_ - A hash which may contain a deserialized location.

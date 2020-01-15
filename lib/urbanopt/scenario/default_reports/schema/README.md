@@ -16,18 +16,19 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 
 **CSV Output Units**
 
-|            output                   |  unit   |
-| ----------------------------------- | ------- |
-| Electricity:Facility                | kbtu    |
-| ElectricityProduced:Facility        | kbtu    |
-| Gas:Facility                        | kbtu    |
-| DistrictCooling:Facility            | kbtu    |
-| DistrictHeating:Facility            | kbtu    |
-| District Cooling Chilled Water Rate | GPM     |
-| District Cooling Mass Flow Rate     | lbs/min |
-| District Cooling Inlet Temperature  | &deg;F  |
-| District Cooling Outlet Temperature | &deg;F  |
-| District Heating Hot Water Rate     | GPM     |
-| District Heating Mass Flow Rate     | lbs/min |
-| District Heating Inlet Temperature  | &deg;F  |
-| District Heating Outlet Temperature | &deg;F  |
+|            output                        |  unit   |
+| -----------------------------------------| ------- |
+| Electricity:Facility                     | kbtu     |
+| ElectricityProduced:Facility             | kbtu     |
+| Gas:Facility                             | kbtu    |
+| DistrictCooling:Facility                 | kbtu    |
+| DistrictHeating:Facility                 | kbtu    |
+| District Cooling Chilled Water Rate      | GPM     |
+| District Cooling Mass Flow Rate          | lbs/min |
+| District Cooling Inlet Temperature       | &deg;F  |
+| District Cooling Outlet Temperature      | &deg;F  |
+| District Heating Hot Water Rate          | GPM     |
+| District Heating Mass Flow Rate          | lbs/min |
+| District Heating Inlet Temperature       | &deg;F  |
+| District Heating Outlet Temperature      | &deg;F  |
+| Electricity:Grid:ToLoad                  | kWh.    |

@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -46,10 +46,9 @@ module URBANopt
       # +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
       def initialize(scenario_base)
         super(scenario_base)
-        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new
-        @scenario_result.id = scenario_base.name
-        @scenario_result.name = scenario_base.name
-        @scenario_result.directory_name = scenario_base.run_dir
+
+        initialization_hash = { directory_name: scenario_base.run_dir, name: scenario_base.name, id: scenario_base.name }
+        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(initialization_hash)
 
         @@logger ||= URBANopt::Scenario::DefaultReports.logger
       end
@@ -87,7 +86,9 @@ module URBANopt
       ##
       # Save scenario result
       ##
-      def save
+      # [parameters:]
+      # +file_name+ - _String_ - Assign a name to the saved scenario results file
+      def save(file_name = 'default_scenario_report')
         @scenario_result.save
 
         return @scenario_result
