@@ -1,7 +1,6 @@
 # URBANopt Scenario Gem
  
 ## Version 0.1.1
-## Version 0.1.0
 
 Date Range: 10/16/19 - 01/14/20
 
@@ -16,3 +15,5 @@ Accepted Pull Requests:
 - Fixed [#61]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/61 ), GitHub security
 - Fixed [#62]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/62 ), Update issue templates
 - Fixed [#64]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/64 ), update dependency versions for security
+
+## Version 0.1.0
