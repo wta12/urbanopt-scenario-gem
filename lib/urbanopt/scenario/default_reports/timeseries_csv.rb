@@ -118,9 +118,23 @@ module URBANopt
         ##
         # Reloads data from the CSV file.
         ##        
-        def reload_data      
-          @data = nil
-          load_data
+        def reload_data(new_data)      
+          @mutex.synchronize do
+            @data = {}
+            @column_names = []
+            new_data.each do |row|
+              if @column_names.empty?
+                @column_names = row
+                @column_names.each do |column_name|
+                  @data[column_name] = []
+                end
+              else
+                row.each_with_index do |value, i|
+                  @data[@column_names[i]] << value.to_f
+                end
+              end
+            end
+          end
         end
 
 
@@ -165,7 +179,10 @@ module URBANopt
         # [parameters:]
         # +path+ - _String_ - The path of the scenario report CSV (default_scenario_report.csv).
         ##
-        def save_data(path)
+        def save_data(path=nil)
+          if path.nil?
+            path = @path
+          end
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
             n = @data[@column_names[0]].size - 1
@@ -236,9 +253,6 @@ module URBANopt
             else
               @data[column_name] = new_values
             end
-          end
-          if !@data.nil?
-            save_data(@path)
           end
         end
       end

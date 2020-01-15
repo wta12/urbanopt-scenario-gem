@@ -185,7 +185,6 @@ RSpec.describe URBANopt::Scenario do
     scenario_json = JSON.parse(File.read(scenario_json_file))
 
     puts JSON::Validator.fully_validate(schema, scenario_json)
-
     expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
     
     # close json file
