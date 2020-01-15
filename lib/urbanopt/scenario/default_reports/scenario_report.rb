@@ -51,10 +51,9 @@ module URBANopt
       ##
       class ScenarioReport
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations,
-
-                      :number_of_started_simulations,:number_of_complete_simulations, :number_of_failed_simulations,
+                      :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations,
                       :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports, :distributed_generation # :nodoc:
-        # ScenarioReport class intializes the scenario report attributes: 
+        # ScenarioReport class intializes the scenario report attributes:
         # +:id+ , +:name+ , +:directory_name+, +:timesteps_per_hour+ , +:number_of_not_started_simulations+ ,
         # +:number_of_started_simulations+ , +:number_of_complete_simulations+ , +:number_of_failed_simulations+ ,
         # +:timeseries_csv+ , +:location+ , +:program+ , +:construction_costs+ , +:reporting_periods+ , +:feature_reports+
@@ -132,7 +131,7 @@ module URBANopt
         # Gets the saved JSON file path.
         ##
         def json_path
-          File.join(@directory_name, @file_name  + '.json' )
+          File.join(@directory_name, @file_name + '.json')
         end
 
         ##
@@ -148,15 +147,14 @@ module URBANopt
         # [parameters]:
         # +file_name+ - _String_ - Assign a name to the saved scenario results file
         def save(file_name = 'default_scenario_report')
-          
-          # reassign the initialize local variable @file_name to the file name input. 
+          # reassign the initialize local variable @file_name to the file name input.
           @file_name = file_name
 
-          # save the csv data 
+          # save the csv data
           old_timeseries_path = nil
           if !@timeseries_csv.path.nil?
             old_timeseries_path = @timeseries_csv.path
-          end   
+          end
 
           @timeseries_csv.path = File.join(@directory_name, file_name + '.csv')
           @timeseries_csv.save_data
@@ -183,7 +181,7 @@ module URBANopt
           if !old_timeseries_path.nil?
             @timeseries_csv.path = old_timeseries_path
           else
-            @timeseries_csv.path = File.join(@directory_name,'default_scenario_report.csv')
+            @timeseries_csv.path = File.join(@directory_name, 'default_scenario_report.csv')
           end
           return true
         end
@@ -289,7 +287,7 @@ module URBANopt
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
 
           @distributed_generation = DistributedGeneration.merge_distributed_generation(@distributed_generation, feature_report.distributed_generation)
-          
+
           # add feature_report
           @feature_reports << feature_report
 
