@@ -28,12 +28,15 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
+
 require 'urbanopt/scenario/default_reports/construction_cost'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/location'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
 require 'urbanopt/scenario/default_reports/validator'
+require 'urbanopt/scenario/default_reports/distributed_generation'
+
 require 'json-schema'
 
 require 'json'
@@ -49,8 +52,8 @@ module URBANopt
       # The DefaultPostProcessor reads these feature reports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
-                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods # :nodoc:
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, 
+                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
@@ -81,7 +84,9 @@ module URBANopt
           hash[:reporting_periods].each do |rp|
             @reporting_periods << ReportingPeriod.new(rp)
           end
-
+          
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
+          
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
@@ -193,6 +198,8 @@ module URBANopt
 
           result[:reporting_periods] = []
           @reporting_periods.each { |rp| result[:reporting_periods] << rp.to_hash }
+
+          result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
 
           # validate feature_report properties against schema
           if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?

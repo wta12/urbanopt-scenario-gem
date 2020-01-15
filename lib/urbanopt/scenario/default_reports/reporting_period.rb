@@ -47,7 +47,7 @@ module URBANopt
                       :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs,
                       :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
                       :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours #:nodoc:
-        # ReportingPeriod class intializes the reporting period attributes:
+        # ReportingPeriod class initializes the reporting period attributes:
         # +:id+ , +:name+ , +:multiplier+ , +:start_date+ , +:end_date+ , +:month+ , +:day_of_month+ , +:year+ , +:total_site_energy+ , +:total_source_energy+ ,
         # +:net_site_energy+ , +:net_source_energy+ , +:net_utility_cost+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
         # +:district_heating+ , +:water+ , +:electricity_produced+ , +:end_uses+ , +:energy_production+ , +:photovoltaic+ , +:utility_costs+ ,

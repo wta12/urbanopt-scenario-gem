@@ -36,7 +36,7 @@ module URBANopt
       class Validator
         @@schema = nil
 
-        # initialize the root directory
+        # Initialize the root directory
         def initialize
           super
 

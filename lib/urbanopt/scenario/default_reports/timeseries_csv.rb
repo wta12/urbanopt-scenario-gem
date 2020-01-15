@@ -114,11 +114,34 @@ module URBANopt
 
           return result
         end
+        
+        ##
+        # Reloads data from the CSV file.
+        ##        
+        def reload_data(new_data)      
+          @mutex.synchronize do
+            @data = {}
+            @column_names = []
+            new_data.each do |row|
+              if @column_names.empty?
+                @column_names = row
+                @column_names.each do |column_name|
+                  @data[column_name] = []
+                end
+              else
+                row.each_with_index do |value, i|
+                  @data[@column_names[i]] << value.to_f
+                end
+              end
+            end
+          end
+        end
+
 
         ##
         # Loads data from the CSV file.
         ##
-        def load_data
+        def load_data      
           @mutex.synchronize do
             if @data.nil?
               @data = {}
@@ -156,16 +179,19 @@ module URBANopt
         # [parameters:]
         # +path+ - _String_ - The path of the scenario report CSV (default_scenario_report.csv).
         ##
-        def save_data(path)
+        def save_data(path=nil)
+          if path.nil?
+            path = @path
+          end
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
-            n = @data[@column_names[0]].size
+            n = @data[@column_names[0]].size - 1
 
             (0..n).each do |i|
               line = []
-              @column_names.each do |column_name|
-                line << @data[column_name][i]
-              end
+            @column_names.each do |column_name|
+              line << @data[column_name][i]
+            end
               f.puts line.join(',')
             end
             begin
@@ -188,7 +214,6 @@ module URBANopt
         # +other+ - _TimeseriesCSV_ - An object of TimeseriesCSV class.
         ##
         def add_timeseries_csv(other)
-          @path = other.path
 
           # initialize first_report_datetime with the incoming first_report_datetime if its nil.
           if @first_report_datetime.nil?
@@ -205,6 +230,11 @@ module URBANopt
 
           # merge the column data
           other.column_names.each do |column_name|
+
+            if !@column_names.include? column_name
+              @column_names.push column_name
+            end
+
             new_values = other.get_data(column_name)
 
             if @data.nil?
