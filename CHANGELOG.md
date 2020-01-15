@@ -4,7 +4,7 @@
 
 Date Range: 10/16/19 - 01/14/20
 
-Accepted Pull Requests: 10
+Accepted Pull Requests:
 - Fixed [#34]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/34 ), Post process
 - Fixed [#44]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/44 ), reopt integrations
 - Fixed [#47]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/47 ), Use runner.conf for run options
