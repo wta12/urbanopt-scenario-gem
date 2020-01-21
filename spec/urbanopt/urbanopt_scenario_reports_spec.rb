@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -70,7 +70,6 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     feature_report_2.program.footprint_area = 1100
 
     # feature_report_1.reporting_periods[0][:total_site_energy] = 100
-
 
     scenario_report = URBANopt::Scenario::DefaultReports::ScenarioReport.new
 

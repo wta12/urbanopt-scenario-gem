@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,7 +49,7 @@ RSpec.describe URBANopt::Scenario do
 
   it 'can run a scenario' do
     name = 'Example Scenario'
-    
+
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
     feature_file_path = File.join(File.dirname(__FILE__), '../files/example_feature_file.json')
     mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
@@ -122,9 +122,9 @@ RSpec.describe URBANopt::Scenario do
     expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
-    
-    # set a name for the results file 
-    scenario_result.save()
+
+    # set a name for the results file
+    scenario_result.save
 
     # Add test assertions on scenario_result
 
@@ -172,9 +172,8 @@ RSpec.describe URBANopt::Scenario do
     # Reporting periods results check
     expect(data['scenario_report']['reporting_periods'][0]['total_site_energy']).to eq(data['feature_reports'].map { |h| h['reporting_periods'][0]['total_site_energy'] }.reduce(:+))
 
-
     ##
-    # validate all results against schema 
+    # validate all results against schema
     ##
 
     # Read scenario schema file
@@ -185,14 +184,13 @@ RSpec.describe URBANopt::Scenario do
     scenario_json = JSON.parse(File.read(scenario_json_file))
 
     puts JSON::Validator.fully_validate(schema, scenario_json)
-
     expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
-    
+
     # close json file
     scenario_json_file.close
 
     # Read scenario csv file and validate against schema
-    scenario_csv_headers = CSV.open(File.expand_path( scenario_result.csv_path , File.dirname(__FILE__)), &:readline)
+    scenario_csv_headers = CSV.open(File.expand_path(scenario_result.csv_path, File.dirname(__FILE__)), &:readline)
 
     # rubocop: disable Security/Open
     scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
@@ -215,8 +213,6 @@ RSpec.describe URBANopt::Scenario do
 
     # close schema file
     schema_json.close
-
   end
-
 end
 # rubocop:enable Metrics/BlockLength

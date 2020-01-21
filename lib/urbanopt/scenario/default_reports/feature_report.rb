@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019, Alliance for Sustainable Energy, LLC, and other
+# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,6 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-
 require 'urbanopt/scenario/default_reports/construction_cost'
 require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/location'
@@ -52,7 +51,7 @@ module URBANopt
       # The DefaultPostProcessor reads these feature reports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status, 
+        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
                       :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
@@ -84,9 +83,9 @@ module URBANopt
           hash[:reporting_periods].each do |rp|
             @reporting_periods << ReportingPeriod.new(rp)
           end
-          
+
           @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
-          
+
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
