@@ -26,6 +26,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '12.3.1'
   spec.add_development_dependency 'rspec', '3.7.0'
   spec.add_development_dependency 'github_api', '~> 0.18.0'
+  # Fix rack version temporarily to work with Ruby 2.2.4
+  spec.add_development_dependency 'rack', '2.1.2'
 
   spec.add_dependency 'json-schema'
   spec.add_dependency 'json_pure'
