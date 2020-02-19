@@ -28,10 +28,22 @@
       }
 		},{
 			"measure_dir_name": "create_typical_building_from_model",
-			"arguments": {
-
+				"arguments": {
+			 
+			
       }
     },{
+		"name": "predicted_mean_vote",
+		"measure_dir_name": "PredictedMeanVote",
+		"arguments": {
+	    "__SKIP__":false,
+        "comfortWarnings":true,
+        "workEfficiencySchedule":"Work Efficiency Schedule",
+        "clothingSchedule":"Clothing Schedule",
+        "airVelocitySchedule":"Air Velocity Schedule"
+		
+		}
+	},{
 	
 		"measure_dir_name": "tariff_selection_flat",
 		"arguments": {

@@ -64,7 +64,6 @@
 				"distributed_generation": {
 					"$ref": "#/definitions/DistributedGeneration"
 				}
-				
 			},
 			"required": [
 				"id",
@@ -83,42 +82,42 @@
 			"type": "object",
 			"properties": {
 				"lcc_us_dollars": {
-					"type": "number", 
-					"description": "Optimal lifecycle cost"
+					"description": "Optimal lifecycle cost",
+					"type": "number"
 				},
 				"npv_us_dollars": {
-					"type": "number", 
-					"description": "Net present value of savings realized by the project"
+					"description": "Net present value of savings realized by the project",
+					"type": "number"
 				},
 				"year_one_energy_cost_us_dollars": {
-					"type": "number", 
-					"description": "Optimal year one utility energy cost"
+					"description": "Optimal year one utility energy cost",
+					"type": "number"
 				},
 				"year_one_demand_cost_us_dollars": {
-					"type": "number", 
-					"description": "Optimal year one utility demand cost"
+					"description": "Optimal year one utility demand cost",
+					"type": "number"
 				},
 				"year_one_bill_us_dollars": {
-					"type": "number", 
-					"description": "Optimal year one utility bill"
+					"description": "Optimal year one utility bill",
+					"type": "number"
 				},
 				"total_energy_cost_us_dollars": {
-					"type": "number", 
-					"description": "Total utility energy cost over the lifecycle, after-tax"
+					"description": "Total utility energy cost over the lifecycle, after-tax",
+					"type": "number"
 				},
-				"SolarPV" : {
+				"SolarPV": {
 					"$ref": "#/definitions/SolarPV"
 				},
-				"Wind" : {
+				"Wind": {
 					"$ref": "#/definitions/Wind"
 				},
-				"Generator" : {
+				"Generator": {
 					"$ref": "#/definitions/Generator"
 				},
-				"Storage" : {
+				"Storage": {
 					"$ref": "#/definitions/Storage"
 				}
-			 }
+			}
 		},
 		"SolarPV": {
 			"type": "object",
@@ -435,6 +434,12 @@
 				},
 				"time_setpoint_not_met_during_occupied_hours": {
 					"description": "(hrs)",
+					"type": "number"
+				},
+				"hours_out_of_comfort_bounds_PMV": {
+					"type": "number"
+				},
+				"hours_out_of_comfort_bounds_PPD": {
 					"type": "number"
 				}
 			},

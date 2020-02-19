@@ -78,6 +78,7 @@ module URBANopt
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
 
           @construction_costs = []
           hash[:construction_costs].each do |cc|
@@ -95,8 +96,8 @@ module URBANopt
             @feature_reports << FeatureReport.new(fr)
           end
 
-          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
           @file_name = 'default_scenario_report'
+
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
@@ -145,7 +146,7 @@ module URBANopt
         # Saves the 'default_feature_report.json' and 'default_scenario_report.csv' files
         ##
         # [parameters]:
-        # +file_name+ - _String_ - Assign a name to the saved scenario results file
+        # +file_name+ - _String_ - Assign a name to the saved scenario results file without an extension
         def save(file_name = 'default_scenario_report')
           # reassign the initialize local variable @file_name to the file name input.
           @file_name = file_name
