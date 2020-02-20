@@ -46,6 +46,16 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
   def name
     return 'Predicted Mean Vote'
   end
+  
+  # description
+  def description
+  return 'This measure adds the necessary data to people objects to support Predicted Mean Vote output data. It also adds the variable request.'
+  end
+
+  # modeler description
+  def modeler_description
+  return 'This will not add new people objects, but rather just extend the ones that are in the model. It will rely on schedules already made in the model instead of creating new schedules.'
+  end
 
   # define the arguments that the user will input
   def arguments(model)
@@ -53,7 +63,7 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
 
     # make a bool argument for ASHRAE 55 Comfort Warnings
     comfortWarnings = OpenStudio::Measure::OSArgument.makeBoolArgument('comfortWarnings', true)
-    comfortWarnings.setDisplayName('Enable ASHRAE 55 Comfort Warnings?')
+    comfortWarnings.setDisplayName('Enable ASHRAE 55 Comfort Warnings')
     comfortWarnings.setDefaultValue(false)
     args << comfortWarnings
 
@@ -63,7 +73,7 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
     chs << 'SurfaceWeighted'
     # chs << "AngleFactor" # I disabled this choice unless we expose the Surface Name/Angle Factor List Name field.
     meanRadiantCalcType = OpenStudio::Measure::OSArgument.makeChoiceArgument('meanRadiantCalcType', chs, true)
-    meanRadiantCalcType.setDisplayName('Mean Radiant Temperature Calculation Type.')
+    meanRadiantCalcType.setDisplayName('Mean Radiant Temperature Calculation Type')
     meanRadiantCalcType.setDefaultValue('ZoneAveraged')
     args << meanRadiantCalcType
 
@@ -95,7 +105,7 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
 
     # make a choice schedule for Work Efficiency Schedule
     workEfficiencySchedule = OpenStudio::Measure::OSArgument.makeChoiceArgument('workEfficiencySchedule', fractional_schedule_handles, fractional_schedule_display_names, true)
-    workEfficiencySchedule.setDisplayName('Choose a Work Efficiency Schedule.')
+    workEfficiencySchedule.setDisplayName('Choose a Work Efficiency Schedule')
     # I don't offer a default here because there will be many fractional schedules. I want to user to choose
     args << workEfficiencySchedule
 
@@ -114,7 +124,7 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
 
     # make a choice argument for Clothing Insulation Schedule Name
     clothingSchedule = OpenStudio::Measure::OSArgument.makeChoiceArgument('clothingSchedule', clothing_schedule_handles, clothing_schedule_display_names, true)
-    clothingSchedule.setDisplayName('Choose a Clothing Insulation Schedule.')
+    clothingSchedule.setDisplayName('Choose a Clothing Insulation Schedule')
     if !clothing_schedule_display_names.empty?
       clothingSchedule.setDefaultValue(clothing_schedule_display_names[0]) # normally I don't default model choice list, but since often there might be just one I decided to default this.
     end
@@ -135,7 +145,7 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
 
     # make a choice argument for Air Velocity Schedule Name
     airVelocitySchedule = OpenStudio::Measure::OSArgument.makeChoiceArgument('airVelocitySchedule', airVelocity_schedule_handles, airVelocity_schedule_display_names, true)
-    airVelocitySchedule.setDisplayName('Choose an Air Velocity Schedule.')
+    airVelocitySchedule.setDisplayName('Choose an Air Velocity Schedule')
     if !airVelocity_schedule_display_names.empty?
       airVelocitySchedule.setDefaultValue(airVelocity_schedule_display_names[0]) # normally I don't default model choice list, but since often there might be just one I decided to default this.
     end

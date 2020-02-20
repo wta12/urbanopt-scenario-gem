@@ -591,9 +591,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       end
     end
 
-    puts " available envperiods == #{sql_file.availableEnvPeriods()}"
-    puts " ann_env_pd = #{ann_env_pd}"
-    puts " env type == #{sql_file.environmentType(ann_env_pd)}"
+    #puts " available envperiods == #{sql_file.availableEnvPeriods()}"
+    #puts " ann_env_pd = #{ann_env_pd}"
+    #puts " env type == #{sql_file.environmentType(ann_env_pd)}"
     
     if ann_env_pd == false
       runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
@@ -622,8 +622,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     requested_timeseries_names += comfortTimeseries
 
 
-    puts " available timeseries == #{sql_file.availableTimeSeries()}"
-    puts " available key values == #{sql_file.availableKeyValues("RUN PERIOD 1", "Zone Timestep","Zone Thermal Comfort Fanger Model PMV")}"
+    #puts " available timeseries == #{sql_file.availableTimeSeries()}"
+    #puts " available key values == #{sql_file.availableKeyValues("RUN PERIOD 1", "Zone Timestep","Zone Thermal Comfort Fanger Model PMV")}"
 
 
     # number of values in each timeseries
@@ -713,10 +713,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
           values[key_cnt] = Array.new(n, 0)
         end
 
-        puts "**************************\n
-        *******Timeseries_name: #{timeseries_name} index: #{key_cnt} , keyvalue: #{key_value} , reporting_frequency: #{reporting_frequency.to_s} *********** \n
-        values[key_cnt] = #{values[key_cnt]} 
-        \n************************"
+        #puts "**************************\n
+        #*******Timeseries_name: #{timeseries_name} index: #{key_cnt} , keyvalue: #{key_value} , reporting_frequency: #{reporting_frequency.to_s} *********** \n
+        #values[key_cnt] = #{values[key_cnt]} 
+        #\n************************"
 
         # Unit conversion
         old_units = ts.get.units if ts.is_initialized
@@ -789,7 +789,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
             # save variable to feature_reports hash 
             runner.registerInfo("timeseries #{timeseries_name}: hours out of bounds: #{hrsOutOfBounds}")
-            puts "hrsOUTOfBound for #{timeseries_name} == #{hrsOutOfBounds}"             
+            #puts "hrsOUTOfBound for #{timeseries_name} == #{hrsOutOfBounds}"             
             if timeseries_name === 'Zone Thermal Comfort Fanger Model PMV'
               feature_report.reporting_periods[0].comfort_result[:hours_out_of_comfort_bounds_PMV] = hrsOutOfBounds
             elsif timeseries_name == 'Zone Thermal Comfort Fanger Model PPD'
@@ -814,12 +814,12 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     timeseries_d.dateTimes.each do |datetime|
      datetimes << format_datetime(datetime.to_s)
     end
-    puts "datetime = #{datetimes}"
+    #puts "datetime = #{datetimes}"
     # insert date times to values
     values.insert(0, datetimes)
     # insert datime header to names
     final_timeseries_names.insert(0, 'Datetime')
-    puts "final values = #{values}"
+    #puts "final values = #{values}"
     
     # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
