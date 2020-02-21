@@ -57,11 +57,11 @@ module URBANopt
           @path = hash[:path]
           @first_report_datetime = hash[:first_report_datetime]
 
-          # from scenario csv shema get required reults to be aggregated 
-          @required_column_names = load_scenario_csv_schema_headers()
+          # from scenario csv shema get required reults to be aggregated
+          @required_column_names = load_scenario_csv_schema_headers
 
           @column_names = hash[:column_names]
-          @column_names.delete_if {|x| !@required_column_names.include? x }
+          @column_names.delete_if { |x| !@required_column_names.include? x }
 
           # hash of column_name to array of values, does not get serialized to hash
           @mutex = Mutex.new
@@ -75,12 +75,10 @@ module URBANopt
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
 
-
-
         ##
         # load required scenario report csv headers from reports schema
         ##
-        def load_scenario_csv_schema_headers()
+        def load_scenario_csv_schema_headers
           # rubocop: disable Security/Open
           scenario_csv_schema = open(File.expand_path('../default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__)))
           # rubocop: enable Security/Open
@@ -263,7 +261,7 @@ module URBANopt
             end
 
             current_values = @data[column_name]
-          
+
             if current_values
               if current_values.size != new_values.size
                 raise 'Values of different sizes in add_timeseries_csv'
@@ -278,7 +276,6 @@ module URBANopt
             else
               @data[column_name] = new_values
             end
-            
           end
         end
       end

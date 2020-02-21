@@ -46,7 +46,7 @@ module URBANopt
                       :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling,
                       :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs,
                       :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
-                      :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours , :hours_out_of_comfort_bounds_PMV, :hours_out_of_comfort_bounds_PPD #:nodoc:
+                      :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours, :hours_out_of_comfort_bounds_PMV, :hours_out_of_comfort_bounds_PPD #:nodoc:
         # ReportingPeriod class initializes the reporting period attributes:
         # +:id+ , +:name+ , +:multiplier+ , +:start_date+ , +:end_date+ , +:month+ , +:day_of_month+ , +:year+ , +:total_site_energy+ , +:total_source_energy+ ,
         # +:net_site_energy+ , +:net_source_energy+ , +:net_utility_cost+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
@@ -120,7 +120,7 @@ module URBANopt
           hash[:energy_production] = { electricity_produced: { photovoltaic: nil } }
           hash[:utility_costs] = [{ fuel_type: nil, total_cost: nil, usage_cost: nil, demand_cost: nil }]
           hash[:comfort_result] = { time_setpoint_not_met_during_occupied_cooling: nil, time_setpoint_not_met_during_occupied_heating: nil,
-             time_setpoint_not_met_during_occupied_hours: nil, hours_out_of_comfort_bounds_PMV: nil, hours_out_of_comfort_bounds_PPD: nil }
+                                    time_setpoint_not_met_during_occupied_hours: nil, hours_out_of_comfort_bounds_PMV: nil, hours_out_of_comfort_bounds_PPD: nil }
 
           return hash
         end

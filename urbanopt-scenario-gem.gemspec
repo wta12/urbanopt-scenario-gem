@@ -6,8 +6,8 @@ require 'urbanopt/scenario/version'
 Gem::Specification.new do |spec|
   spec.name          = 'urbanopt-scenario'
   spec.version       = URBANopt::Scenario::VERSION
-  spec.authors       = ['Dan Macumber']
-  spec.email         = ['daniel.macumber@nrel.gov']
+  spec.authors       = ['Rawad El Kontar', 'Dan Macumber']
+  spec.email         = ['rawad.elkontar@nrel.gov']
 
   spec.summary       = 'Library to export data point OSW files from URBANopt Scenario CSV'
   spec.description   = 'Library to export data point OSW files from URBANopt Scenario CSV'

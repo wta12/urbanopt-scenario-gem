@@ -46,15 +46,15 @@ class PredictedMeanVote < OpenStudio::Measure::ModelMeasure
   def name
     return 'Predicted Mean Vote'
   end
-  
+
   # description
   def description
-  return 'This measure adds the necessary data to people objects to support Predicted Mean Vote output data. It also adds the variable request.'
+    return 'This measure adds the necessary data to people objects to support Predicted Mean Vote output data. It also adds the variable request.'
   end
 
   # modeler description
   def modeler_description
-  return 'This will not add new people objects, but rather just extend the ones that are in the model. It will rely on schedules already made in the model instead of creating new schedules.'
+    return 'This will not add new people objects, but rather just extend the ones that are in the model. It will rely on schedules already made in the model instead of creating new schedules.'
   end
 
   # define the arguments that the user will input
