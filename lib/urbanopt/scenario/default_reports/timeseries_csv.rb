@@ -236,7 +236,7 @@ module URBANopt
         ##
         def add_timeseries_csv(other)
           # initialize first_report_datetime with the incoming first_report_datetime if its nil.
-          if @first_report_datetime.nil?
+          if @first_report_datetime.nil? || @first_report_datetime == ''
             @first_report_datetime = other.first_report_datetime
           end
 
