@@ -244,11 +244,22 @@ module URBANopt
         # +feature_report+ - _FeatureReport_ - An object of FeatureReport class.
         ##
         def add_feature_report(feature_report)
+
+          # check if the timesteps_per_hour are identical
           if @timesteps_per_hour.nil? || @timesteps_per_hour == ''
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
             if feature_report.timesteps_per_hour.is_a?(Integer) && feature_report.timesteps_per_hour != @timesteps_per_hour
               raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
+            end
+          end
+
+          # check if first report_report_datetime are identical.
+          if @timeseries_csv.first_report_datetime.nil? || @timeseries_csv.first_report_datetime == ''
+            @timeseries_csv.first_report_datetime = feature_report.timeseries_csv.first_report_datetime
+          else
+            if feature_report.timeseries_csv.first_report_datetime != @timeseries_csv.first_report_datetime
+              raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{other.first_report_datetime}'"
             end
           end
 
