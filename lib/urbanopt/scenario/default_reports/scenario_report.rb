@@ -259,7 +259,7 @@ module URBANopt
             @timeseries_csv.first_report_datetime = feature_report.timeseries_csv.first_report_datetime
           else
             if feature_report.timeseries_csv.first_report_datetime != @timeseries_csv.first_report_datetime
-              raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{other.first_report_datetime}'"
+              raise "first_report_datetime '#{@first_report_datetime}' does not match other.first_report_datetime '#{feature_report.timeseries_csv.first_report_datetime}'"
             end
           end
 
