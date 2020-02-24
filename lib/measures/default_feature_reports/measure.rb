@@ -44,7 +44,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
   # human readable description
   def description
-    return 'Writes default_feature_reports.json file used by URBANopt Scenario Default Post Processor'
+    return 'Writes default_feature_reports.json and default_feature_reports.csv files used by URBANopt Scenario Default Post Processor'
   end
 
   # human readable description of modeling approach
@@ -75,24 +75,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
     reporting_frequency_chs << 'Timestep'
-    reporting_frequency_chs << 'Hourly'
-    reporting_frequency_chs << 'Daily'
-    reporting_frequency_chs << 'Zone Timestep'
-    # reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
+    #reporting_frequency_chs << 'Hourly'
+    #reporting_frequency_chs << 'Daily'
+    #reporting_frequency_chs << 'Zone Timestep'
+    #reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
     ## Utility report here to report the start and end for each fueltype
-    reporting_frequency_chs << 'Monthly'
-    reporting_frequency_chs << 'Runperiod'
+    #reporting_frequency_chs << 'Monthly'
+    #reporting_frequency_chs << 'Runperiod'
 
     reporting_frequency = OpenStudio::Measure::OSArgument.makeChoiceArgument('reporting_frequency', reporting_frequency_chs, true)
     reporting_frequency.setDisplayName('Reporting Frequency')
     reporting_frequency.setDescription('The frequency at which to report timeseries output data.')
     reporting_frequency.setDefaultValue('Timestep')
     args << reporting_frequency
-
-    # move this in the run method
-    if reporting_frequency.defaultValueDisplayName == 'BillingPeriod'
-      @@logger.error('BillingPeriod frequency is not implemented yet')
-    end
 
     return args
   end
@@ -246,6 +241,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue('reporting_frequency', user_arguments)
+    
+    # BilingPeriod reporting frequency not implemented yet
+    if reporting_frequency == 'BillingPeriod'
+      @@logger.error('BillingPeriod frequency is not implemented yet')
+    end
 
     # cache runner for this instance of the measure
     @runner = runner
@@ -591,10 +591,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       end
     end
 
-    # puts " available envperiods == #{sql_file.availableEnvPeriods()}"
-    # puts " ann_env_pd = #{ann_env_pd}"
-    # puts " env type == #{sql_file.environmentType(ann_env_pd)}"
-
     if ann_env_pd == false
       runner.registerError("Can't find a weather runperiod, make sure you ran an annual simulation, not just the design days.")
       return false
@@ -621,9 +617,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     comfortTimeseries = ['Zone Thermal Comfort Fanger Model PMV', 'Zone Thermal Comfort Fanger Model PPD']
     requested_timeseries_names += comfortTimeseries
 
-    # puts " available timeseries == #{sql_file.availableTimeSeries()}"
-    # puts " available key values == #{sql_file.availableKeyValues("RUN PERIOD 1", "Zone Timestep","Zone Thermal Comfort Fanger Model PMV")}"
-
     # number of values in each timeseries
     n = nil
 
@@ -639,7 +632,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     # loop over requested timeseries
     # rubocop: disable Metrics/BlockLength
-
     requested_timeseries_names.each_index do |i|
       timeseries_name = requested_timeseries_names[i]
       runner.registerInfo("TIMESERIES: #{timeseries_name}")
@@ -689,14 +681,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         final_timeseries_names << new_timeseries_name
 
         # get the actual timeseries
-        # puts "ann_env_pd =  #{ann_env_pd.to_s}, reporting_frequency ==#{reporting_frequency.to_s}, timeseries_name ==#{timeseries_name}, key_value== #{key_value}"
         ts = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, timeseries_name, key_value)
-
-        # if timeseries_name == 'Zone Thermal Comfort Fanger Model PMV'
-        #  ts = sql_file.timeSeries(ann_env_pd.to_s, 'Zone Timestep', timeseries_name, key_value)
-        # else
-        #  ts = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, timeseries_name, key_value)
-        # end
 
         if n.nil?
           # first timeseries should always be set
@@ -710,11 +695,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
           runner.registerInfo('Is NOT Initialized')
           values[key_cnt] = Array.new(n, 0)
         end
-
-        # puts "**************************\n
-        # *******Timeseries_name: #{timeseries_name} index: #{key_cnt} , keyvalue: #{key_value} , reporting_frequency: #{reporting_frequency.to_s} *********** \n
-        # values[key_cnt] = #{values[key_cnt]}
-        # \n************************"
 
         # Unit conversion
         old_units = ts.get.units if ts.is_initialized
@@ -786,7 +766,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
             # save variable to feature_reports hash
             runner.registerInfo("timeseries #{timeseries_name}: hours out of bounds: #{hrsOutOfBounds}")
-            # puts "hrsOUTOfBound for #{timeseries_name} == #{hrsOutOfBounds}"
             if timeseries_name === 'Zone Thermal Comfort Fanger Model PMV'
               feature_report.reporting_periods[0].comfort_result[:hours_out_of_comfort_bounds_PMV] = hrsOutOfBounds
             elsif timeseries_name == 'Zone Thermal Comfort Fanger Model PPD'
@@ -804,17 +783,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     # Add datime column
     datetimes = []
-    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, 'Electricity:Facility', '')
-    timeseries_d = ts_d.get # assume every house consumes some electricity
+    # check what timeseries is available 
+    available_ts = sql_file.availableTimeSeries()
+    # get the timeseries for any of available timeseries
+    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
+    timeseries_d = ts_d.get
+    # add formated datetime
     timeseries_d.dateTimes.each do |datetime|
       datetimes << format_datetime(datetime.to_s)
     end
-    # puts "datetime = #{datetimes}"
     # insert date times to values
     values.insert(0, datetimes)
     # insert datime header to names
     final_timeseries_names.insert(0, 'Datetime')
-    # puts "final values = #{values}"
 
     # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
