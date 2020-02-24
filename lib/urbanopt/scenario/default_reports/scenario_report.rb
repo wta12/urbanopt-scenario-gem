@@ -244,10 +244,10 @@ module URBANopt
         # +feature_report+ - _FeatureReport_ - An object of FeatureReport class.
         ##
         def add_feature_report(feature_report)
-          if @timesteps_per_hour.nil?
+          if @timesteps_per_hour.nil? || @timesteps_per_hour == ''
             @timesteps_per_hour = feature_report.timesteps_per_hour
           else
-            if feature_report.timesteps_per_hour != @timesteps_per_hour
+            if feature_report.timesteps_per_hour.is_a?(Integer) && feature_report.timesteps_per_hour != @timesteps_per_hour
               raise "FeatureReport timesteps_per_hour = '#{feature_report.timesteps_per_hour}' does not match scenario timesteps_per_hour '#{@timesteps_per_hour}'"
             end
           end
