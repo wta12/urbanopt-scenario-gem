@@ -73,24 +73,45 @@ module URBANopt
         attr_accessor :total_energy_cost_us_dollars
 
         ##
-        # _SolarPV_ - Installed \solar PV attributes
+        # _Array_ - List of _SolarPV_ systems
         #
         attr_accessor :solar_pv
 
         ##
-        # _Wind_ -  Installed \wind attributes
+        # _Array_ - List of _Wind_ systems
         #
         attr_accessor :wind
 
         ##
-        # _Generator_ - Installed \generator attributes
+        # _Array_ - List of _Generator_ systems
         #
         attr_accessor :generator
 
         ##
-        # _Storage_ - Installed \storage attributes
+        # _Array_ - List of _Storage_ systems
         #
         attr_accessor :storage
+
+
+        ##
+        # _Float_ -  Installed solar PV capacity
+        #
+        attr_accessor :total_solar_pv_kw
+
+        ##
+        # _Float_ -  Installed wind capacity
+        #
+        attr_accessor :total_wind_kw
+
+        ##
+        # _Float_ -  Installed storage capacity
+        #
+        attr_accessor :total_storage_kw
+
+        ##
+        # _Float_ -  Installed generator capacity
+        #
+        attr_accessor :total_generator_kw
 
         ##
         # Initialize distributed generation system design and financial metrics.
@@ -112,11 +133,86 @@ module URBANopt
           @year_one_demand_cost_us_dollars = hash[:year_one_demand_cost_us_dollars]
           @year_one_bill_us_dollars = hash[:year_one_bill_us_dollars]
           @total_energy_cost_us_dollars = hash[:total_energy_cost_us_dollars]
+          
+          @total_solar_pv_kw = nil
+          @total_wind_kw = nil
+          @total_generator_kw = nil
+          @total_storage_kw = nil
+          @total_storage_kwh = nil
 
-          @solar_pv = SolarPV.new(hash[:solar_pv] || {})
-          @wind = Wind.new(hash[:wind] || {})
-          @generator = Generator.new(hash[:generator] || {})
-          @storage = Storage.new(hash[:storage] || {})
+          @solar_pv = []
+          if hash[:solar_pv].class == Hash
+            hash[:solar_pv] = [hash[:solar_pv]]
+          elsif hash[:solar_pv].nil?
+            hash[:solar_pv] = []
+          end
+          
+          hash[:solar_pv].each do |s|
+            if !s[:size_kw].nil? and s[:size_kw] != 0
+              @solar_pv.push SolarPV.new(s)
+              if @total_solar_pv_kw.nil?
+                @total_solar_pv_kw = @solar_pv[-1].size_kw
+              else
+                @total_solar_pv_kw += @solar_pv[-1].size_kw
+              end
+            end
+          end
+
+          @wind = []
+          if hash[:wind].class == Hash
+            hash[:wind] = [hash[:wind]]
+          elsif hash[:wind].nil?
+            hash[:wind] = []
+          end
+          
+          hash[:wind].each do |s|
+            if !s[:size_kw].nil? and s[:size_kw] != 0
+              @wind.push Wind.new(s)
+              if @total_wind_kw.nil?
+                @total_wind_kw = @wind[-1].size_kw
+              else
+                @total_wind_kw += @wind[-1].size_kw
+              end   
+            end
+          end
+
+          @generator = []
+          if hash[:generator].class == Hash
+            hash[:generator] = [hash[:generator]]
+          elsif hash[:generator].nil?
+            hash[:generator] = []
+          end
+          
+          hash[:generator].each do |s|
+            if !s[:size_kw].nil? and s[:size_kw] != 0
+              @generator.push Generator.new(s)
+              if @total_generator_kw.nil?
+                @total_generator_kw = @generator[-1].size_kw
+              else
+                @total_generator_kw += @generator[-1].size_kw
+              end
+            end   
+          end
+
+          @storage = []
+          if hash[:storage].class == Hash
+            hash[:storage] = [hash[:storage]]
+          elsif hash[:storage].nil?
+            hash[:storage] = []
+          end
+          
+          hash[:storage].each do |s|
+            if !s[:size_kw].nil? and s[:size_kw] != 0
+              @storage.push Storage.new(s)
+              if @total_storage_kw.nil?
+                @total_storage_kw = @storage[-1].size_kw
+                @total_storage_kwh = @storage[-1].size_kwh
+              else
+                @total_storage_kw += @storage[-1].size_kw
+                @total_storage_kwh += @storage[-1].size_kwh
+              end
+            end   
+          end
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -125,6 +221,52 @@ module URBANopt
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
+
+        
+        ##
+        # Add a tech
+        ##
+        def add_tech(name, tech)
+          if name == 'solar_pv'
+              @solar_pv.push tech
+              if @total_solar_pv_kw.nil?
+                @total_solar_pv_kw = tech.size_kw
+              else
+                @total_solar_pv_kw += tech.size_kw
+              end
+          end
+
+          if name == 'wind'
+              @wind.push tech
+              if @total_wind_kw.nil?
+                @total_wind_kw = tech.size_kw
+              else
+                @total_wind_kw += tech.size_kw
+              end
+          end
+
+          if name == 'storage'
+              @storage.push tech
+              if @total_storage_kw.nil?
+                @total_storage_kw = tech.size_kw
+                @total_storage_kwh = tech.size_kwh
+              else
+                @total_storage_kw += tech.size_kw
+                @total_storage_kwh += tech.size_kwh
+              end
+          end
+
+          if name == 'generator'
+              @generator.push tech
+              if @total_generator_kw.nil?
+                @total_generator_kw = tech.size_kw
+              else
+                @total_generator_kw += tech.size_kw
+              end
+          end
+        end
+        
+
 
         ##
         # Convert to a Hash equivalent for JSON serialization
@@ -137,12 +279,28 @@ module URBANopt
           result[:year_one_energy_cost_us_dollars] = @year_one_energy_cost_us_dollars if @year_one_energy_cost_us_dollars
           result[:year_one_demand_cost_us_dollars] = @year_one_demand_cost_us_dollars if @year_one_demand_cost_us_dollars
           result[:year_one_bill_us_dollars] = @year_one_bill_us_dollars if @year_one_bill_us_dollars
-          result[:total_energy_cost_us_dollars] = @total_energy_cost_us_dollars if @total_energy_cost_us_dollars
-          result[:solar_pv] = @solar_pv.to_hash if @solar_pv
-          result[:wind] = @wind.to_hash if @wind
-          result[:generator] = @generator.to_hash if @generator
-          result[:storage] = @storage.to_hash if @storage
-
+          result[:total_solar_pv_kw] = @total_solar_pv_kw if @total_solar_pv_kw
+          result[:total_wind_kw] = @total_wind_kw if @total_wind_kw
+          result[:total_generator_kw] = @total_generator_kw if @total_generator_kw
+          result[:total_storage_kw] = @total_storage_kw if @total_storage_kw
+          result[:total_storage_kwh] = @total_storage_kwh if @total_storage_kwh
+          
+          result[:solar_pv] = []
+          @solar_pv.each do |pv|
+            result[:solar_pv].push pv.to_hash
+          end
+          result[:wind] = []
+          @wind.each do |pv|
+            result[:wind].push wind.to_hash
+          end
+          result[:generator] = []
+          @generator.each do |pv|
+            result[:generator].push generator.to_hash
+          end
+          result[:storage] = []
+          @storage.each do |pv|
+            result[:storage].push storage.to_hash
+          end
           return result
         end
 
@@ -173,12 +331,45 @@ module URBANopt
           existing_dgen.year_one_demand_cost_us_dollars = add_values(existing_dgen.year_one_demand_cost_us_dollars, new_dgen.year_one_demand_cost_us_dollars)
           existing_dgen.year_one_bill_us_dollars = add_values(existing_dgen.year_one_bill_us_dollars, new_dgen.year_one_bill_us_dollars)
           existing_dgen.total_energy_cost_us_dollars = add_values(existing_dgen.total_energy_cost_us_dollars, new_dgen.total_energy_cost_us_dollars)
+          
+          new_dgen.solar_pv.each do |pv|
+            existing_dgen.solar_pv.push pv
+            if existing_dgen.total_solar_pv_kw.nil?
+              existing_dgen.total_solar_pv_kw = pv.size_kw
+            else
+              existing_dgen.total_solar_pv_kw += pv.size_kw
+            end
+          end
 
-          existing_dgen.solar_pv = SolarPV.add_pv existing_dgen.solar_pv, new_dgen.solar_pv
-          existing_dgen.wind = Wind.add_wind existing_dgen.wind, new_dgen.wind
-          existing_dgen.generator = Generator.add_generator existing_dgen.generator, new_dgen.generator
-          existing_dgen.storage = Storage.add_storage existing_dgen.storage, new_dgen.storage
+          new_dgen.wind.each do |wind|
+            existing_dgen.wind.push wind
+            if existing_dgen.total_wind_kw.nil?
+              existing_dgen.total_wind_kw = wind.size_kw
+            else
+              existing_dgen.total_wind_kw += wind.size_kw
+            end
+          end
 
+          new_dgen.storage.each do |storage|
+            existing_dgen.storage.push storage
+            if existing_dgen.total_wind_kw.nil?
+              existing_dgen.total_storage_kw = storage.size_kw
+              existing_dgen.total_storage_kwh = storage.size_kwh
+            else
+              existing_dgen.total_storage_kw += storage.size_kw
+              existing_dgen.total_storage_kwh += storage.size_kwh
+            end
+          end
+
+          new_dgen.generator.each do |generator|
+            existing_dgen.generator.push generator
+            if existing_dgen.total_wind_kw.nil?
+              existing_dgen.total_generator_kw = generator.size_kw
+            else
+              existing_dgen.total_generator_kw += generator.size_kw
+            end
+          end
+          
           return existing_dgen
         end
       end

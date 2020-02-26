@@ -54,6 +54,7 @@ module URBANopt
           hash.delete_if { |k, v| v.nil? }
 
           @size_kw = hash[:size_kw]
+          @id = hash[:id]
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
