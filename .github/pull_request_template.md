@@ -10,4 +10,4 @@
 - [ ] Documentation has been modified appropriately
 - [ ] All ci tests pass (green)
 - [ ] The [changelog](https://github.com/urbanopt/urbanopt-scenario-gem/blob/develop/CHANGELOG.md) has been updated appropriately
-- [ ] This branch is up-to-date with master
+- [ ] This branch is up-to-date with develop
