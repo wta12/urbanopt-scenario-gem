@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.9'
+  spec.add_development_dependency 'bundler', '~> 1.14'
   spec.add_development_dependency 'rake', '12.3.1'
   spec.add_development_dependency 'rspec', '3.7.0'
   spec.add_development_dependency 'github_api', '~> 0.18.0'
