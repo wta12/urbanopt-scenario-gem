@@ -143,7 +143,7 @@ module URBANopt
         end
 
         ##
-        # Saves the 'default_feature_report.json' and 'default_scenario_report.csv' files
+        # Saves the 'default_scenario_report.json' and 'default_scenario_report.csv' files
         ##
         # [parameters]:
         # +file_name+ - _String_ - Assign a name to the saved scenario results file without an extension
@@ -182,7 +182,7 @@ module URBANopt
           if !old_timeseries_path.nil?
             @timeseries_csv.path = old_timeseries_path
           else
-            @timeseries_csv.path = File.join(@directory_name, 'default_scenario_report.csv')
+            @timeseries_csv.path = File.join(@directory_name, file_name + '.csv')
           end
           return true
         end
