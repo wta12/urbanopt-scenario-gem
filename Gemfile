@@ -19,7 +19,7 @@ allow_local = ENV['FAVOR_LOCAL_GEMS']
 # elsif allow_local
 #   gem 'openstudio-extension', github: 'NREL/OpenStudio-extension-gem', branch: 'develop'
 # end
-#
+
 # if allow_local && File.exist?('../openstudio-common-measures-gem')
 #   gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
 # elsif allow_local
@@ -40,7 +40,5 @@ end
 
 # simplecov has an unnecessary dependency on native json gem, use fork that does not require this
 gem 'simplecov', github: 'NREL/simplecov'
-# gem 'rdoc'
 
-# Fix rack version temporarily to work with Ruby 2.2.4
-gem 'rack' , '2.1.2'
+gem 'sqlite3'
