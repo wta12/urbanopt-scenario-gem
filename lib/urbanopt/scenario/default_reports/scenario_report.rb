@@ -251,8 +251,8 @@ module URBANopt
           else
             @timeseries_csv.path = File.join(@directory_name, 'default_scenario_report.csv')
           end
-          return true
           create_scenario_db_file(scenario_file_name)
+          return true
         end
 
         ##
