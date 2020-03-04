@@ -9,7 +9,7 @@
       "measure_dir_name": "ChangeBuildingLocation",
 			"arguments": {
         "weather_file_name": "urbanopt_scenario_tests.epw",
-        "climate_zone": "5B"
+        "climate_zone": "ASHRAE 169-2013-5B"
       }
     },{
       "measure_dir_name": "set_run_period",
@@ -28,10 +28,22 @@
       }
 		},{
 			"measure_dir_name": "create_typical_building_from_model",
-			"arguments": {
-
+				"arguments": {
+			 
+			
       }
     },{
+		"name": "predicted_mean_vote",
+		"measure_dir_name": "PredictedMeanVote",
+		"arguments": {
+	    "__SKIP__":false,
+        "comfortWarnings":true,
+        "workEfficiencySchedule":"Work Efficiency Schedule",
+        "clothingSchedule":"Clothing Schedule",
+        "airVelocitySchedule":"Air Velocity Schedule"
+		
+		}
+	},{
 	
 		"measure_dir_name": "tariff_selection_flat",
 		"arguments": {

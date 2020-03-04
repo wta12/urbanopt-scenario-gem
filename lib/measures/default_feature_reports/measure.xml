@@ -2,12 +2,12 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>803f9d76-a088-489d-88d3-6f3a5ae50d8a</version_id>
-  <version_modified>20191030T020950Z</version_modified>
+  <version_id>1e1df3ed-31b5-40f4-96b6-9aeacb29857b</version_id>
+  <version_modified>20200225T211712Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
-  <description>Writes default_feature_reports.json file used by URBANopt Scenario Default Post Processor</description>
+  <description>Writes default_feature_reports.json and default_feature_reports.csv files used by URBANopt Scenario Default Post Processor</description>
   <modeler_description>This measure only allows for one feature_report per simulation. If multiple features are simulated in a single simulation, a new measure must be written to disaggregate simulation results to multiple features.</modeler_description>
   <arguments>
     <argument>
@@ -41,7 +41,7 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>Hourly</default_value>
+      <default_value>Timestep</default_value>
       <choices>
         <choice>
           <value>Detailed</value>
@@ -50,22 +50,6 @@
         <choice>
           <value>Timestep</value>
           <display_name>Timestep</display_name>
-        </choice>
-        <choice>
-          <value>Hourly</value>
-          <display_name>Hourly</display_name>
-        </choice>
-        <choice>
-          <value>Daily</value>
-          <display_name>Daily</display_name>
-        </choice>
-        <choice>
-          <value>Monthly</value>
-          <display_name>Monthly</display_name>
-        </choice>
-        <choice>
-          <value>Runperiod</value>
-          <display_name>Runperiod</display_name>
         </choice>
       </choices>
     </argument>
@@ -95,12 +79,6 @@
       <checksum>BDF687C1</checksum>
     </file>
     <file>
-      <filename>LICENSE.md</filename>
-      <filetype>md</filetype>
-      <usage_type>license</usage_type>
-      <checksum>B646B327</checksum>
-    </file>
-    <file>
       <filename>README.md.erb</filename>
       <filetype>erb</filetype>
       <usage_type>readmeerb</usage_type>
@@ -113,16 +91,16 @@
       <checksum>CC4BFFAF</checksum>
     </file>
     <file>
-      <filename>README.md</filename>
+      <filename>LICENSE.md</filename>
       <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>FDBC6AE2</checksum>
+      <usage_type>license</usage_type>
+      <checksum>EA283B74</checksum>
     </file>
     <file>
       <filename>default_feature_reports_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>8E37E2D9</checksum>
+      <checksum>56E0804B</checksum>
     </file>
     <file>
       <version>
@@ -133,7 +111,13 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>8C94E56E</checksum>
+      <checksum>1FA95ECA</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>5C1DD676</checksum>
     </file>
   </files>
 </measure>

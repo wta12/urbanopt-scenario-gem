@@ -56,7 +56,12 @@ module URBANopt
 
           @path = hash[:path]
           @first_report_datetime = hash[:first_report_datetime]
+
+          # from scenario csv shema get required reults to be aggregated
+          @required_column_names = load_scenario_csv_schema_headers
+
           @column_names = hash[:column_names]
+          @column_names.delete_if { |x| !@required_column_names.include? x }
 
           # hash of column_name to array of values, does not get serialized to hash
           @mutex = Mutex.new
@@ -68,6 +73,23 @@ module URBANopt
 
           # initialize @@logger
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
+        end
+
+        ##
+        # load required scenario report csv headers from reports schema
+        ##
+        def load_scenario_csv_schema_headers
+          # rubocop: disable Security/Open
+          scenario_csv_schema = open(File.expand_path('../default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__)))
+          # rubocop: enable Security/Open
+
+          scenario_csv_schema_headers = []
+          File.readlines(scenario_csv_schema).each do |line|
+            l = line.delete("\n")
+            a = l.delete("\t")
+            scenario_csv_schema_headers << a
+          end
+          return scenario_csv_schema_headers
         end
 
         ##
@@ -153,7 +175,7 @@ module URBANopt
                   end
                 else
                   row.each_with_index do |value, i|
-                    @data[@column_names[i]] << value.to_f
+                    @data[@column_names[i]] << value
                   end
                 end
               end
@@ -214,7 +236,7 @@ module URBANopt
         ##
         def add_timeseries_csv(other)
           # initialize first_report_datetime with the incoming first_report_datetime if its nil.
-          if @first_report_datetime.nil?
+          if @first_report_datetime.nil? || @first_report_datetime == ''
             @first_report_datetime = other.first_report_datetime
           end
 
@@ -239,12 +261,16 @@ module URBANopt
             end
 
             current_values = @data[column_name]
+
             if current_values
               if current_values.size != new_values.size
                 raise 'Values of different sizes in add_timeseries_csv'
               end
               new_values.each_with_index do |value, i|
-                new_values[i] = value + current_values[i]
+                # aggregate all columns except Datime column
+                if column_name != 'Datetime'
+                  new_values[i] = value.to_f + current_values[i].to_f
+                end
               end
               @data[column_name] = new_values
             else

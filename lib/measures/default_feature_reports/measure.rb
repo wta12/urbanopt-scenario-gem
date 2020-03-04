@@ -44,7 +44,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
   # human readable description
   def description
-    return 'Writes default_feature_reports.json file used by URBANopt Scenario Default Post Processor'
+    return 'Writes default_feature_reports.json and default_feature_reports.csv files used by URBANopt Scenario Default Post Processor'
   end
 
   # human readable description of modeling approach
@@ -75,23 +75,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
     reporting_frequency_chs << 'Timestep'
-    reporting_frequency_chs << 'Hourly'
-    reporting_frequency_chs << 'Daily'
-    # reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
+    #reporting_frequency_chs << 'Hourly'
+    #reporting_frequency_chs << 'Daily'
+    #reporting_frequency_chs << 'Zone Timestep'
+    #reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
     ## Utility report here to report the start and end for each fueltype
-    reporting_frequency_chs << 'Monthly'
-    reporting_frequency_chs << 'Runperiod'
+    #reporting_frequency_chs << 'Monthly'
+    #reporting_frequency_chs << 'Runperiod'
 
     reporting_frequency = OpenStudio::Measure::OSArgument.makeChoiceArgument('reporting_frequency', reporting_frequency_chs, true)
     reporting_frequency.setDisplayName('Reporting Frequency')
     reporting_frequency.setDescription('The frequency at which to report timeseries output data.')
-    reporting_frequency.setDefaultValue('Hourly')
+    reporting_frequency.setDefaultValue('Timestep')
     args << reporting_frequency
-
-    # move this in the run method
-    if reporting_frequency.defaultValueDisplayName == 'BillingPeriod'
-      @@logger.error('BillingPeriod frequency is not implemented yet')
-    end
 
     return args
   end
@@ -129,6 +125,23 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     ]
 
     return end_uses
+  end
+
+  def format_datetime(date_time)
+    date_time.tr!('-', '/')
+    date_time.gsub!('Jan', '01')
+    date_time.gsub!('Feb', '02')
+    date_time.gsub!('Mar', '03')
+    date_time.gsub!('Apr', '04')
+    date_time.gsub!('May', '05')
+    date_time.gsub!('Jun', '06')
+    date_time.gsub!('Jul', '07')
+    date_time.gsub!('Aug', '08')
+    date_time.gsub!('Sep', '09')
+    date_time.gsub!('Oct', '10')
+    date_time.gsub!('Nov', '11')
+    date_time.gsub!('Dec', '12')
+    return date_time
   end
 
   # return a vector of IdfObject's to request EnergyPlus objects needed by the run method
@@ -228,6 +241,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue('reporting_frequency', user_arguments)
+    
+    # BilingPeriod reporting frequency not implemented yet
+    if reporting_frequency == 'BillingPeriod'
+      @@logger.error('BillingPeriod frequency is not implemented yet')
+    end
 
     # cache runner for this instance of the measure
     @runner = runner
@@ -271,7 +289,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.name = feature_name
     feature_report.feature_type = feature_type
     feature_report.directory_name = workflow.absoluteRunDir
-    feature_report.timesteps_per_hour = model.getTimestep.numberOfTimestepsPerHour
+
+    timesteps_per_hour = model.getTimestep.numberOfTimestepsPerHour
+    feature_report.timesteps_per_hour = timesteps_per_hour
+
     feature_report.simulation_status = 'Complete'
 
     feature_report.reporting_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new
@@ -592,23 +613,31 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'District Heating Outlet Temperature'
     ]
 
+    # add thermal comfort timeseries
+    comfortTimeseries = ['Zone Thermal Comfort Fanger Model PMV', 'Zone Thermal Comfort Fanger Model PPD']
+    requested_timeseries_names += comfortTimeseries
+
     # number of values in each timeseries
     n = nil
 
-    # all numeric timeseries values, transpose of CSV file (e.g. values[j] is column, values[j][i] is column and row)
+    # all numeric timeseries values, transpose of CSV file (e.g. values[key_cnt] is column, values[key_cnt][i] is column and row)
     values = []
 
+    tmpArray = []
+
     # Since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
+    key_cnt = 0
     # this is recording the name of these final timeseries to write in the header of the CSV
     final_timeseries_names = []
 
     # loop over requested timeseries
     # rubocop: disable Metrics/BlockLength
-    requested_timeseries_names.each_with_index do |timeseries_name, j|
+    requested_timeseries_names.each_index do |i|
+      timeseries_name = requested_timeseries_names[i]
       runner.registerInfo("TIMESERIES: #{timeseries_name}")
 
-      # get all the key values that this timeseries can be reported for (e.g. if power is requested for each zone)
-      key_values = sql_file.availableKeyValues(ann_env_pd.to_s, reporting_frequency.to_s, timeseries_name)
+      # get all the key values that this timeseries can be reported for (e.g. if PMV is requested for each zone)
+      key_values = sql_file.availableKeyValues('RUN PERIOD 1', 'Zone Timestep', timeseries_name)
       runner.registerInfo("KEY VALUES: #{key_values}")
       if key_values.empty?
         key_values = ['']
@@ -616,7 +645,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
       # sort keys
       sorted_keys = key_values.sort
-      requested_keys = ['SUMMED ELECTRICITY:FACILITY', 'SUMMED ELECTRICITY:FACILITY POWER', 'SUMMED ELECTRICITYPRODUCED:FACILITY', 'SUMMED ELECTRICITYPRODUCED:FACILITY POWER', 'SUMMED NET APPARENT POWER', 'SUMMED NET ELECTRIC ENERGY', 'SUMMED NET POWER', 'TRANSFORMER OUTPUT ELECTRIC ENERGY SCHEDULE']
+      requested_keys = requested_timeseries_names
       final_keys = []
       # make sure aggregated timeseries are listed in sorted order before all individual feature timeseries
       sorted_keys.each do |k|
@@ -657,17 +686,17 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         if n.nil?
           # first timeseries should always be set
           runner.registerInfo('First timeseries')
-          values[j] = ts.get.values
-          n = values[j].size
+          values[key_cnt] = ts.get.values
+          n = values[key_cnt].size
         elsif ts.is_initialized
           runner.registerInfo('Is Initialized')
-          values[j] = ts.get.values
+          values[key_cnt] = ts.get.values
         else
           runner.registerInfo('Is NOT Initialized')
-          values[j] = Array.new(n, 0)
+          values[key_cnt] = Array.new(n, 0)
         end
 
-        # ##Unit conversion
+        # Unit conversion
         old_units = ts.get.units if ts.is_initialized
         new_units = case old_units.to_s
                       when 'J'
@@ -678,17 +707,96 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                         'gal'
                     end
 
-        # Unit conversion here
-        os_vec = values[j]
-
-        # loop through each value to retrieve it
-        for i in 0..os_vec.length - 1
-          unless new_units == old_units
-            os_vec[i] = OpenStudio.convert(os_vec[i], old_units, new_units).get
+        # loop through each value and apply unit conversion
+        os_vec = values[key_cnt]
+        if !timeseries_name.include? 'Zone Thermal Comfort'
+          for i in 0..os_vec.length - 1
+            unless new_units == old_units
+              os_vec[i] = OpenStudio.convert(os_vec[i], old_units, new_units).get
+            end
           end
         end
+
+        # comfort results usually have multiple timeseries (per zone), aggregate into a single series with consistent name and use worst value at each timestep
+        if comfortTimeseries.include? timeseries_name
+
+          # set up array if 1st key_value
+          if key_i == 0
+            runner.registerInfo("SETTING UP NEW ARRAY FOR: #{timeseries_name}")
+            tmpArray = Array.new(n, 0)
+          end
+
+          # add to array (keep max value at each timestep)
+          (0..(n - 1)).each do |ind|
+            # process negative and positive values differently
+            tVal = values[key_cnt][ind].to_f
+            if tVal < 0
+              tmpArray[ind] = [tVal, tmpArray[ind]].min
+            else
+              tmpArray[ind] = [tVal, tmpArray[ind]].max
+            end
+          end
+
+          # aggregate and save when all keyvalues have been processed
+          if key_i == final_keys.size - 1
+
+            hrsOutOfBounds = 0
+            if timeseries_name === 'Zone Thermal Comfort Fanger Model PMV'
+              (0..(n - 1)).each do |ind|
+                # -0.5 < x < 0.5 is within bounds
+                if values[key_cnt][ind].to_f > 0.5 || values[key_cnt][ind].to_f < -0.5
+                  hrsOutOfBounds += 1
+                end
+              end
+              hrsOutOfBounds = hrsOutOfBounds.to_f / timesteps_per_hour
+            elsif timeseries_name === 'Zone Thermal Comfort Fanger Model PPD'
+              (0..(n - 1)).each do |ind|
+                # > 20 is outside bounds
+                if values[key_cnt][ind].to_f > 20
+                  hrsOutOfBounds += 1
+                end
+              end
+              hrsOutOfBounds = hrsOutOfBounds.to_f / timesteps_per_hour
+            else
+              # this one is already scaled by timestep, no need to divide total
+              (0..(n - 1)).each do |ind|
+                hrsOutOfBounds += values[key_cnt][ind].to_f if values[key_cnt][ind].to_f > 0
+              end
+            end
+
+            # save variable to feature_reports hash
+            runner.registerInfo("timeseries #{timeseries_name}: hours out of bounds: #{hrsOutOfBounds}")
+            if timeseries_name === 'Zone Thermal Comfort Fanger Model PMV'
+              feature_report.reporting_periods[0].comfort_result[:hours_out_of_comfort_bounds_PMV] = hrsOutOfBounds
+            elsif timeseries_name == 'Zone Thermal Comfort Fanger Model PPD'
+              feature_report.reporting_periods[0].comfort_result[:hours_out_of_comfort_bounds_PPD] = hrsOutOfBounds
+            end
+
+          end
+
+        end
+
+        # increment key_cnt in new_keys loop
+        key_cnt += 1
       end
     end
+
+    # Add datime column
+    datetimes = []
+    # check what timeseries is available 
+    available_ts = sql_file.availableTimeSeries()
+    # get the timeseries for any of available timeseries
+    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
+    timeseries_d = ts_d.get
+    # add formated datetime
+    timeseries_d.dateTimes.each do |datetime|
+      datetimes << format_datetime(datetime.to_s)
+    end
+    # insert date times to values
+    values.insert(0, datetimes)
+    # insert datime header to names
+    final_timeseries_names.insert(0, 'Datetime')
+
     # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
