@@ -76,9 +76,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs << 'Detailed'
     reporting_frequency_chs << 'Timestep'
     reporting_frequency_chs << 'Hourly'
-    reporting_frequency_chs << 'Daily' 
+    reporting_frequency_chs << 'Daily'
     #reporting_frequency_chs << 'Zone Timestep'
-    reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
+    reporting_frequency_chs << 'BillingPeriod' # match it to utility bill object
     ## Utility report here to report the start and end for each fueltype
     reporting_frequency_chs << 'Monthly'
     reporting_frequency_chs << 'Runperiod'
@@ -698,15 +698,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
         # Unit conversion
         old_unit = ts.get.units if ts.is_initialized
-        new_unit = case old_unit.to_s
-                      when 'J'
-                        'kWh'
-                      when 'kBtu'
-                        'kWh'
-                      when 'gal'
-                        'm3'
-                    end        
 
+        if timeseries_name.include? 'Gas'
+          new_unit = 'kBtu'
+        else
+          new_unit = case old_unit.to_s
+                        when 'J'
+                          'kWh'
+                        when 'kBtu'
+                          'kWh'
+                        when 'gal'
+                          'm3'
+                      end
+        end
         # loop through each value and apply unit conversion
         os_vec = values[key_cnt]
         if !timeseries_name.include? 'Zone Thermal Comfort'
