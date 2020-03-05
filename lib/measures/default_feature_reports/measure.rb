@@ -458,6 +458,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     aspect_ratio ||= nil
     feature_report.program.aspect_ratio = aspect_ratio
 
+    # total_construction_cost
+    total_construction_cost = sql_query(runner, sql_file, 'Life-Cycle Cost Report', "TableName='Present Value for Recurring, Nonrecurring and Energy Costs (Before Tax)' AND RowName='LCC_MAT - BUILDING - LIFE CYCLE COSTS' AND ColumnName='Cost'")
+    feature_report.program.total_construction_cost = total_construction_cost
+
     ############################################################################
     ##
     # Get Reporting Periods information and store in the feature_report

@@ -44,6 +44,12 @@
 		
 		}
 	},{
+		"measure_dir_name": "AddCostPerFloorAreaToBuilding",
+		"arguments": {
+		"__SKIP__" : false,
+		"material_cost_ip": 100
+		}
+	},{
 	
 		"measure_dir_name": "tariff_selection_flat",
 		"arguments": {
