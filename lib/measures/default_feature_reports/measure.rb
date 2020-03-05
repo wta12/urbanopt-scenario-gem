@@ -75,13 +75,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
     reporting_frequency_chs << 'Timestep'
-    #reporting_frequency_chs << 'Hourly'
-    #reporting_frequency_chs << 'Daily'
+    reporting_frequency_chs << 'Hourly'
+    reporting_frequency_chs << 'Daily' 
     #reporting_frequency_chs << 'Zone Timestep'
-    #reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
+    reporting_frequency_chs << "BillingPeriod" # match it to utility bill object
     ## Utility report here to report the start and end for each fueltype
-    #reporting_frequency_chs << 'Monthly'
-    #reporting_frequency_chs << 'Runperiod'
+    reporting_frequency_chs << 'Monthly'
+    reporting_frequency_chs << 'Runperiod'
 
     reporting_frequency = OpenStudio::Measure::OSArgument.makeChoiceArgument('reporting_frequency', reporting_frequency_chs, true)
     reporting_frequency.setDisplayName('Reporting Frequency')
@@ -92,6 +92,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     return args
   end
 
+  # define fuel types
   def fuel_types
     fuel_types = [
       'Electricity',
@@ -105,6 +106,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     return fuel_types
   end
 
+  # define enduses
   def end_uses
     end_uses = [
       'Heating',
@@ -127,6 +129,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     return end_uses
   end
 
+  # format datetime
   def format_datetime(date_time)
     date_time.tr!('-', '/')
     date_time.gsub!('Jan', '01')
@@ -165,7 +168,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       end
     end
 
-    ### Request the output for each end use/fuel type combination
+    # Request the output for each end use/fuel type combination
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Electricity:Facility,#{reporting_frequency};").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,ElectricityProduced:Facility,#{reporting_frequency};").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Gas:Facility,#{reporting_frequency};").get
@@ -619,13 +622,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     # number of values in each timeseries
     n = nil
-
     # all numeric timeseries values, transpose of CSV file (e.g. values[key_cnt] is column, values[key_cnt][i] is column and row)
     values = []
-
     tmpArray = []
-
-    # Since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
+    # since schedule value will have a bunch of key_values, we need to keep track of these as additional timeseries
     key_cnt = 0
     # this is recording the name of these final timeseries to write in the header of the CSV
     final_timeseries_names = []
@@ -678,7 +678,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
             new_timeseries_name = key_value
           end
         end
-        final_timeseries_names << new_timeseries_name
+        #final_timeseries_names << new_timeseries_name
 
         # get the actual timeseries
         ts = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, timeseries_name, key_value)
@@ -697,26 +697,31 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         end
 
         # Unit conversion
-        old_units = ts.get.units if ts.is_initialized
-        new_units = case old_units.to_s
+        old_unit = ts.get.units if ts.is_initialized
+        new_unit = case old_unit.to_s
                       when 'J'
-                        'kBtu'
-                      when 'kWh'
-                        'kBtu'
-                      when 'm3'
-                        'gal'
-                    end
+                        'kWh'
+                      when 'kBtu'
+                        'kWh'
+                      when 'gal'
+                        'm3'
+                    end        
 
         # loop through each value and apply unit conversion
         os_vec = values[key_cnt]
         if !timeseries_name.include? 'Zone Thermal Comfort'
           for i in 0..os_vec.length - 1
-            unless new_units == old_units
-              os_vec[i] = OpenStudio.convert(os_vec[i], old_units, new_units).get
+            unless new_unit == old_unit
+              os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
             end
           end
         end
 
+        
+        # append units to headers
+        new_timeseries_name = new_timeseries_name + "(#{new_unit})"
+        final_timeseries_names << new_timeseries_name
+        
         # comfort results usually have multiple timeseries (per zone), aggregate into a single series with consistent name and use worst value at each timestep
         if comfortTimeseries.include? timeseries_name
 
@@ -788,13 +793,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # get the timeseries for any of available timeseries
     ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
     timeseries_d = ts_d.get
-    # add formated datetime
+    # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
       datetimes << format_datetime(datetime.to_s)
     end
-    # insert date times to values
+    # insert datetimes to values
     values.insert(0, datetimes)
-    # insert datime header to names
+    # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
 
     # rubocop: enable Metrics/BlockLength

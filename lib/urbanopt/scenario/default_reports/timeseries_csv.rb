@@ -61,7 +61,7 @@ module URBANopt
           @required_column_names = load_scenario_csv_schema_headers
 
           @column_names = hash[:column_names]
-          @column_names.delete_if { |x| !@required_column_names.include? x }
+          @column_names.delete_if { |x| !@required_column_names.include? x.split('(')[0] }
 
           # hash of column_name to array of values, does not get serialized to hash
           @mutex = Mutex.new
