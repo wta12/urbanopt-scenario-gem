@@ -714,6 +714,10 @@
 				"aspect_ratio": {
 					"description": "Ratio of longest to shortest axis",
 					"type": "number"
+				},
+				"total_construction_cost": {
+					"description": "total construction cost calculated from the defined cost per floor area ($)",
+					"type": "number"
 				}
 			},
 			"required": [

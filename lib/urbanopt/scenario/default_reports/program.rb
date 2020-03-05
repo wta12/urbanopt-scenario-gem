@@ -44,7 +44,7 @@ module URBANopt
                       :number_of_parking_spaces_charging, :parking_footprint_area, :maximum_parking_height, :maximum_number_of_parking_stories,
                       :maximum_number_of_parking_stories_above_ground, :number_of_residential_units, :building_types, :building_type, :maximum_occupancy,
                       :area, :window_area, :north_window_area, :south_window_area, :east_window_area, :west_window_area, :wall_area, :roof_area, :equipment_roof_area,
-                      :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio # :nodoc:
+                      :photovoltaic_roof_area, :available_roof_area, :total_roof_area, :orientation, :aspect_ratio, :total_construction_cost # :nodoc:
         # Program class initialize building program attributes: +:site_area+ , +:floor_area+ , +:conditioned_area+ , +:unconditioned_area+ ,
         # +:footprint_area+ , +:maximum_roof_height, +:maximum_number_of_stories+ , +:maximum_number_of_stories_above_ground+ , +:parking_area+ ,
         # +:number_of_parking_spaces+ , +:number_of_parking_spaces_charging+ , +:parking_footprint_area+ , +:maximum_parking_height+ , +:maximum_number_of_parking_stories+ ,
@@ -81,6 +81,7 @@ module URBANopt
           @roof_area = hash[:roof_area]
           @orientation = hash[:orientation]
           @aspect_ratio = hash[:aspect_ratio]
+          @total_construction_cost = hash[:total_construction_cost]
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -114,6 +115,7 @@ module URBANopt
           hash[:roof_area] = { equipment_roof_area: nil, photovoltaic_roof_area: nil, available_roof_area: nil, total_roof_area: nil }
           hash[:orientation] = nil
           hash[:aspect_ratio] = nil
+          hash[:total_construction_cost] = nil
           return hash
         end
 
@@ -166,6 +168,8 @@ module URBANopt
 
           result[:orientation] = @orientation if @orientation
           result[:aspect_ratio] = @aspect_ratio if @aspect_ratio
+
+          result[:total_construction_cost] = @total_construction_cost if @total_construction_cost
 
           # validate program properties against schema
           if @@validator.validate(@@schema[:definitions][:Program][:properties], result).any?
@@ -234,6 +238,7 @@ module URBANopt
           @maximum_number_of_parking_stories = max_value(@maximum_number_of_parking_stories, other.maximum_number_of_parking_stories)
           @maximum_number_of_parking_stories_above_ground = max_value(maximum_number_of_parking_stories_above_ground, other.maximum_number_of_parking_stories_above_ground)
           @number_of_residential_units = add_values(@number_of_residential_units, other.number_of_residential_units)
+          @total_construction_cost = add_values(@total_construction_cost, other.total_construction_cost)
 
           @building_types = other.building_types
 

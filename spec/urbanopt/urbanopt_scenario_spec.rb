@@ -123,12 +123,16 @@ RSpec.describe URBANopt::Scenario do
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     scenario_result = default_post_processor.run
 
-    # set a name for the results file
-    scenario_result.save
+    # save scenario result
+    scenario_result.save()
 
-    # Add test assertions on scenario_result
+    # save feature reports 
+    scenario_result.feature_reports.each do |feature_report|
+      feature_report.save_feature_report()
+    end
 
-    ## Check scenario_report JSON file
+    ## Add test assertions on scenario_result
+    # Check scenario_report JSON file
 
     # Read json file
     scenario_json_file = File.open(scenario_result.json_path)
@@ -191,19 +195,27 @@ RSpec.describe URBANopt::Scenario do
 
     # Read scenario csv file and validate against schema
     scenario_csv_headers = CSV.open(File.expand_path(scenario_result.csv_path, File.dirname(__FILE__)), &:readline)
+    # strip the units partial string from the scenario_csv_header since these units can change
+    scenario_csv_headers_with_no_units = []
+    scenario_csv_headers.each do |x|
+      scenario_csv_headers_with_no_units << x.split('(')[0]
+    end
 
     # rubocop: disable Security/Open
-    scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
-    # rubocop: enable Security/Open
 
+    # read scenario csv schema headers
+    scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
+    
     scenario_csv_schema_headers = []
     File.readlines(scenario_csv_schema).each do |line|
       l = line.delete("\n")
       a = l.delete("\t")
       scenario_csv_schema_headers << a
     end
+    
+    # rubocop: enable Security/Open
 
-    expect(scenario_csv_headers).to eq(scenario_csv_schema_headers)
+    expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
 
     # Read feature_reprot json file and validate against schema
     Dir["#{File.dirname(__FILE__)}/../**/*default_feature_reports.json"].each do |json_file|
