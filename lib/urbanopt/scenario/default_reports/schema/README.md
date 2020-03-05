@@ -20,7 +20,7 @@ The URBANopt Scenario Gem includes functionality for defining scenarios, running
 | -----------------------------------------| ------- |
 | Electricity:Facility                     | kWh     |
 | ElectricityProduced:Facility             | kWh     |
-| Gas:Facility                             | kWh     |
+| Gas:Facility                             | kBtu    |
 | DistrictCooling:Facility                 | kWh     |
 | DistrictHeating:Facility                 | kWh     |
 | District Cooling Chilled Water Rate      | GPM     |
