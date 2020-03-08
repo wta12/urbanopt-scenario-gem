@@ -244,7 +244,6 @@ module URBANopt
         # +feature_report+ - _FeatureReport_ - An object of FeatureReport class.
         ##
         def add_feature_report(feature_report)
-
           # check if the timesteps_per_hour are identical
           if @timesteps_per_hour.nil? || @timesteps_per_hour == ''
             @timesteps_per_hour = feature_report.timesteps_per_hour

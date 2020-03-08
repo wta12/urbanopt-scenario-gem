@@ -92,7 +92,6 @@ module URBANopt
         #
         attr_accessor :storage
 
-
         ##
         # _Float_ -  Installed solar PV capacity
         #
@@ -133,7 +132,7 @@ module URBANopt
           @year_one_demand_cost_us_dollars = hash[:year_one_demand_cost_us_dollars]
           @year_one_bill_us_dollars = hash[:year_one_bill_us_dollars]
           @total_energy_cost_us_dollars = hash[:total_energy_cost_us_dollars]
-          
+
           @total_solar_pv_kw = nil
           @total_wind_kw = nil
           @total_generator_kw = nil
@@ -146,9 +145,9 @@ module URBANopt
           elsif hash[:solar_pv].nil?
             hash[:solar_pv] = []
           end
-          
+
           hash[:solar_pv].each do |s|
-            if !s[:size_kw].nil? and s[:size_kw] != 0
+            if !s[:size_kw].nil? && (s[:size_kw] != 0)
               @solar_pv.push SolarPV.new(s)
               if @total_solar_pv_kw.nil?
                 @total_solar_pv_kw = @solar_pv[-1].size_kw
@@ -164,15 +163,15 @@ module URBANopt
           elsif hash[:wind].nil?
             hash[:wind] = []
           end
-          
+
           hash[:wind].each do |s|
-            if !s[:size_kw].nil? and s[:size_kw] != 0
+            if !s[:size_kw].nil? && (s[:size_kw] != 0)
               @wind.push Wind.new(s)
               if @total_wind_kw.nil?
                 @total_wind_kw = @wind[-1].size_kw
               else
                 @total_wind_kw += @wind[-1].size_kw
-              end   
+              end
             end
           end
 
@@ -182,16 +181,16 @@ module URBANopt
           elsif hash[:generator].nil?
             hash[:generator] = []
           end
-          
+
           hash[:generator].each do |s|
-            if !s[:size_kw].nil? and s[:size_kw] != 0
+            if !s[:size_kw].nil? && (s[:size_kw] != 0)
               @generator.push Generator.new(s)
               if @total_generator_kw.nil?
                 @total_generator_kw = @generator[-1].size_kw
               else
                 @total_generator_kw += @generator[-1].size_kw
               end
-            end   
+            end
           end
 
           @storage = []
@@ -200,9 +199,9 @@ module URBANopt
           elsif hash[:storage].nil?
             hash[:storage] = []
           end
-          
+
           hash[:storage].each do |s|
-            if !s[:size_kw].nil? and s[:size_kw] != 0
+            if !s[:size_kw].nil? && (s[:size_kw] != 0)
               @storage.push Storage.new(s)
               if @total_storage_kw.nil?
                 @total_storage_kw = @storage[-1].size_kw
@@ -211,7 +210,7 @@ module URBANopt
                 @total_storage_kw += @storage[-1].size_kw
                 @total_storage_kwh += @storage[-1].size_kwh
               end
-            end   
+            end
           end
 
           # initialize class variables @@validator and @@schema
@@ -222,51 +221,48 @@ module URBANopt
           @@logger ||= URBANopt::Scenario::DefaultReports.logger
         end
 
-        
         ##
         # Add a tech
         ##
         def add_tech(name, tech)
           if name == 'solar_pv'
-              @solar_pv.push tech
-              if @total_solar_pv_kw.nil?
-                @total_solar_pv_kw = tech.size_kw
-              else
-                @total_solar_pv_kw += tech.size_kw
-              end
+            @solar_pv.push tech
+            if @total_solar_pv_kw.nil?
+              @total_solar_pv_kw = tech.size_kw
+            else
+              @total_solar_pv_kw += tech.size_kw
+            end
           end
 
           if name == 'wind'
-              @wind.push tech
-              if @total_wind_kw.nil?
-                @total_wind_kw = tech.size_kw
-              else
-                @total_wind_kw += tech.size_kw
-              end
+            @wind.push tech
+            if @total_wind_kw.nil?
+              @total_wind_kw = tech.size_kw
+            else
+              @total_wind_kw += tech.size_kw
+            end
           end
 
           if name == 'storage'
-              @storage.push tech
-              if @total_storage_kw.nil?
-                @total_storage_kw = tech.size_kw
-                @total_storage_kwh = tech.size_kwh
-              else
-                @total_storage_kw += tech.size_kw
-                @total_storage_kwh += tech.size_kwh
-              end
+            @storage.push tech
+            if @total_storage_kw.nil?
+              @total_storage_kw = tech.size_kw
+              @total_storage_kwh = tech.size_kwh
+            else
+              @total_storage_kw += tech.size_kw
+              @total_storage_kwh += tech.size_kwh
+            end
           end
 
           if name == 'generator'
-              @generator.push tech
-              if @total_generator_kw.nil?
-                @total_generator_kw = tech.size_kw
-              else
-                @total_generator_kw += tech.size_kw
-              end
+            @generator.push tech
+            if @total_generator_kw.nil?
+              @total_generator_kw = tech.size_kw
+            else
+              @total_generator_kw += tech.size_kw
+            end
           end
         end
-        
-
 
         ##
         # Convert to a Hash equivalent for JSON serialization
@@ -284,7 +280,7 @@ module URBANopt
           result[:total_generator_kw] = @total_generator_kw if @total_generator_kw
           result[:total_storage_kw] = @total_storage_kw if @total_storage_kw
           result[:total_storage_kwh] = @total_storage_kwh if @total_storage_kwh
-          
+
           result[:solar_pv] = []
           @solar_pv.each do |pv|
             result[:solar_pv].push pv.to_hash
@@ -331,7 +327,7 @@ module URBANopt
           existing_dgen.year_one_demand_cost_us_dollars = add_values(existing_dgen.year_one_demand_cost_us_dollars, new_dgen.year_one_demand_cost_us_dollars)
           existing_dgen.year_one_bill_us_dollars = add_values(existing_dgen.year_one_bill_us_dollars, new_dgen.year_one_bill_us_dollars)
           existing_dgen.total_energy_cost_us_dollars = add_values(existing_dgen.total_energy_cost_us_dollars, new_dgen.total_energy_cost_us_dollars)
-          
+
           new_dgen.solar_pv.each do |pv|
             existing_dgen.solar_pv.push pv
             if existing_dgen.total_solar_pv_kw.nil?
@@ -369,7 +365,7 @@ module URBANopt
               existing_dgen.total_generator_kw += generator.size_kw
             end
           end
-          
+
           return existing_dgen
         end
       end
