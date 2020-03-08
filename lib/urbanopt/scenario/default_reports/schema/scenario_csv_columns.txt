@@ -1,14 +1,21 @@
 Datetime
-Electricity:Facility	
+Electricity:Facility
 ElectricityProduced:Facility	
-Gas:Facility	
+Gas:Facility
 DistrictCooling:Facility	
 DistrictHeating:Facility	
 District Cooling Chilled Water Rate	
-District Cooling Mass Flow Rate	
+District Cooling Mass Flow Rate
 District Cooling Inlet Temperature	
 District Cooling Outlet Temperature	
-District Heating Hot Water Rate	
-District Heating Mass Flow Rate	
-District Heating Inlet Temperature	
+District Heating Hot Water Rate
+District Heating Mass Flow Rate
+District Heating Inlet Temperature
 District Heating Outlet Temperature
+Net Electric Energy
+Electricity:Facility Power
+ElectricityProduced:Facility Power
+Electricity:Facility Apparent Power
+ElectricityProduced:Facility Apparent Power
+Net Power
+Net Apparent Power
