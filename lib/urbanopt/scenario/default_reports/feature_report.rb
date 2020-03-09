@@ -92,7 +92,6 @@ module URBANopt
 
           # initialize feature report file name to be saved.
           @file_name = 'default_feature_report'
-
         end
 
         ##
@@ -218,10 +217,9 @@ module URBANopt
         # [parameters]:
         # +file_name+ - _String_ - Assign a name to the saved feature report results file without an extension
         def save_feature_report(file_name = 'updated_default_feature_report')
-
           # reassign the initialize local variable @file_name to the file name input.
           @file_name = file_name
-          
+
           # create feature reports directory
           Dir.mkdir(File.join(@directory_name, 'feature_reports')) unless Dir.exist?(File.join(@directory_name, 'feature_reports'))
 
@@ -230,14 +228,14 @@ module URBANopt
           if !@timeseries_csv.path.nil?
             old_timeseries_path = @timeseries_csv.path
           end
- 
-          @timeseries_csv.path = File.join(@directory_name,'feature_reports', file_name + '.csv')
+
+          @timeseries_csv.path = File.join(@directory_name, 'feature_reports', file_name + '.csv')
           @timeseries_csv.save_data
 
           hash = {}
           hash[:feature_report] = to_hash
 
-          json_name_path = File.join(@directory_name,'feature_reports', file_name + '.json')
+          json_name_path = File.join(@directory_name, 'feature_reports', file_name + '.json')
 
           File.open(json_name_path, 'w') do |f|
             f.puts JSON.pretty_generate(hash)
@@ -256,9 +254,6 @@ module URBANopt
           end
           return true
         end
-
-
-
       end
     end
   end

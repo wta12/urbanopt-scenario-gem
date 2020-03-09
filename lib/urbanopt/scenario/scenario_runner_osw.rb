@@ -150,7 +150,7 @@ module URBANopt
         transformer_failures = runner.run_osws(transformer_osws)
         failures + transformer_failures
 
-        puts "Done Running Scenario"
+        puts 'Done Running Scenario'
 
         # if failures.size > 0
         #   puts "DATAPOINT FAILURES: #{failures}"
@@ -159,12 +159,12 @@ module URBANopt
         # look for other failed datapoints
         failed_sims = []
         simulation_dirs.each do |simulation_dir|
-          if File.exists?(File.join(simulation_dir.run_dir, 'failed.job'))
+          if File.exist?(File.join(simulation_dir.run_dir, 'failed.job'))
             failed_sims << simulation_dir.run_dir.split('/')[-1]
           end
         end
-        if failed_sims.size > 0
-          puts "FAILED SIMULATION IDs: #{failed_sims.join(",")}"
+        if !failed_sims.empty?
+          puts "FAILED SIMULATION IDs: #{failed_sims.join(',')}"
         end
 
         return simulation_dirs
