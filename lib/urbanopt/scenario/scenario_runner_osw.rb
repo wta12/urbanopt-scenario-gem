@@ -132,7 +132,7 @@ module URBANopt
           end
         end
 
-        # Run osw groups in order and store simulation failure in a array.
+        # Run osw groups in order and store simulation failure in an array.
         # Return simulation_dirs after running all simulations.
 
         # failures
@@ -140,17 +140,33 @@ module URBANopt
         # run building_osws
         # building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         building_failures = runner.run_osws(building_osws)
-        failures << building_failures
+        failures + building_failures
         # run district_system_osws
         # district_system_failures = runner.run_osws(district_system_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         district_system_failures = runner.run_osws(district_system_osws)
-        failures << district_system_failures
+        failures + district_system_failures
         # run transformer_osws
         # transformer_failures = runner.run_osws(transformer_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)
         transformer_failures = runner.run_osws(transformer_osws)
-        failures << transformer_failures
+        failures + transformer_failures
 
-        # puts "failures = #{failures}"
+        puts 'Done Running Scenario'
+
+        # if failures.size > 0
+        #   puts "DATAPOINT FAILURES: #{failures}"
+        # end
+
+        # look for other failed datapoints
+        failed_sims = []
+        simulation_dirs.each do |simulation_dir|
+          if File.exist?(File.join(simulation_dir.run_dir, 'failed.job'))
+            failed_sims << simulation_dir.run_dir.split('/')[-1]
+          end
+        end
+        if !failed_sims.empty?
+          puts "FAILED SIMULATION IDs: #{failed_sims.join(',')}"
+        end
+
         return simulation_dirs
       end
     end

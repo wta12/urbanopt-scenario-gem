@@ -89,6 +89,9 @@ module URBANopt
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
           @@schema ||= @@validator.schema
+
+          # initialize feature report file name to be saved.
+          @file_name = 'default_feature_report'
         end
 
         ##
@@ -206,6 +209,50 @@ module URBANopt
           end
 
           return result
+        end
+
+        ##
+        # Saves the 'default_feature_report.json' and 'default_feature_report.csv' files
+        ##
+        # [parameters]:
+        # +file_name+ - _String_ - Assign a name to the saved feature report results file without an extension
+        def save_feature_report(file_name = 'updated_default_feature_report')
+          # reassign the initialize local variable @file_name to the file name input.
+          @file_name = file_name
+
+          # create feature reports directory
+          Dir.mkdir(File.join(@directory_name, 'feature_reports')) unless Dir.exist?(File.join(@directory_name, 'feature_reports'))
+
+          # save the csv data
+          old_timeseries_path = nil
+          if !@timeseries_csv.path.nil?
+            old_timeseries_path = @timeseries_csv.path
+          end
+
+          @timeseries_csv.path = File.join(@directory_name, 'feature_reports', file_name + '.csv')
+          @timeseries_csv.save_data
+
+          hash = {}
+          hash[:feature_report] = to_hash
+
+          json_name_path = File.join(@directory_name, 'feature_reports', file_name + '.json')
+
+          File.open(json_name_path, 'w') do |f|
+            f.puts JSON.pretty_generate(hash)
+            # make sure data is written to the disk one way or the other
+            begin
+              f.fsync
+            rescue StandardError
+              f.flush
+            end
+          end
+
+          if !old_timeseries_path.nil?
+            @timeseries_csv.path = old_timeseries_path
+          else
+            @timeseries_csv.path = File.join(@directory_name, 'feature_reports', file_name + '.csv')
+          end
+          return true
         end
       end
     end
