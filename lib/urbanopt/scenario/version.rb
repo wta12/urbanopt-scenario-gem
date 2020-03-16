@@ -30,6 +30,6 @@
 
 module URBANopt
   module Scenario
-    VERSION = '0.2.0.pre1'.freeze
+    VERSION = '0.2.0.pre2'.freeze
   end
 end
