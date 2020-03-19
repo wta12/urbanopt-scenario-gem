@@ -43,3 +43,4 @@ require 'urbanopt/scenario/simulation_dir_osw'
 require 'urbanopt/scenario/simulation_mapper_base'
 
 require 'urbanopt/scenario/default_reports'
+require 'urbanopt/scenario/opendss_post_processor_default'
