@@ -74,11 +74,11 @@ module URBANopt
 
         @scenario_report.feature_reports.each do |feature_report|
           # read results from opendss
-          opendss_csv = CSV.read(File.join(@opendss_results_dir,'features', feature_report.id + '.csv'))
+          opendss_csv = CSV.read(File.join(@opendss_results_dir,'results','Features', feature_report.id + '.csv'))
           # add results to data 
           @opendss_data[feature_report.id] = opendss_csv
         end
-
+   
       end
 
 
@@ -94,16 +94,18 @@ module URBANopt
 
       end
 
-
-
-      # merge data
-      def merge_data(feature_report_data, opendss_data)
+      # load feature report data and opendss data
+      def load_data()
 
         # load selected opendss data
         load_opendss_data()
-
         # load selected feature reports data
         load_feature_report_data()
+
+      end
+
+      # merge data
+      def merge_data(feature_report_data, opendss_data)
 
         output = CSV.generate do |csv|
           opendss_data.each_with_index do |row, i|
@@ -134,9 +136,13 @@ module URBANopt
       def run
         @scenario_report.feature_reports.each do |feature_report|
 
+          # load data
+          load_data()
+          
           # merge data
           id = feature_report.id
           updated_feature_report = merge_data(@feature_reports_data[id], @opendss_data[id])
+
           # save 
           save(feature_report, updated_feature_report,'default_feature_report_plus_opendss' )
           

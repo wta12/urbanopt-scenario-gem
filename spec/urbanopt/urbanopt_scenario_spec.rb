@@ -75,7 +75,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
 
     # set clear_results to be false if you want the tests to run faster
-    clear_results = false # edited
+    clear_results = true # edited
     scenario.clear if clear_results
 
     simulation_dirs = scenario.simulation_dirs
@@ -132,9 +132,13 @@ RSpec.describe URBANopt::Scenario do
     end
 
 
+    # generate opendssreults for testing
+    opendss_results_source = File.join(File.dirname(__FILE__), '../files/opendss_outputs/')
+    opendss_results_destination = File.join(File.dirname(__FILE__), '../test/example_scenario')
+    FileUtils.copy_entry opendss_results_source, opendss_results_destination
     # post_process opendss results
-    #opendss_post_processor = URBANopt::Scenario::OpenDSSPostProcessor.new(scenario_result, 'opendss')
-    #opendss_post_processor.run
+    opendss_post_processor = URBANopt::Scenario::OpenDSSPostProcessor.new(scenario_result, 'opendss')
+    opendss_post_processor.run
 
     ## Add test assertions on scenario_result
     # Check scenario_report JSON file
