@@ -216,7 +216,7 @@ module URBANopt
         ##
         # [parameters]:
         # +file_name+ - _String_ - Assign a name to the saved feature report results file without an extension
-        def save_feature_report(file_name = 'updated_default_feature_report')
+        def save_feature_report(file_name = 'default_feature_report_updated')
           # reassign the initialize local variable @file_name to the file name input.
           @file_name = file_name
 

@@ -109,6 +109,9 @@ module URBANopt
 
         output = CSV.generate do |csv|
           opendss_data.each_with_index do |row, i|
+            if row.include? 'Datetime'
+              row.map {|header| header.prepend('opendss_')}
+            end
             csv << (feature_report_data[i] + row[1..-1])
           end
         end
@@ -144,7 +147,7 @@ module URBANopt
           updated_feature_report = merge_data(@feature_reports_data[id], @opendss_data[id])
 
           # save 
-          save(feature_report, updated_feature_report,'default_feature_report_plus_opendss' )
+          save(feature_report, updated_feature_report,'default_feature_report_updated' )
           
         end
       end
