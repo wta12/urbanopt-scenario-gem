@@ -122,14 +122,49 @@ module URBANopt
 
 
       ##
-      # Save method
+      # Save csv report method
       ##
       # [parameters:]
       # +feature_report+ - _feature report object_ - An onject of the feature report
       # +updated_feature_report_csv+ - _CSV_ - An updated feature report csv
       # +file_name+ - _String_ - Assigned name to save the file with no extension
-      def save(feature_report, updated_feature_report_csv, file_name = 'default_feature_report')
+      def save_csv(feature_report, updated_feature_report_csv, file_name = 'default_feature_report')
         File.write(File.join(feature_report.directory_name,'feature_reports',"#{file_name}.csv"), updated_feature_report_csv)
+      end
+
+
+      ##
+      # create opendss json report results
+      ##
+      # [parameters:]
+      # +feature_report+ - _feature report object_ - An onject of the feature report
+      def add_summary_results(feature_report)
+
+        under_voltage_hrs = 0
+        over_voltage_hrs = 0
+
+        id = feature_report.id
+        @opendss_data[id].each_with_index do |row, i|
+          if !row[1].include? 'voltage'
+            
+            if row[1].to_f > 3
+              over_voltage_hrs += 1
+            end
+
+            if row[1].to_f < 1.5
+              under_voltage_hrs += 1
+            end
+
+          end
+          
+        end
+
+        # assign results to feature report
+        feature_report.power_distribution.over_voltage_hours = over_voltage_hrs
+        feature_report.power_distribution.under_voltage_hours = under_voltage_hrs
+
+        return feature_report
+
       end
 
 
@@ -142,13 +177,18 @@ module URBANopt
           # load data
           load_data()
           
-          # merge data
-          id = feature_report.id
-          updated_feature_report = merge_data(@feature_reports_data[id], @opendss_data[id])
+          # get summary results
+          updated_feature_report = add_summary_results(feature_report)
+          # save reports
+          updated_feature_report.save_feature_report # save summary to the json feature reports
 
-          # save 
-          save(feature_report, updated_feature_report,'default_feature_report_updated' )
-          
+          # merge csv data
+          id = feature_report.id
+          updated_feature_csv = merge_data(@feature_reports_data[id], @opendss_data[id])
+
+          # save csv report
+          save_csv(feature_report, updated_feature_csv,'default_feature_report_updated' )
+
         end
       end
 

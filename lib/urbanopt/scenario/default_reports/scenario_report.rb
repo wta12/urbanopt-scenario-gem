@@ -151,7 +151,7 @@ module URBANopt
           # reassign the initialize local variable @file_name to the file name input.
           @file_name = file_name
 
-          # save the csv data
+          # save the scenario reports csv and json data
           old_timeseries_path = nil
           if !@timeseries_csv.path.nil?
             old_timeseries_path = @timeseries_csv.path
@@ -184,6 +184,12 @@ module URBANopt
           else
             @timeseries_csv.path = File.join(@directory_name, file_name + '.csv')
           end
+
+          # save the feature reports csv and json data
+          @feature_reports.each do |feature_report|
+            feature_report.save_feature_report()
+          end
+
           return true
         end
 

@@ -126,10 +126,10 @@ RSpec.describe URBANopt::Scenario do
     # save scenario result
     $scenario_result.save()
 
-    # save feature reports 
-    $scenario_result.feature_reports.each do |feature_report|
-      feature_report.save_feature_report()
-    end
+    ### save feature reports 
+    # $scenario_result.feature_reports.each do |feature_report|
+    #   feature_report.save_feature_report()
+    # end
 
     ## Add test assertions on scenario_result
     # Check scenario_report JSON file

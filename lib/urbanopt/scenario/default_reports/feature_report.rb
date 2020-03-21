@@ -33,9 +33,10 @@ require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/location'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
-require 'urbanopt/scenario/default_reports/validator'
 require 'urbanopt/scenario/default_reports/distributed_generation'
+require 'urbanopt/scenario/default_reports/power_distribution'
 
+require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
 require 'json'
@@ -52,7 +53,7 @@ module URBANopt
       ##
       class FeatureReport
         attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
-                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation # :nodoc:
+                      :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation, :power_distribution # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
         ##
@@ -84,7 +85,9 @@ module URBANopt
             @reporting_periods << ReportingPeriod.new(rp)
           end
 
-          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
+          @distributed_generation = DistributedGeneration.new(hash[:distributed_generation])
+
+          @power_distribution = PowerDistribution.new(hash[:power_distribution])
 
           # initialize class variables @@validator and @@schema
           @@validator ||= Validator.new
@@ -104,6 +107,8 @@ module URBANopt
           hash[:program] = {}
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
+          hash[:distributed_generation] = {}
+          hash[:power_distribution] = {}
           return hash
         end
 
@@ -203,6 +208,8 @@ module URBANopt
 
           result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
 
+          result[:power_distribution] = @power_distribution.to_hash if @power_distribution
+
           # validate feature_report properties against schema
           if @@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result).any?
             raise "feature_report properties does not match schema: #{@@validator.validate(@@schema[:definitions][:FeatureReport][:properties], result)}"
@@ -232,13 +239,13 @@ module URBANopt
           @timeseries_csv.path = File.join(@directory_name, 'feature_reports', file_name + '.csv')
           @timeseries_csv.save_data
 
-          hash = {}
-          hash[:feature_report] = to_hash
+          # feature_hash
+          feature_hash = to_hash
 
           json_name_path = File.join(@directory_name, 'feature_reports', file_name + '.json')
 
           File.open(json_name_path, 'w') do |f|
-            f.puts JSON.pretty_generate(hash)
+            f.puts JSON.pretty_generate(feature_hash)
             # make sure data is written to the disk one way or the other
             begin
               f.fsync
