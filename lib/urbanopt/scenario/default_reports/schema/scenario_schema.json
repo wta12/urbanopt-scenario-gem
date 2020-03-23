@@ -213,6 +213,9 @@
 				},
 				"distributed_generation": {
 					"$ref": "#/definitions/DistributedGeneration"
+				},
+				"power_distribution": {
+					"$ref": "#/definitions/PowerDistribution"
 				}
 			},
 			"required": [
@@ -834,6 +837,17 @@
 				"column_names"
 			],
 			"additionalProperties": false
+		},
+		"PowerDistribution": {
+			"type": "object",
+			"properties": {
+				"over_voltage_hours": {
+					"type": "number"
+				},
+				"under_voltage_hours": {
+					"type": "number"
+				}
+			}
 		}
 	}
 }

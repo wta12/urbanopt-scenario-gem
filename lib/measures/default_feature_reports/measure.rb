@@ -646,7 +646,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     total_seconds = (60 / timesteps_per_hour.to_f) * 60 # make sure timesteps_per_hour is a float in the division
     total_hours = 1 / timesteps_per_hour.to_f # make sure timesteps_per_hour is a float in the division
     # set power_conversion
-    power_conversion = total_hours
+    power_conversion = total_hours # we set the power conversio to total_hours since we want to convert lWh to kW
     puts "Power Converion: to convert kWh to kW values will be divided by #{power_conversion}"
 
     # number of values in each timeseries
