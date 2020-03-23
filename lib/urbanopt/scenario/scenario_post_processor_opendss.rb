@@ -147,11 +147,11 @@ module URBANopt
         @opendss_data[id].each_with_index do |row, i|
           if !row[1].include? 'voltage'
             
-            if row[1].to_f > 3
+            if row[1].to_f > 1.05
               over_voltage_hrs += 1
             end
 
-            if row[1].to_f < 1.5
+            if row[1].to_f < 0.95
               under_voltage_hrs += 1
             end
 
