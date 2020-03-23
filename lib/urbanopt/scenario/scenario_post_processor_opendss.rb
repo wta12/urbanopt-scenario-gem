@@ -178,9 +178,7 @@ module URBANopt
           load_data()
           
           # get summary results
-          updated_feature_report = add_summary_results(feature_report)
-          # save reports
-          updated_feature_report.save_feature_report # save summary to the json feature reports
+          add_summary_results(feature_report)
 
           # merge csv data
           id = feature_report.id
@@ -190,6 +188,10 @@ module URBANopt
           save_csv(feature_report, updated_feature_csv,'default_feature_report_updated' )
 
         end
+
+        # save the updated scenario reports
+        @scenario_report.save(file_name = 'default_scenario_report_updated')
+
       end
 
 
