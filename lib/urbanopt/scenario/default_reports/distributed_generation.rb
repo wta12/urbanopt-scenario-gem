@@ -108,6 +108,11 @@ module URBANopt
         attr_accessor :total_storage_kw
 
         ##
+        # _Float_ -  Installed storage capacity
+        #
+        attr_accessor :total_storage_kwh
+
+        ##
         # _Float_ -  Installed generator capacity
         #
         attr_accessor :total_generator_kw
