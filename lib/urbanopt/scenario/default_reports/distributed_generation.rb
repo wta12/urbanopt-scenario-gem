@@ -108,6 +108,11 @@ module URBANopt
         attr_accessor :total_storage_kw
 
         ##
+        # _Float_ -  Installed storage capacity
+        #
+        attr_accessor :total_storage_kwh
+
+        ##
         # _Float_ -  Installed generator capacity
         #
         attr_accessor :total_generator_kw
@@ -286,15 +291,15 @@ module URBANopt
             result[:solar_pv].push pv.to_hash
           end
           result[:wind] = []
-          @wind.each do |pv|
+          @wind.each do |wind|
             result[:wind].push wind.to_hash
           end
           result[:generator] = []
-          @generator.each do |pv|
+          @generator.each do |generator|
             result[:generator].push generator.to_hash
           end
           result[:storage] = []
-          @storage.each do |pv|
+          @storage.each do |storage|
             result[:storage].push storage.to_hash
           end
           return result
