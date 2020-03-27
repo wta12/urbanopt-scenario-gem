@@ -186,9 +186,9 @@ module URBANopt
           end
 
           # save the feature reports csv and json data
-          @feature_reports.each do |feature_report|
-            feature_report.save_feature_report()
-          end
+          #@feature_reports.each do |feature_report|
+          #  feature_report.save_feature_report()
+          #end
 
           return true
         end
