@@ -251,7 +251,9 @@ module URBANopt
           # merge the column data
           other.column_names.each do |column_name|
             if !@column_names.include? column_name
-              @column_names.push column_name
+              if !column_name.incude? 'Zone Thermal'
+                @column_names.push column_name
+              end
             end
 
             new_values = other.get_data(column_name)
