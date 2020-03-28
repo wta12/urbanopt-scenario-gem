@@ -72,13 +72,37 @@ module URBANopt
       # load opendss data
       def load_opendss_data()
 
+        # load building features data 
         @scenario_report.feature_reports.each do |feature_report|
           # read results from opendss
           opendss_csv = CSV.read(File.join(@opendss_results_dir,'results','Features', feature_report.id + '.csv'))
           # add results to data 
           @opendss_data[feature_report.id] = opendss_csv
         end
-   
+        
+
+        ## load transformers data
+        
+        # transformers results directory path 
+        tf_results_path = File.join(@opendss_results_dir,'results','Transformers')
+
+        # get transformer ids
+        transformer_ids = []
+        Dir.entries("#{tf_results_path}").select do |f| 
+          if !File.directory? f
+            fn = File.basename(f, ".csv")
+            transformer_ids << fn
+          end
+        end
+
+        # add transformer results to @opendss_data
+        transformer_ids.each do |id|
+          # read results from transformers
+          transformer_csv = CSV.read(File.join(tf_results_path, id + '.csv'))
+          # add results to data 
+          @opendss_data[id] = transformer_csv
+        end
+
       end
 
 
@@ -119,6 +143,84 @@ module URBANopt
         return output
         
       end
+
+      # add feature reports for transformers
+      def save_transformers_reports()
+
+        @opendss_data.keys.each do |k|
+          
+          if k.include? 'Transformer'
+
+            # create transformer directory
+            transformer_dir = File.join(@scenario_report.directory_name, k)
+            FileUtils.mkdir_p(File.join(transformer_dir,'feature_reports'))
+
+            # write data to csv
+            # store under voltages and over voltages
+            under_voltage_hrs = 0
+            over_voltage_hrs = 0
+
+            transformer_csv = CSV.generate do |csv|
+              @opendss_data[k].each_with_index do |row, i|
+                
+                csv << row
+                
+                if !row[1].include? 'loading'
+                  if row[1].to_f > 1.05
+                    over_voltage_hrs += 1
+                  end
+      
+                  if row[1].to_f < 0.95
+                    under_voltage_hrs += 1
+                  end
+                end
+
+              end
+            end
+
+            # save transformer CSV report
+            File.write(File.join(transformer_dir,'feature_reports', 'default_feature_report_opendss' + '.csv'), transformer_csv)
+
+
+            # create transformer report
+            transformer_report = URBANopt::Scenario::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir ,
+                                                                                         timesteps_per_hour: @scenario_report.timesteps_per_hour, 
+                                                                                        simulation_status: 'complete' )
+
+            # assign results to transfomrer report
+            transformer_report.power_distribution.over_voltage_hours = over_voltage_hrs
+            transformer_report.power_distribution.under_voltage_hours = under_voltage_hrs
+            
+            ## save transformer JSON file
+            # transformer_hash
+            transformer_hash = transformer_report.to_hash
+            #transformer_hash.delete_if { |k, v| v.nil? }
+
+            json_name_path = File.join(transformer_dir, 'feature_reports', 'default_feature_report_opendss' + '.json')
+            
+            # save the json file
+            File.open(json_name_path, 'w') do |f|
+              f.puts JSON.pretty_generate(transformer_hash)
+              # make sure data is written to the disk one way or the other
+              begin
+                f.fsync
+              rescue StandardError
+                f.flush
+              end
+            end
+
+
+            # add transformers reports to scenario_report
+            @scenario_report.feature_reports << transformer_report
+
+
+          end
+
+        end
+
+      end
+
+
 
 
       ##
@@ -176,6 +278,8 @@ module URBANopt
 
           # load data
           load_data()
+
+          #puts " @opendss data = #{@opendss_data}"
           
           # get summary results
           add_summary_results(feature_report)
@@ -192,8 +296,12 @@ module URBANopt
 
         end
 
+       # add transformer reports
+       save_transformers_reports()
+
         # save the updated scenario reports
         @scenario_report.save(file_name = 'scenario_report_opendss')
+
 
       end
 
