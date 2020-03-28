@@ -768,7 +768,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                 newVals[j] = (values[tsToKeepIndexes['Electricity:Facility']][j].to_f - values[tsToKeepIndexes['ElectricityProduced:Facility']][j].to_f) / power_conversion / powerFactor
                 j += 1
               end
-              new_unit = 'kW'
+              new_unit = 'kVA'
             elsif timeseries_name.include? 'Net Electric Energy'
               (0..n - 1).each do |j|
                 newVals[j] = (values[tsToKeepIndexes['Electricity:Facility']][j].to_f - values[tsToKeepIndexes['ElectricityProduced:Facility']][j].to_f)
@@ -798,7 +798,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                     newVals[j] = values[indexValue][j].to_f / power_conversion / powerFactor
                     j += 1
                   end
-                  new_unit = 'kW'
+                  new_unit = 'kVA'
                 else
                   # Power calculation
                   (0..n - 1).each do |j|
