@@ -89,16 +89,13 @@ module URBANopt
           return result
         end
 
-
         ##
         # Merges muliple power distribution results together.
         ##
         # +new_costs+ - _Array_ - An array of ConstructionCost objects.
         def merge_power_distribition
-            # method to be developed for any attributes to be aggregated or merged
+          # method to be developed for any attributes to be aggregated or merged
         end
-
-
       end
     end
   end
