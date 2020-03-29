@@ -183,7 +183,7 @@ module URBANopt
 
 
             # create transformer report
-            transformer_report = URBANopt::Scenario::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir ,
+            transformer_report = URBANopt::Scenario::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir , feature_type: 'Transformer',
                                                                                          timesteps_per_hour: @scenario_report.timesteps_per_hour, 
                                                                                         simulation_status: 'complete' )
 
