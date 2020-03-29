@@ -40,7 +40,8 @@ Accepted Pull Requests:
 - Fixed [#106]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/106 ), bug fixes
 - Fixed [#107]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/107 ), bug fixes to timeseries csv
 - Fixed [#109]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/109 ), only specify Rack version once
-- Fixed [#110]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/110 ), saving transformer features CSV and JSON reports
+- Fixed [#110]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/110 ), save transformer features CSV and JSON reports
+- Fixed [#111]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/111 ), prep for 0.2.0 release
 
 
 
