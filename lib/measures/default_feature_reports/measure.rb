@@ -174,6 +174,17 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Gas:Facility,#{reporting_frequency};").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,DistrictCooling:Facility,#{reporting_frequency};").get
     result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,DistrictHeating:Facility,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Cooling:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Heating:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,InteriorLights:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,ExteriorLights:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,InteriorEquipment:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Fans:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Pumps:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,WaterSystems:Electricity,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Heating:Gas,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,WaterSystems:Gas,#{reporting_frequency};").get
+    # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,InteriorEquipment:Gas,#{reporting_frequency};").get
 
     timeseries_data = ['District Cooling Chilled Water Rate', 'District Cooling Mass Flow Rate',
                        'District Cooling Inlet Temperature', 'District Cooling Outlet Temperature',
@@ -608,6 +619,17 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'Electricity:Facility',
       'ElectricityProduced:Facility',
       'Gas:Facility',
+      'Cooling:Electricity',
+      'Heating:Electricity',
+      'InteriorLights:Electricity',
+      'ExteriorLights:Electricity',
+      'InteriorEquipment:Electricity',
+      'Fans:Electricity',
+      'Pumps:Electricity',
+      'WaterSystems:Electricity',
+      'Heating:Gas',
+      'WaterSystems:Gas',
+      'InteriorEquipment:Gas',
       'DistrictCooling:Facility',
       'DistrictHeating:Facility',
       'District Cooling Chilled Water Rate',
@@ -646,7 +668,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     total_seconds = (60 / timesteps_per_hour.to_f) * 60 # make sure timesteps_per_hour is a float in the division
     total_hours = 1 / timesteps_per_hour.to_f # make sure timesteps_per_hour is a float in the division
     # set power_conversion
-    power_conversion = total_hours
+    power_conversion = total_hours # we set the power conversio to total_hours since we want to convert lWh to kW
     puts "Power Converion: to convert kWh to kW values will be divided by #{power_conversion}"
 
     # number of values in each timeseries
@@ -768,7 +790,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                 newVals[j] = (values[tsToKeepIndexes['Electricity:Facility']][j].to_f - values[tsToKeepIndexes['ElectricityProduced:Facility']][j].to_f) / power_conversion / powerFactor
                 j += 1
               end
-              new_unit = 'kW'
+              new_unit = 'kVA'
             elsif timeseries_name.include? 'Net Electric Energy'
               (0..n - 1).each do |j|
                 newVals[j] = (values[tsToKeepIndexes['Electricity:Facility']][j].to_f - values[tsToKeepIndexes['ElectricityProduced:Facility']][j].to_f)
@@ -798,7 +820,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                     newVals[j] = values[indexValue][j].to_f / power_conversion / powerFactor
                     j += 1
                   end
-                  new_unit = 'kW'
+                  new_unit = 'kVA'
                 else
                   # Power calculation
                   (0..n - 1).each do |j|

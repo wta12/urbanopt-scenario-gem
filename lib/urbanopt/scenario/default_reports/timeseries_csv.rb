@@ -87,7 +87,8 @@ module URBANopt
           File.readlines(scenario_csv_schema).each do |line|
             l = line.delete("\n")
             a = l.delete("\t")
-            scenario_csv_schema_headers << a
+            r = a.delete("\r")
+            scenario_csv_schema_headers << r
           end
           return scenario_csv_schema_headers
         end
@@ -152,7 +153,11 @@ module URBANopt
                 end
               else
                 row.each_with_index do |value, i|
-                  @data[@column_names[i]] << value.to_f
+                  if i == 0
+                    @data[@column_names[i]] << value
+                  else
+                    @data[@column_names[i]] << value.to_f
+                  end
                 end
               end
             end
@@ -204,6 +209,7 @@ module URBANopt
           if path.nil?
             path = @path
           end
+
           File.open(path, 'w') do |f|
             f.puts @column_names.join(',')
             n = @data[@column_names[0]].size - 1
@@ -246,35 +252,44 @@ module URBANopt
           end
 
           # merge the column names
-          @column_names = @column_names.concat(other.column_names).uniq
+          other_column_names = []
+          other.column_names.each do |n|
+            if !n[0, 4].casecmp('ZONE').zero?
+              other_column_names << n
+            end
+          end
+
+          @column_names = @column_names.concat(other_column_names).uniq
 
           # merge the column data
           other.column_names.each do |column_name|
-            if !@column_names.include? column_name
-              @column_names.push column_name
-            end
-
-            new_values = other.get_data(column_name)
-
-            if @data.nil?
-              @data = {}
-            end
-
-            current_values = @data[column_name]
-
-            if current_values
-              if current_values.size != new_values.size
-                raise 'Values of different sizes in add_timeseries_csv'
+            if !column_name[0, 4].casecmp('ZONE').zero?
+              if !@column_names.include? column_name
+                @column_names.push column_name
               end
-              new_values.each_with_index do |value, i|
-                # aggregate all columns except Datime column
-                if column_name != 'Datetime'
-                  new_values[i] = value.to_f + current_values[i].to_f
+
+              new_values = other.get_data(column_name)
+
+              if @data.nil?
+                @data = {}
+              end
+
+              current_values = @data[column_name]
+
+              if current_values
+                if current_values.size != new_values.size
+                  raise 'Values of different sizes in add_timeseries_csv'
                 end
+                new_values.each_with_index do |value, i|
+                  # aggregate all columns except Datime column
+                  if column_name != 'Datetime'
+                    new_values[i] = value.to_f + current_values[i].to_f
+                  end
+                end
+                @data[column_name] = new_values
+              else
+                @data[column_name] = new_values
               end
-              @data[column_name] = new_values
-            else
-              @data[column_name] = new_values
             end
           end
         end

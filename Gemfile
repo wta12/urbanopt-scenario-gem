@@ -40,6 +40,3 @@ end
 
 # simplecov has an unnecessary dependency on native json gem, use fork that does not require this
 gem 'simplecov', github: 'NREL/simplecov'
-
-# Fix rack version temporarily to work with Ruby 2.2.4
-gem 'rack', '2.1.2'
