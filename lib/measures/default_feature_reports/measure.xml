@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>607df4a0-d1ff-4c14-8d2f-93cde078dc47</version_id>
-  <version_modified>20200308T020104Z</version_modified>
+  <version_id>dcf043ff-d992-4835-893d-8658a6365eb3</version_id>
+  <version_modified>20200329T155122Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -137,7 +137,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DC29E5E6</checksum>
+      <checksum>DF6AAD06</checksum>
     </file>
   </files>
 </measure>

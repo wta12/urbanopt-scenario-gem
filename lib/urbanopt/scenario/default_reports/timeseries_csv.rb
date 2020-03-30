@@ -254,7 +254,7 @@ module URBANopt
           # merge the column names
           other_column_names = []
           other.column_names.each do |n|
-            if !(n[0,4].upcase =='ZONE')
+            if !n[0, 4].casecmp('ZONE').zero?
               other_column_names << n
             end
           end
@@ -263,7 +263,7 @@ module URBANopt
 
           # merge the column data
           other.column_names.each do |column_name|
-            if !(column_name[0,4].upcase =='ZONE')
+            if !column_name[0, 4].casecmp('ZONE').zero?
               if !@column_names.include? column_name
                 @column_names.push column_name
               end

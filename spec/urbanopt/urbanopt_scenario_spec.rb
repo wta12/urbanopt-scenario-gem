@@ -124,12 +124,10 @@ RSpec.describe URBANopt::Scenario do
     $scenario_result = default_post_processor.run
 
     # save scenario result
-    $scenario_result.save()
+    $scenario_result.save
 
-    ### save feature reports 
-    $scenario_result.feature_reports.each do |feature_report|
-      feature_report.save_feature_report()
-    end
+    ### save feature reports
+    $scenario_result.feature_reports.each(&:save_feature_report)
 
     ## Add test assertions on scenario_result
     # Check scenario_report JSON file
@@ -205,14 +203,14 @@ RSpec.describe URBANopt::Scenario do
 
     # read scenario csv schema headers
     scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
-    
+
     scenario_csv_schema_headers = []
     File.readlines(scenario_csv_schema).each do |line|
       l = line.delete("\n")
       a = l.delete("\t")
       scenario_csv_schema_headers << a
     end
-    
+
     # rubocop: enable Security/Open
 
     expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
@@ -228,7 +226,6 @@ RSpec.describe URBANopt::Scenario do
   end
 
   it 'can integrate opendss results' do
-
     # generate opendssreults for testing
     opendss_results_source = File.join(File.dirname(__FILE__), '../files/opendss_outputs/')
     opendss_results_destination = File.join(File.dirname(__FILE__), '../test/example_scenario')
@@ -236,8 +233,6 @@ RSpec.describe URBANopt::Scenario do
     # post_process opendss results
     opendss_post_processor = URBANopt::Scenario::OpenDSSPostProcessor.new($scenario_result, 'opendss')
     opendss_post_processor.run
-
   end
-
 end
 # rubocop:enable Metrics/BlockLength
