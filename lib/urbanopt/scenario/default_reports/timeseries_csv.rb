@@ -87,7 +87,8 @@ module URBANopt
           File.readlines(scenario_csv_schema).each do |line|
             l = line.delete("\n")
             a = l.delete("\t")
-            scenario_csv_schema_headers << a
+            r = a.delete("\r")
+            scenario_csv_schema_headers << r
           end
           return scenario_csv_schema_headers
         end
