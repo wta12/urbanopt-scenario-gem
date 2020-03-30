@@ -1,11 +1,31 @@
 # URBANopt Scenario Gem
 
 ## Version 0.2.0
- 
+
+
 Date Range: 01/15/20 - 03/30/20:
 
-Accepted Pull Requests:
+Closed Issues: 18
+- Fixed [#27]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/27 ), FeatureReports are not initialized with location information. Also, location is not in the attr_accessor.
+- Fixed [#38]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/38 ), Write documentation on how to configure ScenarioRunner to run multiple OSWs in parallel
+- Fixed [#42]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/42 ), Scenario Report Instantiation from Hash
+- Fixed [#43]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/43 ), Add timestep column to timeseries csv or add start and end timestep to feature and scenario reports
+- Fixed [#46]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/46 ), add Validator class
+- Fixed [#52]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/52 ), create a save as method that takes a file name
+- Fixed [#53]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/53 ), Remove travis files from repo
+- Fixed [#54]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/54 ), Add constraint on the versions of ruby in the gemspec file
+- Fixed [#56]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/56 ), Add folder for mapper csv files
+- Fixed [#57]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/57 ), Add description on the main page of repo (at the top)
+- Fixed [#59]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/59 ), figure out how UrbanOpt will select tariff structure for REopt
+- Fixed [#74]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/74 ), Update copyrights
+- Fixed [#75]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/75 ), make github_api a development dependency
+- Fixed [#82]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/82 ), Basic construction cost support
+- Fixed [#84]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/84 ), Create method to save feature reports
+- Fixed [#95]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/95 ), list datapoint failures
+- Fixed [#103]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/103 ), OpenDSS postprocessor to aggregate outputs back into feature and scenario reports
+- Fixed [#108]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/108 ), Rack version should only be specified once
 
+Accepted Pull Requests: 35
 - Fixed [#58]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/58 ), post process results
 - Fixed [#65]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/65 ), make default timeseries csv for scenario; update adding feature times…
 - Fixed [#67]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/67 ), update vuepress version
@@ -42,7 +62,7 @@ Accepted Pull Requests:
 - Fixed [#109]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/109 ), only specify Rack version once
 - Fixed [#110]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/110 ), save transformer features CSV and JSON reports
 - Fixed [#111]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/111 ), prep for 0.2.0 release
-
+- Fixed [#112]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/112 ), added additional timeseries results to CSV reports
 
 
 ## Version 0.1.1
