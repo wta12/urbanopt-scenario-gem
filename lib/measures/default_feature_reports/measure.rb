@@ -762,11 +762,12 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                           'm3'
                       end
         end
+        
         # loop through each value and apply unit conversion
         os_vec = values[key_cnt]
         if !timeseries_name.include? 'Zone Thermal Comfort'
           for i in 0..os_vec.length - 1
-            unless new_unit == old_unit || !ts.is_initialized
+            unless new_unit == old_unit || !ts.is_initialized || os_vec[i].nil? || os_vec[i] == 0
               os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
             end
           end
