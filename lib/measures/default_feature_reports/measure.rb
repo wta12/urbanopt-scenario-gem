@@ -768,9 +768,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         if !timeseries_name.include? 'Zone Thermal Comfort'
           for i in 0..os_vec.length - 1
 
-          unless new_unit == old_unit || old_unit.nil?  || new_unit.nil? || !ts.is_initialized || os_vec[i].nil?
-            os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
+            unless new_unit == old_unit || old_unit.nil?  || new_unit.nil? || !ts.is_initialized
+              os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
             end
+
           end
         end
 
