@@ -30,11 +30,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'json-schema'
   spec.add_dependency 'json_pure'
-  spec.add_dependency 'openstudio-model-articulation', '~> 0.1.1'
-  spec.add_dependency 'urbanopt-core', '~> 0.2.0'
+  spec.add_dependency 'openstudio-common-measures', '~> 0.2.0'
+  spec.add_dependency 'openstudio-model-articulation', '~> 0.2.0'
+  spec.add_dependency 'urbanopt-core', '~> 0.3.0.pre1'
 
   # lock the version of these dependencies due to using older version of Ruby.
   spec.add_dependency 'public_suffix', '3.1.1'
-  spec.add_development_dependency 'rack', '2.1.2'
+  #spec.add_development_dependency 'rack', '2.1.2'
   
 end
