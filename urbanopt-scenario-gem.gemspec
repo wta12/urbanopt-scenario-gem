@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'urbanopt-core', '~> 0.3.0.pre2'
 
   # lock the version of these dependencies due to using older version of Ruby.
-  #spec.add_dependency 'public_suffix', '3.1.1'
-  #spec.add_development_dependency 'rack', '2.1.2'
-  
+  # spec.add_dependency 'public_suffix', '3.1.1'
+  # spec.add_development_dependency 'rack', '2.1.2'
 end
