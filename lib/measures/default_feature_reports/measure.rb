@@ -185,12 +185,15 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Heating:Gas,#{reporting_frequency};").get
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,WaterSystems:Gas,#{reporting_frequency};").get
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,InteriorEquipment:Gas,#{reporting_frequency};").get
+    result << OpenStudio::IdfObject.load("Output:Variable,*,Heating Coil Heating Rate,hourly; !- HVAC Average [W];").get
 
     timeseries_data = ['District Cooling Chilled Water Rate', 'District Cooling Mass Flow Rate',
                        'District Cooling Inlet Temperature', 'District Cooling Outlet Temperature',
                        'District Heating Hot Water Rate', 'District Heating Mass Flow Rate',
-                       'District Heating Inlet Temperature', 'District Heating Outlet Temperature']
+                       'District Heating Inlet Temperature', 'District Heating Outlet Temperature','Cooling Coil Total Cooling Rate',
+                       'Heating Coil Heating Rate']
 
+                       
     timeseries_data.each do |ts|
       result << OpenStudio::IdfObject.load("Output:Variable,*,#{ts},#{reporting_frequency};").get
     end
@@ -652,7 +655,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'District Heating Hot Water Rate',
       'District Heating Mass Flow Rate',
       'District Heating Inlet Temperature',
-      'District Heating Outlet Temperature'
+      'District Heating Outlet Temperature', 
+      'Cooling Coil Total Cooling Rate',
+      'Heating Coil Heating Rate'
     ]
 
     # add thermal comfort timeseries
@@ -773,15 +778,20 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                           'kWh'
                         when 'gal'
                           'm3'
+                        when 'W'
+                          'W'
                       end
         end
+        
         # loop through each value and apply unit conversion
         os_vec = values[key_cnt]
         if !timeseries_name.include? 'Zone Thermal Comfort'
           for i in 0..os_vec.length - 1
-            unless new_unit == old_unit || !ts.is_initialized
+
+            unless new_unit == old_unit || old_unit.nil?  || new_unit.nil? || !ts.is_initialized
               os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
             end
+
           end
         end
 
@@ -927,8 +937,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     datetimes = []
     # check what timeseries is available
     available_ts = sql_file.availableTimeSeries
+
     # get the timeseries for any of available timeseries
-    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
+    # RK: code enhancement needed
+    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[2], '')
+      
     timeseries_d = ts_d.get
     # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
@@ -938,6 +951,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     values.insert(0, datetimes)
     # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
+
 
     # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
