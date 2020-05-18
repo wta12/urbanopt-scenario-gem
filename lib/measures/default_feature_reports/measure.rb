@@ -586,6 +586,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     photovoltaic_power = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Electric Loads Satisfied' AND RowName='Photovoltaic Power' AND ColumnName='Electricity'")
     feature_report.reporting_periods[0].energy_production[:electricity_produced][:photovoltaic] = convert_units(photovoltaic_power, 'GJ', 'kBtu')
 
+    ## Total utility cost
+    total_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Total'")
+    feature_report.reporting_periods[0].total_utility_cost = total_utility_cost 
+    
+    ## Utility Costs
+    # electricity utility cost
+    elec_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Electric'")
+    feature_report.reporting_periods[0].utility_costs[0][:fuel_type] = 'Electricity'
+    feature_report.reporting_periods[0].utility_costs[0][:total_cost] = elec_utility_cost
+    # gas utility cost
+    gas_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Gas'")
+    feature_report.reporting_periods[0].utility_costs << {:fuel_type => 'Natural Gas', :total_cost => gas_utility_cost}
+    
     ## comfort_result
     # time_setpoint_not_met_during_occupied_cooling
     time_setpoint_not_met_during_occupied_cooling = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Cooling' AND ColumnName='Facility'")
