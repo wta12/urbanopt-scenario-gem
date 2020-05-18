@@ -43,14 +43,14 @@ module URBANopt
       ##
       class ReportingPeriod
         attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy,
-                      :net_site_energy, :net_source_energy, :net_utility_cost, :electricity, :natural_gas, :additional_fuel, :district_cooling,
-                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, :utility_costs,
+                      :net_site_energy, :net_source_energy, :total_utility_cost, :net_utility_cost, :utility_costs, :electricity, :natural_gas, :additional_fuel, :district_cooling,
+                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, 
                       :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
                       :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours, :hours_out_of_comfort_bounds_PMV, :hours_out_of_comfort_bounds_PPD #:nodoc:
         # ReportingPeriod class initializes the reporting period attributes:
         # +:id+ , +:name+ , +:multiplier+ , +:start_date+ , +:end_date+ , +:month+ , +:day_of_month+ , +:year+ , +:total_site_energy+ , +:total_source_energy+ ,
-        # +:net_site_energy+ , +:net_source_energy+ , +:net_utility_cost+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
-        # +:district_heating+ , +:water+ , +:electricity_produced+ , +:end_uses+ , +:energy_production+ , +:photovoltaic+ , +:utility_costs+ ,
+        # +:net_site_energy+ , +:net_source_energy+ , +:total_utility_cost , +:net_utility_cost+ , +:utility_costs+ , +:electricity+ , +:natural_gas+ , +:additional_fuel+ , +:district_cooling+ ,
+        # +:district_heating+ , +:water+ , +:electricity_produced+ , +:end_uses+ , +:energy_production+ , +:photovoltaic+ ,
         # +:fuel_type+ , +:total_cost+ , +:usage_cost+ , +:demand_cost+ , +:comfort_result+ , +:time_setpoint_not_met_during_occupied_cooling+ ,
         # +:time_setpoint_not_met_during_occupied_heating+ , +:time_setpoint_not_met_during_occupied_hours+
         ##
@@ -72,6 +72,7 @@ module URBANopt
           @net_site_energy = hash [:net_site_energy]
           @net_source_energy = hash [:net_source_energy]
           @net_utility_cost = hash [:net_utility_cost]
+          @total_utility_cost = hash [:total_utility_cost]
           @electricity = hash [:electricity]
           @natural_gas = hash [:natural_gas]
           @additional_fuel = hash [:additional_fuel]
@@ -109,6 +110,7 @@ module URBANopt
           hash [:net_site_energy] = nil
           hash [:net_source_energy] = nil
           hash [:net_utility_cost] = nil
+          hash [:total_utility_cost] = nil
           hash [:electricity] = nil
           hash [:natural_gas] = nil
           hash [:additional_fuel] = nil
@@ -144,6 +146,7 @@ module URBANopt
           result[:net_site_energy] = @net_site_energy if @net_site_energy
           result[:net_source_energy] = @net_source_energy if @net_source_energy
           result[:net_utility_cost] = @net_utility_cost if @net_utility_cost
+          result[:total_utility_cost] = @total_utility_cost if @total_utility_cost
           result[:electricity] = @electricity if @electricity
           result[:natural_gas] = @natural_gas if @natural_gas
           result[:additional_fuel] = @additional_fuel if @additional_fuel
@@ -212,6 +215,7 @@ module URBANopt
           existing_period.total_source_energy = add_values(existing_period.total_source_energy, new_period.total_source_energy)
           existing_period.net_source_energy = add_values(existing_period.net_source_energy, new_period.net_source_energy)
           existing_period.net_utility_cost = add_values(existing_period.net_utility_cost, new_period.net_utility_cost)
+          existing_period.total_utility_cost = add_values(existing_period.total_utility_cost, new_period.total_utility_cost)
           existing_period.electricity = add_values(existing_period.electricity, new_period.electricity)
           existing_period.natural_gas = add_values(existing_period.natural_gas, new_period.natural_gas)
           existing_period.additional_fuel = add_values(existing_period.additional_fuel, new_period.additional_fuel)
@@ -231,9 +235,9 @@ module URBANopt
           end
 
           if existing_period.utility_costs
-
+            #RK: this need to be updated
             existing_period.utility_costs.each_with_index do |item, i|
-              existing_period.utility_costs[i][:fuel_type] = add_values(existing_period.utility_costs[i][:fuel_type], new_period.utility_costs[i][:fuel_type])
+              existing_period.utility_costs[i][:fuel_type] = existing_period.utility_costs[i][:fuel_type]
               existing_period.utility_costs[i][:total_cost] = add_values(existing_period.utility_costs[i][:total_cost], new_period.utility_costs[i][:total_cost])
               existing_period.utility_costs[i][:usage_cost] = add_values(existing_period.utility_costs[i][:usage_cost], new_period.utility_costs[i][:usage_cost])
               existing_period.utility_costs[i][:demand_cost] = add_values(existing_period.utility_costs[i][:demand_cost], new_period.utility_costs[i][:demand_cost])
