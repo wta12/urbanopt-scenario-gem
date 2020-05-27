@@ -703,6 +703,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # rubocop: disable Metrics/BlockLength
     requested_timeseries_names.each_index do |i|
       timeseries_name = requested_timeseries_names[i]
+      puts " *********timeseries_name = #{timeseries_name}******************"
       runner.registerInfo("TIMESERIES: #{timeseries_name}")
 
       # get all the key values that this timeseries can be reported for (e.g. if PMV is requested for each zone)
@@ -863,7 +864,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         final_timeseries_names << new_timeseries_name
 
         # TODO: DELETE PUTS
-        puts " *********timeseries_name = #{timeseries_name}******************"
+        # puts " *********timeseries_name = #{timeseries_name}******************"
         # if timeseries_name.include? 'Power'
         #   puts "values = #{values[key_cnt]}"
         #   puts "units = #{new_unit}"
@@ -948,7 +949,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     elsif ts_d_g.is_initialized
       timeseries_d = ts_d_g.get
     else 
-      print "#######EERROR no initiaized results"
+      raise "ELECTRICITY and GAS results are not initiaized"
     end
     # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
