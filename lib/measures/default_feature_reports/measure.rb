@@ -863,7 +863,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         final_timeseries_names << new_timeseries_name
 
         # TODO: DELETE PUTS
-        # puts " *********timeseries_name = #{timeseries_name}******************"
+        puts " *********timeseries_name = #{timeseries_name}******************"
         # if timeseries_name.include? 'Power'
         #   puts "values = #{values[key_cnt]}"
         #   puts "units = #{new_unit}"
@@ -937,11 +937,12 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     datetimes = []
     # check what timeseries is available
     available_ts = sql_file.availableTimeSeries
-
+    puts "####### available_ts = #{available_ts}"
     # get the timeseries for any of available timeseries
     # RK: code enhancement needed
-    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[2], '')
-      
+    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
+    puts "########### ts_d = #{ts_d}"
+
     timeseries_d = ts_d.get
     # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
