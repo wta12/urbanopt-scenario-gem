@@ -940,10 +940,16 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     puts "####### available_ts = #{available_ts}"
     # get the timeseries for any of available timeseries
     # RK: code enhancement needed
-    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[0], '')
-    puts "########### ts_d = #{ts_d}"
+    ts_d_e = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, 'Electricity:Facility', '')
+    ts_d_g = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, 'Gas:Facility', '')
 
-    timeseries_d = ts_d.get
+    if ts_d_e.is_initialized
+      timeseries_d = ts_d_e.get
+    elsif ts_d_g.is_initialized
+      timeseries_d = ts_d_g.get
+    else 
+      print "#######EERROR no initiaized results"
+    end
     # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
       datetimes << format_datetime(datetime.to_s)
