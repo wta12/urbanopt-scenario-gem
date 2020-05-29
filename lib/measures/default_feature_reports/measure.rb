@@ -643,6 +643,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'Fans:Electricity',
       'Pumps:Electricity',
       'WaterSystems:Electricity',
+      'HeatRejection:Electricity',
+      'HeatRejection:Gas',
       'Heating:Gas',
       'WaterSystems:Gas',
       'InteriorEquipment:Gas',
