@@ -32,8 +32,6 @@ require_relative '../spec_helper'
 require_relative '../files/example_feature_file'
 require 'json'
 require 'json-schema'
-
-# rubocop: disable Metrics/BlockLength
 RSpec.describe URBANopt::Scenario do
   it 'has a version number' do
     expect(URBANopt::Scenario::VERSION).not_to be nil

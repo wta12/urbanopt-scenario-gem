@@ -185,15 +185,14 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,Heating:Gas,#{reporting_frequency};").get
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,WaterSystems:Gas,#{reporting_frequency};").get
     # result << OpenStudio::IdfObject.load("Output:Meter:MeterFileOnly,InteriorEquipment:Gas,#{reporting_frequency};").get
-    result << OpenStudio::IdfObject.load("Output:Variable,*,Heating Coil Heating Rate,hourly; !- HVAC Average [W];").get
+    result << OpenStudio::IdfObject.load('Output:Variable,*,Heating Coil Heating Rate,hourly; !- HVAC Average [W];').get
 
     timeseries_data = ['District Cooling Chilled Water Rate', 'District Cooling Mass Flow Rate',
                        'District Cooling Inlet Temperature', 'District Cooling Outlet Temperature',
                        'District Heating Hot Water Rate', 'District Heating Mass Flow Rate',
-                       'District Heating Inlet Temperature', 'District Heating Outlet Temperature','Cooling Coil Total Cooling Rate',
+                       'District Heating Inlet Temperature', 'District Heating Outlet Temperature', 'Cooling Coil Total Cooling Rate',
                        'Heating Coil Heating Rate']
 
-                       
     timeseries_data.each do |ts|
       result << OpenStudio::IdfObject.load("Output:Variable,*,#{ts},#{reporting_frequency};").get
     end
@@ -588,8 +587,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     ## Total utility cost
     total_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Total'")
-    feature_report.reporting_periods[0].total_utility_cost = total_utility_cost 
-    
+    feature_report.reporting_periods[0].total_utility_cost = total_utility_cost
+
     ## Utility Costs
     # electricity utility cost
     elec_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Electric'")
@@ -597,8 +596,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.reporting_periods[0].utility_costs[0][:total_cost] = elec_utility_cost
     # gas utility cost
     gas_utility_cost = sql_query(runner, sql_file, 'Economics Results Summary Report', "TableName='Annual Cost' AND RowName='Cost' AND ColumnName='Gas'")
-    feature_report.reporting_periods[0].utility_costs << {:fuel_type => 'Natural Gas', :total_cost => gas_utility_cost}
-    
+    feature_report.reporting_periods[0].utility_costs << { fuel_type: 'Natural Gas', total_cost: gas_utility_cost }
+
     ## comfort_result
     # time_setpoint_not_met_during_occupied_cooling
     time_setpoint_not_met_during_occupied_cooling = sql_query(runner, sql_file, 'AnnualBuildingUtilityPerformanceSummary', "TableName='Comfort and Setpoint Not Met Summary' AND RowName='Time Setpoint Not Met During Occupied Cooling' AND ColumnName='Facility'")
@@ -643,6 +642,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'Fans:Electricity',
       'Pumps:Electricity',
       'WaterSystems:Electricity',
+      'HeatRejection:Electricity',
+      'HeatRejection:Gas',
       'Heating:Gas',
       'WaterSystems:Gas',
       'InteriorEquipment:Gas',
@@ -655,7 +656,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       'District Heating Hot Water Rate',
       'District Heating Mass Flow Rate',
       'District Heating Inlet Temperature',
-      'District Heating Outlet Temperature', 
+      'District Heating Outlet Temperature',
       'Cooling Coil Total Cooling Rate',
       'Heating Coil Heating Rate'
     ]
@@ -700,9 +701,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     final_timeseries_names = []
 
     # loop over requested timeseries
-    # rubocop: disable Metrics/BlockLength
     requested_timeseries_names.each_index do |i|
       timeseries_name = requested_timeseries_names[i]
+      puts " *********timeseries_name = #{timeseries_name}******************"
       runner.registerInfo("TIMESERIES: #{timeseries_name}")
 
       # get all the key values that this timeseries can be reported for (e.g. if PMV is requested for each zone)
@@ -782,13 +783,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                           'W'
                       end
         end
-        
+
         # loop through each value and apply unit conversion
         os_vec = values[key_cnt]
         if !timeseries_name.include? 'Zone Thermal Comfort'
           for i in 0..os_vec.length - 1
 
-            unless new_unit == old_unit || old_unit.nil?  || new_unit.nil? || !ts.is_initialized
+            unless new_unit == old_unit || old_unit.nil? || new_unit.nil? || !ts.is_initialized
               os_vec[i] = OpenStudio.convert(os_vec[i], old_unit, new_unit).get
             end
 
@@ -937,12 +938,19 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     datetimes = []
     # check what timeseries is available
     available_ts = sql_file.availableTimeSeries
-
+    puts "####### available_ts = #{available_ts}"
     # get the timeseries for any of available timeseries
     # RK: code enhancement needed
-    ts_d = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, available_ts[2], '')
-      
-    timeseries_d = ts_d.get
+    ts_d_e = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, 'Electricity:Facility', '')
+    ts_d_g = sql_file.timeSeries(ann_env_pd.to_s, reporting_frequency.to_s, 'Gas:Facility', '')
+
+    if ts_d_e.is_initialized
+      timeseries_d = ts_d_e.get
+    elsif ts_d_g.is_initialized
+      timeseries_d = ts_d_g.get
+    else
+      raise 'ELECTRICITY and GAS results are not initiaized'
+    end
     # get formated datetimes
     timeseries_d.dateTimes.each do |datetime|
       datetimes << format_datetime(datetime.to_s)
@@ -951,7 +959,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     values.insert(0, datetimes)
     # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
-
 
     # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
