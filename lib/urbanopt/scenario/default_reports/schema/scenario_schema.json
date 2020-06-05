@@ -273,9 +273,19 @@
 					"description": "Net source energy (kBtu)",
 					"type": "number"
 				},
-				"net_utility_cost": {
-					"description": "Total utility cost for reporting period includes generation",
+				"total_utility_cost": {
+					"description": "Total utility cost",
 					"type": "number"
+				},
+				"net_utility_cost": {
+					"description": "Net utility cost for reporting period includes generation",
+					"type": "number"
+				},
+				"utility_costs": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/UtilityCost"
+					}
 				},
 				"electricity": {
 					"description": "Sum of all electricity used, does not include electricity produced (kWh)",
@@ -323,12 +333,6 @@
 						}
 					},
 					"additionalProperties": false
-				},
-				"utility_costs": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/UtilityCost"
-					}
 				},
 				"comfort_result": {
 					"$ref": "#/definitions/ComfortResult"

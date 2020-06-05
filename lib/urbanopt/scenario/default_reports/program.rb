@@ -219,7 +219,6 @@ module URBANopt
         # [parameters:]
         # +other+ - _Program_ - An object of Program class.
         ##
-        # rubocop:disable Metrics/AbcSize # :nodoc:
         def add_program(other)
           @site_area = add_values(@site_area, other.site_area)
 

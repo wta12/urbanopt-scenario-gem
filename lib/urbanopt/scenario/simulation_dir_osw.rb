@@ -132,8 +132,6 @@ module URBANopt
         return result
       end
 
-      # rubocop: disable Metrics/AbcSize #:nodoc:
-
       ##
       # Return true if the simulation is out of date (input files newer than results), false otherwise.
       # Non-existant simulation input files are out of date.
@@ -198,8 +196,6 @@ module URBANopt
         return false
       end
       # rubocop: enable Metrics/AbcSize #:nodoc:
-
-      # rubocop: disable Style/GuardClause #:nodoc:
 
       ##
       # Return simulation status one of {'Not Started', 'Started', 'Complete', 'Failed'}
