@@ -44,7 +44,7 @@ module URBANopt
       class ReportingPeriod
         attr_accessor :id, :name, :multiplier, :start_date, :end_date, :month, :day_of_month, :year, :total_site_energy, :total_source_energy,
                       :net_site_energy, :net_source_energy, :total_utility_cost, :net_utility_cost, :utility_costs, :electricity, :natural_gas, :additional_fuel, :district_cooling,
-                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic, 
+                      :district_heating, :water, :electricity_produced, :end_uses, :energy_production, :photovoltaic,
                       :fuel_type, :total_cost, :usage_cost, :demand_cost, :comfort_result, :time_setpoint_not_met_during_occupied_cooling,
                       :time_setpoint_not_met_during_occupied_heating, :time_setpoint_not_met_during_occupied_hours, :hours_out_of_comfort_bounds_PMV, :hours_out_of_comfort_bounds_PPD #:nodoc:
         # ReportingPeriod class initializes the reporting period attributes:
@@ -208,7 +208,6 @@ module URBANopt
         ##
         # +new_period+ - _ReportingPeriod_ - An object of ReportingPeriod class.
         ##
-        # rubocop: disable Metrics/AbcSize
         def self.merge_reporting_period(existing_period, new_period)
           # modify the existing_period by summing up the results
           existing_period.total_site_energy = add_values(existing_period.total_site_energy, new_period.total_site_energy)
@@ -235,7 +234,7 @@ module URBANopt
           end
 
           if existing_period.utility_costs
-            #RK: this need to be updated
+            # RK: this need to be updated
             existing_period.utility_costs.each_with_index do |item, i|
               existing_period.utility_costs[i][:fuel_type] = existing_period.utility_costs[i][:fuel_type]
               existing_period.utility_costs[i][:total_cost] = add_values(existing_period.utility_costs[i][:total_cost], new_period.utility_costs[i][:total_cost])

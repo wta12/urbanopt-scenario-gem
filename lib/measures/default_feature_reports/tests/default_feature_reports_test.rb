@@ -67,8 +67,6 @@ class DefaultFeatureReportsTest < MiniTest::Test
   def model_out_path(test_name)
     "#{run_dir(test_name)}/TestOutput.osm"
   end
-
-  # rubocop: disable Style/GuardClause
   def workspace_path(test_name)
     if openstudio_2?
       return "#{run_dir(test_name)}/run/in.idf"
@@ -161,8 +159,6 @@ class DefaultFeatureReportsTest < MiniTest::Test
       setup_test_1(test_name, epw_path)
     end
   end
-
-  # rubocop: disable Metrics/AbcSize
   def test_good_argument_values
     test_name = 'good_argument_values'
     model_in_path = "#{File.dirname(__FILE__)}/example_model.osm"
