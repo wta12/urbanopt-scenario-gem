@@ -1,13 +1,15 @@
 # URBANopt Scenario Gem
 
-## Version 0.3.0.pre1
-Date Range: 04/01/20 - 05/18/20:
+## Version 0.3.0
+Date Range: 04/01/20 - 06/04/20:
 
 Updating to OpenStudio 3.0 and Ruby 2.5
 
 - Fixed [#114]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/114 ), Bug fix
 - Fixed [#117]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/117 ), Added utility cost outputs to reports
 - Fixed [#118]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/118 ), test Jenkins using pipeline to run OpenStudio 3.0.0
+- Fixed [#119]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/119 ), added timeseries outputs for heat rejection end uses
+- Fixed [#120]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/120 ), Bug fix r
 
 ## Version 0.2.0
 
