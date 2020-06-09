@@ -311,9 +311,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.name = feature_name
     feature_report.feature_type = feature_type
     feature_report.directory_name = workflow.absoluteRunDir
-    feature_report.feature_location = feature_location
-    puts "feature location == #{feature_location}"
-
 
     timesteps_per_hour = model.getTimestep.numberOfTimestepsPerHour
     feature_report.timesteps_per_hour = timesteps_per_hour
@@ -700,7 +697,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # set power_conversion
     power_conversion = total_hours # we set the power conversio to total_hours since we want to convert lWh to kW
     puts "Power Converion: to convert kWh to kW values will be divided by #{power_conversion}"
-    puts "**************************************************WORKING*****************************************"
 
     # number of values in each timeseries
     n = nil

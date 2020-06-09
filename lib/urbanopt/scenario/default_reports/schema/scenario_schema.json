@@ -181,10 +181,6 @@
 						"Transformer"
 					]
 				},
-				"feature_location": {
-					"description": "geospatial location of feature  one point)",
-					"type": "string"
-				},
 				"timesteps_per_hour": {
 					"$ref": "#/definitions/TimestepsPerHour"
 				},
@@ -545,11 +541,11 @@
 			"type": "object",
 			"properties": {
 				"latitude": {
-					"description": "(deg)",
+					"description": "latitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"longitude": {
-					"description": "(deg)",
+					"description": "longitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"surface_elevation": {

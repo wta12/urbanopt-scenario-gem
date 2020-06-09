@@ -48,7 +48,8 @@ class ExampleFeature < URBANopt::Core::Feature
   end
 
   def feature_location
-    "[50, 100]"
+    # take just 1 vertex here for testing
+    "#{@json[:geometry][:coordinates][0][1]}"
   end
 
 end
