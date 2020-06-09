@@ -181,6 +181,10 @@
 						"Transformer"
 					]
 				},
+				"feature_location": {
+					"description": "geospatial location of feature  one point)",
+					"type": "string"
+				},
 				"timesteps_per_hour": {
 					"$ref": "#/definitions/TimestepsPerHour"
 				},

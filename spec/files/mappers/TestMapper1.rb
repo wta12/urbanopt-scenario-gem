@@ -81,6 +81,7 @@ module URBANopt
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_id', feature.id)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_name', feature_name)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_type', feature.feature_type)
+        OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_location', feature.feature_location)
 
         osw[:name] = feature_name
         osw[:description] = feature_name

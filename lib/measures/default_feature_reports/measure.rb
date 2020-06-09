@@ -71,6 +71,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_type.setDefaultValue('Building')
     args << feature_type
 
+    feature_location = OpenStudio::Measure::OSArgument.makeStringArgument('feature_location', false)
+    feature_location.setDisplayName('URBANopt Feature Location')
+    feature_location.setDefaultValue('0')
+    args << feature_location
+
     # make an argument for the frequency
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
@@ -254,6 +259,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_id = runner.getStringArgumentValue('feature_id', user_arguments)
     feature_name = runner.getStringArgumentValue('feature_name', user_arguments)
     feature_type = runner.getStringArgumentValue('feature_type', user_arguments)
+    feature_location = runner.getStringArgumentValue('feature_location', user_arguments)
 
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue('reporting_frequency', user_arguments)
@@ -305,6 +311,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_report.name = feature_name
     feature_report.feature_type = feature_type
     feature_report.directory_name = workflow.absoluteRunDir
+    feature_report.feature_location = feature_location
+    puts "feature location == #{feature_location}"
+
 
     timesteps_per_hour = model.getTimestep.numberOfTimestepsPerHour
     feature_report.timesteps_per_hour = timesteps_per_hour
@@ -318,12 +327,13 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Get Location information and store in the feature_report
     ##
 
+    # get latitude from feature_location
+    latitude = (feature_location.split(",")[0].delete! '[]').to_f
+    # get longitude from feature_location
+    longitude = (feature_location.split(",")[1].delete! '[]').to_f
     # latitude
-    latitude = epw_file.latitude
     feature_report.location.latitude = latitude
-
     # longitude
-    longitude = epw_file.longitude
     feature_report.location.longitude = longitude
 
     # surface_elevation
@@ -332,6 +342,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     ##########################################################################
     ##
+
     # Get program information and store in the feature_report
     ##
 
@@ -689,6 +700,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # set power_conversion
     power_conversion = total_hours # we set the power conversio to total_hours since we want to convert lWh to kW
     puts "Power Converion: to convert kWh to kW values will be divided by #{power_conversion}"
+    puts "**************************************************WORKING*****************************************"
 
     # number of values in each timeseries
     n = nil

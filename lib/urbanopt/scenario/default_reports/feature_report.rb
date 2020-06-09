@@ -52,7 +52,7 @@ module URBANopt
       # The DefaultPostProcessor reads these feature reports and aggregates them to create a ScenarioReport.
       ##
       class FeatureReport
-        attr_accessor :id, :name, :directory_name, :feature_type, :timesteps_per_hour, :simulation_status,
+        attr_accessor :id, :name, :directory_name, :feature_type, :feature_location, :timesteps_per_hour, :simulation_status,
                       :timeseries_csv, :location, :program, :design_parameters, :construction_costs, :reporting_periods, :distributed_generation, :power_distribution # :nodoc:
         ##
         # Each FeatureReport object corresponds to a single Feature.
@@ -68,6 +68,7 @@ module URBANopt
           @name = hash[:name]
           @directory_name = hash[:directory_name]
           @feature_type = hash[:feature_type]
+          @feature_location = hash[:feature_location]
           @timesteps_per_hour = hash[:timesteps_per_hour]
           @simulation_status = hash[:simulation_status]
           @timeseries_csv = TimeseriesCSV.new(hash[:timeseries_csv])
@@ -192,6 +193,7 @@ module URBANopt
           result[:name] = @name if @name
           result[:directory_name] = @directory_name if @directory_name
           result[:feature_type] = @feature_type if @feature_type
+          result[:feature_location] = @feature_location if @feature_location
           result[:timesteps_per_hour] = @timesteps_per_hour if @timesteps_per_hour
           result[:simulation_status] = @simulation_status if @simulation_status
           result[:timeseries_csv] = @timeseries_csv.to_hash

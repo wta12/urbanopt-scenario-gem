@@ -46,6 +46,11 @@ class ExampleFeature < URBANopt::Core::Feature
   def feature_type
     'Building'
   end
+
+  def feature_location
+    "[50, 100]"
+  end
+
 end
 
 # Simple example of a FeatureFile
