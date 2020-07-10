@@ -60,10 +60,12 @@ module URBANopt
             i = 0
             CSV.foreach(scenario_csv_dir).map do |row|
               if i == 0
+                # store header values from csv
                 headers = row
                 headers.each do |header|
                   monthly_values[header] = []
                 end
+                # store values from csv for each row
               elsif i <= size
                 headers.each_index do |j|
                   monthly_values[headers[j]] << row[j]
@@ -80,6 +82,7 @@ module URBANopt
               year = monthly_values["Datetime"][0].split(/\W+/)[2]
             end
 
+            # create dates for each month
             jan_date = DateTime.new(year.to_i, 1, 1, 1, 0)
             feb_date = DateTime.new(year.to_i, 2, 1, 0, 0)
             mar_date = DateTime.new(year.to_i, 3, 1, 0, 0)
@@ -98,6 +101,7 @@ module URBANopt
               date_obj = DateTime.strptime(i.to_s, format)
               index = monthly_values["Datetime"].index(i)
 
+              # store index of each date from the csv
               if jan_date == date_obj
                 @@jan_index = index
               elsif feb_date == date_obj
@@ -131,10 +135,14 @@ module URBANopt
 
               i = 0
 
-              monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
+              monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may
+               = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct 
+               = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
             
+              # loop through values for each header
               all_values = monthly_values[headers[j]]
 
+              # for each header store monthly sums of values
               all_values.each do |v|
                 if i < @@feb_index
                   monthly_sum_jan += v.to_f
@@ -172,12 +180,16 @@ module URBANopt
                 elsif @@dec_index <= i && i < @@jan_next_year_index
                   monthly_sum_dec += v.to_f
                   i +=1
+                # sum up all values for annual aggregate
                 elsif i < size
                   annual_sum += v.to_f
                 end
               end
 
-              monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
+              # store headers as key and monthly sums as values for each header
+              monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, 
+                monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, 
+                monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
             
               annual_values[headers[j]] = annual_sum
 
@@ -201,6 +213,7 @@ module URBANopt
             end
           end
           
+          # create json with required data stored in a variable
           results_path = File.join(File.dirname(__FILE__), "/run/#{folder}/scenarioData.js")
           File.open(results_path, 'w') do |file|
             file << "var scenarioData = [
