@@ -31,6 +31,8 @@
 require 'csv'
 require 'date'
 require 'json'
+require 'fileutils'
+
 
 module URBANopt
   module Scenario
@@ -38,9 +40,10 @@ module URBANopt
       
       def self.create_visualization(root_dir)
         run_dir = File.join(root_dir, 'run')
+
+        @all_scenario_results = []
         Dir.foreach(run_dir) do |folder|
-          
-          next if folder == '.' or folder == '..'
+          next if folder == '.' or folder == '..' or folder == 'scenarioData.js' or folder == 'scenario_comparison.html'
           scenario_dir = File.join(run_dir, folder)
           scenario_csv_dir = File.join(scenario_dir,'default_scenario_report.csv')
           scenario_name = folder.delete_suffix('_scenario')
@@ -135,9 +138,7 @@ module URBANopt
 
               i = 0
 
-              monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may
-               = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct 
-               = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
+              monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
             
               # loop through values for each header
               all_values = monthly_values[headers[j]]
@@ -187,42 +188,41 @@ module URBANopt
               end
 
               # store headers as key and monthly sums as values for each header
-              monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, 
-                monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, 
-                monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
+              monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
             
               annual_values[headers[j]] = annual_sum
 
-              @all_scenario_results = {}
-              @all_scenario_results["name"] = scenario_name
-              @all_scenario_results["monthly_values"] = {}
-              @all_scenario_results["annual_values"] = {}
+              @scenario_results = {}
+              @scenario_results["name"] = scenario_name
+              @scenario_results["monthly_values"] = {}
+              @scenario_results["annual_values"] = {}
 
             end
           end
           
           monthly_totals.each do |key, value|
             unless key == 'Datetime'
-              @all_scenario_results["monthly_values"][key] = value
+              @scenario_results["monthly_values"][key] = value
             end
           end
 
           annual_values.each do |key, value|
             unless key == 'Datetime'
-              @all_scenario_results["annual_values"][key] = value
+              @scenario_results["annual_values"][key] = value
             end
-          end
-          
+          end 
+
+          @all_scenario_results << @scenario_results
+
+          end 
+
           # create json with required data stored in a variable
-          results_path = File.join(File.dirname(__FILE__), "/run/#{folder}/scenarioData.js")
-          File.open(results_path, 'w') do |file|
-            file << "var scenarioData = [
-            #{JSON.pretty_generate(@all_scenario_results)}
-            ];"
-          end
+         results_path = File.join(File.dirname(__FILE__), "/run/scenarioData.js")
+         File.open(results_path, 'w') do |file|
+          file << "var scenarioData = #{JSON.pretty_generate(@all_scenario_results)};"
+        end 
 
         end
-      end
     
     end # ResultVisualization
   end # Scenario
