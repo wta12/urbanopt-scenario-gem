@@ -216,8 +216,8 @@ module URBANopt
 
           end 
 
-          # create json with required data stored in a variable
-         results_path = File.join(File.dirname(__FILE__), "/run/scenarioData.js")
+        # create json with required data stored in a variable
+         results_path = File.join(root_dir, "/run/scenarioData.js")
          File.open(results_path, 'w') do |file|
           file << "var scenarioData = #{JSON.pretty_generate(@all_scenario_results)};"
         end 
