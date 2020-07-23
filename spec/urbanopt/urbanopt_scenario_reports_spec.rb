@@ -222,5 +222,28 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
     # puts "\nfinal periods: #{existing_periods}"
   end
+
+  it 'can create visualization for scenario result' do
+
+    root_dir = File.join(File.dirname(__FILE__), '../')
+    scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(root_dir)
+    file = File.join(root_dir, 'run/scenarioData.js')
+    expect(File.exist?(file)).to be true
+
+    visualization_file = File.read(file)
+    visualization_file = visualization_file.to_s
+    visualization_file = visualization_file.split('=')[1]
+    visualization_file = visualization_file.split(';')[0]
+
+    json_file = JSON.parse(visualization_file)
+
+    expect(json_file[0]["name"]).to eq 'baseline'
+    expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"].size).to eq 12
+    expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 2083432.9873999027
+    expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 1788.144023
+
+  end
+
+
 end
 # rubocop: enable Metrics/BlockLength
