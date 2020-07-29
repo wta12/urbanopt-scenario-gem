@@ -487,7 +487,8 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
       begin
         ptes_size = 0
         ptes_keys.each do |pk|
-          ptes_size += sql_query(runner, sql_file, 'ComponentSizingSummary', "TableName='Coil:Cooling:DX:SingleSpeed:ThermalStorage' AND RowName='#{pk.to_s}' AND ColumnName='Ice Storage Capacity'")
+          ptes_size += sql_query(runner, sql_file, 'ComponentSizingSummary', "TableName='Coil:Cooling:DX:SingleSpeed:ThermalStorage' AND RowName='#{pk.to_s}' AND ColumnName='Ice Storage Capacity'").get
+          ptes_size = convert_units(ptes_size.to_f, 'GJ', 'kWh')
         end
       rescue StandardError
         runner.registerWarning('Query ptes_size.get failed')

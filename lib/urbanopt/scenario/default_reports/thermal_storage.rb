@@ -83,6 +83,28 @@ module URBANopt
 
           return result
         end
+
+        ##
+        # Add up old and new values
+        ##
+        def self.add_values(existing_value, new_value) #:nodoc:
+          if existing_value && new_value
+            existing_value += new_value
+          elsif new_value
+            existing_value = new_value
+          end
+          return existing_value
+        end
+
+        ##
+        # Merge thermal storage
+        ##
+        def self.merge_thermal_storage(existing_tes, new_tes)
+          existing_tes.its_size = add_values(existing_tes.its_size, new_tes.its_size)
+          existing_tes.ptes_size = add_values(existing_tes.ptes_size, new_tes.ptes_size)
+
+          return existing_tes
+        end
       end
     end
   end
