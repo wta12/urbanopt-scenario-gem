@@ -32,3 +32,5 @@ Electricity:Facility Apparent Power
 ElectricityProduced:Facility Apparent Power
 Net Power
 Net Apparent Power
+Ice Thermal Storage End Fraction
+Cooling Coil Ice Thermal Storage End Fraction

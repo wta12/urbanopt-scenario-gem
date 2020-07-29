@@ -28,14 +28,62 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-##
-# Retrieve all default_reports classes.
-##
-require 'urbanopt/scenario/default_reports/construction_cost'
-require 'urbanopt/scenario/default_reports/feature_report'
-require 'urbanopt/scenario/default_reports/logger'
-require 'urbanopt/scenario/default_reports/program'
-require 'urbanopt/scenario/default_reports/reporting_period'
-require 'urbanopt/scenario/default_reports/scenario_report'
-require 'urbanopt/scenario/default_reports/timeseries_csv'
-require 'urbanopt/scenario/default_reports/thermal_storage'
+require 'json'
+require 'urbanopt/scenario/default_reports/validator'
+require 'json-schema'
+
+module URBANopt
+  module Scenario
+    module DefaultReports
+      ##
+      # Ice Thermal Storage Systems
+      ##
+      class ThermalStorage
+        ##
+        # _Float_ - Total ice storage capacity on central plant loop in kWh
+        #
+        attr_accessor :its_size
+
+        # _Float_ - Total ice storage capacity distributed to packaged systems in kWh
+        #
+        attr_accessor :ptes_size
+
+        def initialize(hash={})
+          hash.delete_if { |k,v| v.nil? }
+
+          @its_size = hash[:its_size]
+          @ptes_size = hash[:ptes_size]
+
+          # initialize class variables @@validator and @@schema
+          @@validator ||= Validator.new
+          @@schema ||= @@validator.schema
+
+          # initialize @@logger
+          @@logger ||= URBANopt::Scenario::DefaultReports.logger
+        end
+
+        ##
+        # Assigns default values if attribute values do not exist.
+        ##
+        def defaults
+          hash = {}
+          hash[:its_size] = nil
+          hash[:ptes_size] = nil
+
+          return hash
+        end
+
+        ##
+        # Convert to hash equivalent for JSON serialization
+        ##
+        def to_hash
+          result = {}
+          result[:its_size] = @its_size if @its_size
+          result[:ptes_size] = @ptes_size if @ptes_size
+
+          return result
+        end
+      end
+    end
+  end
+end
