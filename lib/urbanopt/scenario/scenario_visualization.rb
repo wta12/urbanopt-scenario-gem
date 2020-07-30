@@ -38,19 +38,29 @@ module URBANopt
   module Scenario
     class ResultVisualization
       
-      def self.create_visualization(root_dir)
-        run_dir = File.join(root_dir, 'run')
+      def self.create_visualization(run_dir, feature = true)
 
         @all_scenario_results = []
         Dir.foreach(run_dir) do |folder|
           next if folder == '.' or folder == '..' or folder == 'scenarioData.js' or folder == 'scenario_comparison.html'
-          scenario_dir = File.join(run_dir, folder)
-          scenario_csv_dir = File.join(scenario_dir,'default_scenario_report.csv')
           scenario_name = folder.delete_suffix('_scenario')
           
-          if File.exist?(scenario_csv_dir)
-            headers = CSV.open(scenario_csv_dir, &:readline)
-            size = CSV.open(scenario_csv_dir).readlines.size
+          # create visualization for scenarios
+          if feature == false
+            folder_dir = File.join(run_dir, folder)
+            csv_dir = File.join(folder_dir,'default_scenario_report.csv')
+          # create visualization for features
+          elsif feature == true
+            folder_dir = Dir[File.join(run_dir, folder,  "/feature_reports")]
+            # check if feature reports folder is empty
+            unless folder_dir.empty?
+              csv_dir = File.join(folder_dir,'default_feature_report.csv')
+            end
+          end
+
+          if !folder_dir.empty? && File.exist?(csv_dir)
+            headers = CSV.open(csv_dir, &:readline)
+            size = CSV.open(csv_dir).readlines.size
             
             monthly_values = {}
             monthly_totals = {}
@@ -61,7 +71,7 @@ module URBANopt
             end
             
             i = 0
-            CSV.foreach(scenario_csv_dir).map do |row|
+            CSV.foreach(csv_dir).map do |row|
               if i == 0
                 # store header values from csv
                 headers = row
@@ -137,6 +147,7 @@ module URBANopt
             headers.each_index do |j|
 
               i = 0
+              k = 0
 
               monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
             
@@ -181,9 +192,11 @@ module URBANopt
                 elsif @@dec_index <= i && i < @@jan_next_year_index
                   monthly_sum_dec += v.to_f
                   i +=1
+                end
                 # sum up all values for annual aggregate
-                elsif i < size
+                if k <= size
                   annual_sum += v.to_f
+                  k += 1
                 end
               end
 
@@ -196,33 +209,39 @@ module URBANopt
               @scenario_results["name"] = scenario_name
               @scenario_results["monthly_values"] = {}
               @scenario_results["annual_values"] = {}
-
+            
             end
           end
           
+          unless monthly_totals.nil?
           monthly_totals.each do |key, value|
             unless key == 'Datetime'
               @scenario_results["monthly_values"][key] = value
             end
           end
+        end
 
+        unless annual_values.nil?
           annual_values.each do |key, value|
             unless key == 'Datetime'
               @scenario_results["annual_values"][key] = value
             end
-          end 
+          end
+        end
 
+        unless @scenario_results.nil?
           @all_scenario_results << @scenario_results
-
-          end 
+        end
+      
+      end 
 
         # create json with required data stored in a variable
-         results_path = File.join(root_dir, "/run/scenarioData.js")
+         results_path = File.join(run_dir, "/scenarioData.js")
          File.open(results_path, 'w') do |file|
           file << "var scenarioData = #{JSON.pretty_generate(@all_scenario_results)};"
-        end 
-
         end
+      
+      end
     
     end # ResultVisualization
   end # Scenario
