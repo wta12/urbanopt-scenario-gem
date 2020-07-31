@@ -38,8 +38,8 @@ elsif allow_local
   gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
 end
 
-#if allow_local && File.exist?('../urbanopt-reporting-gem')
+if allow_local && File.exist?('../urbanopt-reporting-gem')
   gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
-#elsif allow_local
-#  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'master'
-#end
+elsif allow_local
+  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'master'
+end
