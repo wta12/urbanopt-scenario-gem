@@ -31,6 +31,8 @@
 require 'urbanopt/scenario'
 require 'openstudio/common_measures'
 require 'openstudio/model_articulation'
+require 'urbanopt/reporting/derived_extension'
+#require 'urbanopt/reporting'
 
 require 'json'
 

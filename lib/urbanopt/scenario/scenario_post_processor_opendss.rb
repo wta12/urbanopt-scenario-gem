@@ -29,8 +29,7 @@
 # *********************************************************************************
 
 # require 'urbanopt/scenario/scenario_post_processor_base'
-require 'urbanopt/scenario/default_reports'
-require 'urbanopt/scenario/default_reports/logger'
+require 'urbanopt/reporting/default_reports'
 
 require 'csv'
 require 'json'
@@ -64,7 +63,7 @@ module URBANopt
         @feature_reports_data = {}
 
         # initialize logger
-        @@logger ||= URBANopt::Scenario::DefaultReports.logger
+        @@logger ||= URBANopt::Reporting::DefaultReports.logger
       end
 
       # load opendss data
@@ -166,7 +165,7 @@ module URBANopt
             File.write(File.join(transformer_dir, 'feature_reports', 'default_feature_report_opendss' + '.csv'), transformer_csv)
 
             # create transformer report
-            transformer_report = URBANopt::Scenario::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir, feature_type: 'Transformer',
+            transformer_report = URBANopt::Reporting::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir, feature_type: 'Transformer',
                                                                                        timesteps_per_hour: @scenario_report.timesteps_per_hour,
                                                                                        simulation_status: 'complete')
 
