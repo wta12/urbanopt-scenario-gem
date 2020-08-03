@@ -60,8 +60,7 @@ module URBANopt
         @mapper_class = mapper_class
       end
 
-      attr_reader :mapper_class
-
+      attr_reader :mapper_class, :feature_id
       ##
       # Return the directory that this simulation will run in.
       ##
