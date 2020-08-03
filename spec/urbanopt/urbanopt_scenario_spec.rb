@@ -33,6 +33,9 @@ require_relative '../files/example_feature_file'
 require 'json'
 require 'json-schema'
 RSpec.describe URBANopt::Scenario do
+
+  @@logger ||= URBANopt::Reporting::DefaultReports.logger
+
   it 'has a version number' do
     expect(URBANopt::Scenario::VERSION).not_to be nil
   end
@@ -73,7 +76,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
 
     # set clear_results to be false if you want the tests to run faster
-    clear_results = true # edited
+    clear_results = true
     scenario.clear if clear_results
 
     simulation_dirs = scenario.simulation_dirs
@@ -176,51 +179,39 @@ RSpec.describe URBANopt::Scenario do
     # validate all results against schema
     ##
 
-    # Read scenario schema file
-    # schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
-    # schema = JSON.parse(File.read(schema_json))
+    # initialize validator class
+    validator = URBANopt::Reporting::DefaultReports::Validator.new()
 
-    # # Read scenario json file and validated againt schema
-    # scenario_json = JSON.parse(File.read(scenario_json_file))
+    # Get scenario schema hash
+    schema = validator.schema
 
-    # puts JSON::Validator.fully_validate(schema, scenario_json)
-    # expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
+    # Read scenario json file and validated againt schema
+    scenario_json = JSON.parse(File.read(scenario_json_file))
 
-    # # close json file
-    # scenario_json_file.close
+    @@logger.info("Schema Validation Errors: #{JSON::Validator.fully_validate(schema, scenario_json)}")
+    expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
 
-    # # Read scenario csv file and validate against schema
-    # scenario_csv_headers = CSV.open(File.expand_path($scenario_result.csv_path, File.dirname(__FILE__)), &:readline)
-    # # strip the units partial string from the scenario_csv_header since these units can change
-    # scenario_csv_headers_with_no_units = []
-    # scenario_csv_headers.each do |x|
-    #   scenario_csv_headers_with_no_units << x.split('(')[0]
-    # end
+    # close json file
+    scenario_json_file.close
 
-    # # rubocop: disable Security/Open
+    # Read scenario csv file and validate against scenario CSV schema
+    scenario_csv_headers = CSV.open(File.expand_path($scenario_result.csv_path, File.dirname(__FILE__)), &:readline)
+    # strip the units partial string from the scenario_csv_header since these units can change
+    scenario_csv_headers_with_no_units = []
+    scenario_csv_headers.each do |x|
+      scenario_csv_headers_with_no_units << x.split('(')[0]
+    end
 
-    # # read scenario csv schema headers
-    # scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
+    scenario_csv_schema_headers = validator.csv_headers
+    expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
 
-    # scenario_csv_schema_headers = []
-    # File.readlines(scenario_csv_schema).each do |line|
-    #   l = line.delete("\n")
-    #   a = l.delete("\t")
-    #   scenario_csv_schema_headers << a
-    # end
 
-    # # rubocop: enable Security/Open
+    # Read feature_reprot json file and validate against schema
+    Dir["#{File.dirname(__FILE__)}/../**/*default_feature_reports.json"].each do |json_file|
+      feature_json = JSON.parse(File.read(json_file))
+      expect(JSON::Validator.fully_validate(schema[:definitions][:FeatureReport][:properties], feature_json).empty?).to be true
+    end
 
-    # expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
-
-    # # Read feature_reprot json file and validate against schema
-    # Dir["#{File.dirname(__FILE__)}/../**/*default_feature_reports.json"].each do |json_file|
-    #   feature_json = JSON.parse(File.read(json_file))
-    #   expect(JSON::Validator.fully_validate(schema['definitions']['FeatureReport']['properties'], feature_json).empty?).to be true
-    # end
-
-    # # close schema file
-    # schema_json.close
   end
 
   it 'can integrate opendss results' do
