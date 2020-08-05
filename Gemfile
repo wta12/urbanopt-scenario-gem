@@ -37,3 +37,9 @@ if allow_local && File.exist?('../urbanopt-core-gem')
 elsif allow_local
   gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
 end
+
+if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
+  gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
+elsif allow_local
+  gem 'openstudio-load-flexibility-measures', github: 'URBANopt/openstudio-load-flexibility-measures-gem', branch: 'master'
+end

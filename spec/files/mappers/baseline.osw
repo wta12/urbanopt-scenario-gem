@@ -62,9 +62,13 @@
 		"water_rate": 0.005,
 		"disthtg_rate": 0.2,
 		"distclg_rate" : 0.2
-		
+
 		}
-	
+  },{
+    "measure_dir_name": "add_distributed_ice_storage_to_air_loop_for_load_flexibility",
+    "arguments": {
+      "__SKIP__": true
+    }
 	},{
       "measure_dir_name": "default_feature_reports",
       "arguments": {
