@@ -1,9 +1,10 @@
+<?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>dcf043ff-d992-4835-893d-8658a6365eb3</version_id>
-  <version_modified>20200329T155122Z</version_modified>
+  <version_id>95706c7a-88ab-433b-b897-00435181a6dd</version_id>
+  <version_modified>20200603T001228Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -13,32 +14,45 @@
     <argument>
       <name>feature_id</name>
       <display_name>Feature unique identifier</display_name>
+      <description></description>
       <type>String</type>
+      <units></units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>1</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>feature_name</name>
       <display_name>Feature scenario specific name</display_name>
+      <description></description>
       <type>String</type>
+      <units></units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>name</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>feature_type</name>
       <display_name>URBANopt Feature Type</display_name>
+      <description></description>
       <type>String</type>
+      <units></units>
       <required>false</required>
       <model_dependent>false</model_dependent>
       <default_value>Building</default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>reporting_frequency</name>
       <display_name>Reporting Frequency</display_name>
       <description>The frequency at which to report timeseries output data.</description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>Timestep</default_value>
@@ -72,10 +86,12 @@
           <display_name>Runperiod</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
-  <outputs/>
-  <provenances/>
+  <outputs />
+  <provenances />
   <tags>
     <tag>Reporting.QAQC</tag>
   </tags>
@@ -123,12 +139,6 @@
       <checksum>56E0804B</checksum>
     </file>
     <file>
-      <filename>README.md</filename>
-      <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>5C1DD676</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>1.11.0</identifier>
@@ -137,7 +147,14 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DF6AAD06</checksum>
+      <checksum>A00C8077</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>0B68E96D</checksum>
     </file>
   </files>
 </measure>
+<error>wrong number of arguments (given 1, expected 0)</error>
