@@ -41,5 +41,5 @@ end
 if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
   gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
 elsif allow_local
-  gem 'openstudio-load-flexibility-measures', github: 'URBANopt/openstudio-load-flexibility-measures-gem', branch: 'master'
+  gem 'openstudio-load-flexibility-measures', github: 'NREL/openstudio-load-flexibility-measures-gem', branch: 'master'
 end
