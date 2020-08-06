@@ -7,7 +7,7 @@
 ### Checklist (Delete lines that don't apply)
 
 - [ ] Unit tests have been added or updated
-- [ ] Documentation has been modified appropriately
+- [ ] Documentation has been modified as needed
 - [ ] All ci tests pass (green)
-- [ ] The [changelog](https://github.com/urbanopt/urbanopt-scenario-gem/blob/develop/CHANGELOG.md) has been updated appropriately
+- [ ] An [issue](https://github.com/urbanopt/urbanopt-scenario-gem/issues) has been created (which will be used for the changelog)
 - [ ] This branch is up-to-date with develop
