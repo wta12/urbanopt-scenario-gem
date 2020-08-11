@@ -324,14 +324,16 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Get Location information and store in the feature_report
     ##
 
-    # get latitude from feature_location
-    latitude = (feature_location.split(",")[0].delete! '[]').to_f
-    # get longitude from feature_location
-    longitude = (feature_location.split(",")[1].delete! '[]').to_f
-    # latitude
-    feature_report.location.latitude = latitude
-    # longitude
-    feature_report.location.longitude = longitude
+    if feature_location.include? '['
+      # get latitude from feature_location
+      latitude = (feature_location.split(',')[0].delete! '[]').to_f
+      # get longitude from feature_location
+      longitude = (feature_location.split(',')[1].delete! '[]').to_f
+      # latitude
+      feature_report.location.latitude = latitude
+      # longitude
+      feature_report.location.longitude = longitude
+    end
 
     # surface_elevation
     elev = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
@@ -968,7 +970,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
 
-    # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
     # Save the 'default_feature_reports.csv' file
