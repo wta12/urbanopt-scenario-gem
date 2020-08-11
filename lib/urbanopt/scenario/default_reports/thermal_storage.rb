@@ -48,8 +48,8 @@ module URBANopt
         #
         attr_accessor :ptes_size
 
-        def initialize(hash={})
-          hash.delete_if { |k,v| v.nil? }
+        def initialize(hash = {})
+          hash.delete_if { |k, v| v.nil? }
 
           @its_size = hash[:its_size]
           @ptes_size = hash[:ptes_size]

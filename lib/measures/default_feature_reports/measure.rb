@@ -482,12 +482,12 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     ptes_keys = sql_file.availableKeyValues('RUN Period 1', 'Zone Timestep', 'Cooling Coil Ice Thermal Storage End Fraction')
     if ptes_keys.empty?
       ptes_size = nil
-      runner.registerWarning("Query failed for Packaged Ice Thermal Storage Capacity")
+      runner.registerWarning('Query failed for Packaged Ice Thermal Storage Capacity')
     else
       begin
         ptes_size = 0
         ptes_keys.each do |pk|
-          ptes_size += sql_query(runner, sql_file, 'ComponentSizingSummary', "TableName='Coil:Cooling:DX:SingleSpeed:ThermalStorage' AND RowName='#{pk.to_s}' AND ColumnName='Ice Storage Capacity'").to_f
+          ptes_size += sql_query(runner, sql_file, 'ComponentSizingSummary', "TableName='Coil:Cooling:DX:SingleSpeed:ThermalStorage' AND RowName='#{pk}' AND ColumnName='Ice Storage Capacity'").to_f
         end
         ptes_size = convert_units(ptes_size, 'GJ', 'kWh')
       rescue StandardError
@@ -500,7 +500,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     its_size = nil
     its_size_index = sql_file.execAndReturnFirstDouble("SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Ice Thermal Storage Capacity'")
     if its_size_index.empty?
-      runner.registerWarning("Query failed for Ice Thermal Storage Capacity")
+      runner.registerWarning('Query failed for Ice Thermal Storage Capacity')
     else
       begin
         its_size = sql_file.execAndReturnFirstDouble("SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex=#{its_size_index}").get
@@ -1016,7 +1016,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
 
-    # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
     # Save the 'default_feature_reports.csv' file

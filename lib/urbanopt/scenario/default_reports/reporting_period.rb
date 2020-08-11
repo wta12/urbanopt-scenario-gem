@@ -254,7 +254,6 @@ module URBANopt
 
           return existing_period
         end
-        # rubocop: enable Metrics/AbcSize # :nodoc:
 
         ##
         # Merges multiple reporting periods together.

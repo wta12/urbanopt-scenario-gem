@@ -33,25 +33,23 @@ require 'date'
 require 'json'
 require 'fileutils'
 
-
 module URBANopt
   module Scenario
     class ResultVisualization
-      
       def self.create_visualization(root_dir)
         run_dir = File.join(root_dir, 'run')
 
         @all_scenario_results = []
         Dir.foreach(run_dir) do |folder|
-          next if folder == '.' or folder == '..' or folder == 'scenarioData.js' or folder == 'scenario_comparison.html'
+          next if (folder == '.') || (folder == '..') || (folder == 'scenarioData.js') || (folder == 'scenario_comparison.html')
           scenario_dir = File.join(run_dir, folder)
-          scenario_csv_dir = File.join(scenario_dir,'default_scenario_report.csv')
+          scenario_csv_dir = File.join(scenario_dir, 'default_scenario_report.csv')
           scenario_name = folder.delete_suffix('_scenario')
-          
+
           if File.exist?(scenario_csv_dir)
             headers = CSV.open(scenario_csv_dir, &:readline)
             size = CSV.open(scenario_csv_dir).readlines.size
-            
+
             monthly_values = {}
             monthly_totals = {}
             annual_values = {}
@@ -59,7 +57,7 @@ module URBANopt
             headers.each do |header|
               monthly_values[header] = []
             end
-            
+
             i = 0
             CSV.foreach(scenario_csv_dir).map do |row|
               if i == 0
@@ -77,12 +75,12 @@ module URBANopt
               i += 1
             end
 
-            if monthly_values["Datetime"][0].split(/\W+/)[0].to_f > 31
-              format = "%Y/%m/%d %H:%M"
-              year = monthly_values["Datetime"][0].split(/\W+/)[0]
+            if monthly_values['Datetime'][0].split(/\W+/)[0].to_f > 31
+              format = '%Y/%m/%d %H:%M'
+              year = monthly_values['Datetime'][0].split(/\W+/)[0]
             else
-              format = "%m/%d/%Y %H:%M"
-              year = monthly_values["Datetime"][0].split(/\W+/)[2]
+              format = '%m/%d/%Y %H:%M'
+              year = monthly_values['Datetime'][0].split(/\W+/)[2]
             end
 
             # create dates for each month
@@ -100,9 +98,9 @@ module URBANopt
             dec_date = DateTime.new(year.to_i, 12, 1, 0, 0)
             jan_next_year = DateTime.new(year.to_i + 1, 1, 1, 0, 0)
 
-            monthly_values["Datetime"].each do |i|
+            monthly_values['Datetime'].each do |i|
               date_obj = DateTime.strptime(i.to_s, format)
-              index = monthly_values["Datetime"].index(i)
+              index = monthly_values['Datetime'].index(i)
 
               # store index of each date from the csv
               if jan_date == date_obj
@@ -132,14 +130,13 @@ module URBANopt
               elsif jan_next_year == date_obj
                 @@jan_next_year_index = index
               end
-            end 
-            
-            headers.each_index do |j|
+            end
 
+            headers.each_index do |j|
               i = 0
 
               monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
-            
+
               # loop through values for each header
               all_values = monthly_values[headers[j]]
 
@@ -180,7 +177,7 @@ module URBANopt
                   i += 1
                 elsif @@dec_index <= i && i < @@jan_next_year_index
                   monthly_sum_dec += v.to_f
-                  i +=1
+                  i += 1
                 # sum up all values for annual aggregate
                 elsif i < size
                   annual_sum += v.to_f
@@ -189,41 +186,37 @@ module URBANopt
 
               # store headers as key and monthly sums as values for each header
               monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
-            
+
               annual_values[headers[j]] = annual_sum
 
               @scenario_results = {}
-              @scenario_results["name"] = scenario_name
-              @scenario_results["monthly_values"] = {}
-              @scenario_results["annual_values"] = {}
-
+              @scenario_results['name'] = scenario_name
+              @scenario_results['monthly_values'] = {}
+              @scenario_results['annual_values'] = {}
             end
           end
-          
+
           monthly_totals.each do |key, value|
             unless key == 'Datetime'
-              @scenario_results["monthly_values"][key] = value
+              @scenario_results['monthly_values'][key] = value
             end
           end
 
           annual_values.each do |key, value|
             unless key == 'Datetime'
-              @scenario_results["annual_values"][key] = value
+              @scenario_results['annual_values'][key] = value
             end
-          end 
+          end
 
           @all_scenario_results << @scenario_results
-
-          end 
+        end
 
         # create json with required data stored in a variable
-         results_path = File.join(root_dir, "/run/scenarioData.js")
-         File.open(results_path, 'w') do |file|
+        results_path = File.join(root_dir, '/run/scenarioData.js')
+        File.open(results_path, 'w') do |file|
           file << "var scenarioData = #{JSON.pretty_generate(@all_scenario_results)};"
-        end 
-
         end
-    
+        end
     end # ResultVisualization
   end # Scenario
 end # URBANopt

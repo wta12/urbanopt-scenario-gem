@@ -233,4 +233,3 @@ RSpec.describe URBANopt::Scenario do
     opendss_post_processor.run
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
-  <version_id>95706c7a-88ab-433b-b897-00435181a6dd</version_id>
-  <version_modified>20200603T001228Z</version_modified>
+  <version_id>9f6e68c1-c153-496f-bb05-76f0f95f39cf</version_id>
+  <version_modified>20200811T165416Z</version_modified>
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -133,10 +133,16 @@
       <checksum>EA283B74</checksum>
     </file>
     <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>0B68E96D</checksum>
+    </file>
+    <file>
       <filename>default_feature_reports_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>56E0804B</checksum>
+      <checksum>EBB9761D</checksum>
     </file>
     <file>
       <version>
@@ -147,13 +153,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A00C8077</checksum>
-    </file>
-    <file>
-      <filename>README.md</filename>
-      <filetype>md</filetype>
-      <usage_type>readme</usage_type>
-      <checksum>0B68E96D</checksum>
+      <checksum>B7A7D98E</checksum>
     </file>
   </files>
 </measure>

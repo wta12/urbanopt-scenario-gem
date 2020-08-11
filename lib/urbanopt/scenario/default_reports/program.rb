@@ -258,7 +258,6 @@ module URBANopt
           @roof_area[:available_roof_area] = add_values(@roof_area[:available_roof_area], other.roof_area[:available_roof_area])
           @roof_area[:total_roof_area] = add_values(@roof_area[:total_roof_area], other.roof_area[:total_roof_area])
         end
-        # rubocop:enable Metrics/AbcSize
       end
     end
   end
