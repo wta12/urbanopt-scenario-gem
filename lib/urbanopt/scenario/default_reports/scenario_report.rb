@@ -35,6 +35,7 @@ require 'urbanopt/scenario/default_reports/program'
 require 'urbanopt/scenario/default_reports/reporting_period'
 require 'urbanopt/scenario/default_reports/timeseries_csv'
 require 'urbanopt/scenario/default_reports/distributed_generation'
+require 'urbanopt/scenario/default_reports/thermal_storage'
 require 'urbanopt/scenario/default_reports/validator'
 require 'json-schema'
 
@@ -52,7 +53,7 @@ module URBANopt
       class ScenarioReport
         attr_accessor :id, :name, :directory_name, :timesteps_per_hour, :number_of_not_started_simulations,
                       :number_of_started_simulations, :number_of_complete_simulations, :number_of_failed_simulations,
-                      :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports, :distributed_generation # :nodoc:
+                      :timeseries_csv, :location, :program, :construction_costs, :reporting_periods, :feature_reports, :distributed_generation, :thermal_storage # :nodoc:
         # ScenarioReport class intializes the scenario report attributes:
         # +:id+ , +:name+ , +:directory_name+, +:timesteps_per_hour+ , +:number_of_not_started_simulations+ ,
         # +:number_of_started_simulations+ , +:number_of_complete_simulations+ , +:number_of_failed_simulations+ ,
@@ -79,6 +80,7 @@ module URBANopt
           @location = Location.new(hash[:location])
           @program = Program.new(hash[:program])
           @distributed_generation = DistributedGeneration.new(hash[:distributed_generation] || {})
+          @thermal_storage = ThermalStorage.new(hash[:thermal_storage] || {})
 
           @construction_costs = []
           hash[:construction_costs].each do |cc|
@@ -122,6 +124,7 @@ module URBANopt
           hash[:timeseries_csv] = TimeseriesCSV.new.to_hash
           hash[:location] = Location.new.defaults
           hash[:program] = Program.new.to_hash
+          hash[:thermal_storage] = ThermalStorage.new.to_hash
           hash[:construction_costs] = []
           hash[:reporting_periods] = []
           hash[:feature_reports] = []
@@ -213,6 +216,7 @@ module URBANopt
           result[:location] = @location.to_hash if @location
           result[:program] = @program.to_hash if @program
           result[:distributed_generation] = @distributed_generation.to_hash if @distributed_generation
+          result[:thermal_storage] = @thermal_storage.to_hash if @thermal_storage
 
           result[:construction_costs] = []
           @construction_costs.each { |cc| result[:construction_costs] << cc.to_hash } if @construction_costs
@@ -304,6 +308,9 @@ module URBANopt
           @reporting_periods = ReportingPeriod.merge_reporting_periods(@reporting_periods, feature_report.reporting_periods)
 
           @distributed_generation = DistributedGeneration.merge_distributed_generation(@distributed_generation, feature_report.distributed_generation)
+
+          # merge thermal_storage information
+          @thermal_storage = ThermalStorage.merge_thermal_storage(@thermal_storage, feature_report.thermal_storage)
 
           # add feature_report
           @feature_reports << feature_report

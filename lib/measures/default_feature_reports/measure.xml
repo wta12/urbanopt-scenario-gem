@@ -3,8 +3,10 @@
   <schema_version>3.0</schema_version>
   <name>default_feature_reports</name>
   <uid>9ee3135a-8070-4408-bfa1-b75fecf9dd4f</uid>
+
   <version_id>fede31d6-e9eb-4024-8851-bd0cad197450</version_id>
   <version_modified>20200811T051210Z</version_modified>
+
   <xml_checksum>FB304155</xml_checksum>
   <class_name>DefaultFeatureReports</class_name>
   <display_name>DefaultFeatureReports</display_name>
@@ -153,7 +155,9 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
+
       <checksum>408F898E</checksum>
+
     </file>
   </files>
 </measure>
