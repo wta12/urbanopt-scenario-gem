@@ -71,6 +71,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_type.setDefaultValue('Building')
     args << feature_type
 
+    feature_location = OpenStudio::Measure::OSArgument.makeStringArgument('feature_location', false)
+    feature_location.setDisplayName('URBANopt Feature Location')
+    feature_location.setDefaultValue('0')
+    args << feature_location
+
     # make an argument for the frequency
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
@@ -257,6 +262,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_id = runner.getStringArgumentValue('feature_id', user_arguments)
     feature_name = runner.getStringArgumentValue('feature_name', user_arguments)
     feature_type = runner.getStringArgumentValue('feature_type', user_arguments)
+    feature_location = runner.getStringArgumentValue('feature_location', user_arguments)
 
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue('reporting_frequency', user_arguments)
@@ -321,13 +327,16 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Get Location information and store in the feature_report
     ##
 
-    # latitude
-    latitude = epw_file.latitude
-    feature_report.location.latitude = latitude
-
-    # longitude
-    longitude = epw_file.longitude
-    feature_report.location.longitude = longitude
+    if feature_location.include? '['
+      # get latitude from feature_location
+      latitude = (feature_location.split(',')[0].delete! '[]').to_f
+      # get longitude from feature_location
+      longitude = (feature_location.split(',')[1].delete! '[]').to_f
+      # latitude
+      feature_report.location.latitude = latitude
+      # longitude
+      feature_report.location.longitude = longitude
+    end
 
     # surface_elevation
     elev = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
@@ -335,6 +344,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     ##########################################################################
     ##
+
     # Get program information and store in the feature_report
     ##
 

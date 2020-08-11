@@ -46,6 +46,11 @@ class ExampleFeature < URBANopt::Core::Feature
   def feature_type
     'Building'
   end
+
+  def feature_location
+    # take just 1 vertex here for testing
+    (@json[:geometry][:coordinates][0][1]).to_s
+  end
 end
 
 # Simple example of a FeatureFile
