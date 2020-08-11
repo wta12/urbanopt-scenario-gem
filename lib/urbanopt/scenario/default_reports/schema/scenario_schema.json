@@ -541,11 +541,11 @@
 			"type": "object",
 			"properties": {
 				"latitude": {
-					"description": "(deg)",
+					"description": "latitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"longitude": {
-					"description": "(deg)",
+					"description": "longitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"surface_elevation": {

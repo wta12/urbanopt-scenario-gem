@@ -195,7 +195,6 @@ module URBANopt
 
         return false
       end
-      # rubocop: enable Metrics/AbcSize #:nodoc:
 
       ##
       # Return simulation status one of {'Not Started', 'Started', 'Complete', 'Failed'}
@@ -213,7 +212,6 @@ module URBANopt
 
         return 'Not Started'
       end
-      # rubocop: enable Style/GuardClause #:nodoc:
 
       ##
       # Clear the directory that this simulation runs in
