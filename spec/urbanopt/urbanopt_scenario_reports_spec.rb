@@ -262,8 +262,8 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
     expect(json_file[0]["name"]).to eq '2'
     expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"].size).to eq 12
-    expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 1661086.3948920087
-    expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 22603131.20083145
+    expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 1833016.431105801
+    expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 3230104.682959298
 
   end
 
