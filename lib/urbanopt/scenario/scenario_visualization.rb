@@ -144,7 +144,7 @@ module URBANopt
               elsif jan_next_year == date_obj
                 @jan_next_year_index = index
               end
-            end #do i end
+            end
 
             headers.each_index do |j|
 
@@ -155,7 +155,6 @@ module URBANopt
             
               # loop through values for each header
               all_values = monthly_values[headers[j]]
-
 
               unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
                 
@@ -211,7 +210,7 @@ module URBANopt
             
               annual_values[headers[j]] = annual_sum
             
-            end #unless end 
+            end 
             
             @results = {}
             @results["name"] = name
@@ -223,8 +222,7 @@ module URBANopt
             else
             @results["complete_simulation"] = false
             end
-          
-
+            
             unless monthly_totals.nil?
               monthly_totals.each do |key, value|
                 unless key == 'Datetime'
