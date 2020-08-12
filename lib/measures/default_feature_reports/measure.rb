@@ -71,6 +71,11 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_type.setDefaultValue('Building')
     args << feature_type
 
+    feature_location = OpenStudio::Measure::OSArgument.makeStringArgument('feature_location', false)
+    feature_location.setDisplayName('URBANopt Feature Location')
+    feature_location.setDefaultValue('0')
+    args << feature_location
+
     # make an argument for the frequency
     reporting_frequency_chs = OpenStudio::StringVector.new
     reporting_frequency_chs << 'Detailed'
@@ -193,6 +198,9 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
                        'District Heating Inlet Temperature', 'District Heating Outlet Temperature', 'Cooling Coil Total Cooling Rate',
                        'Heating Coil Heating Rate']
 
+    tes_timeseries_data = ['Ice Thermal Storage End Fraction', 'Cooling coil Ice Thermal Storage End Fraction']
+    timeseries_data += tes_timeseries_data
+
     timeseries_data.each do |ts|
       result << OpenStudio::IdfObject.load("Output:Variable,*,#{ts},#{reporting_frequency};").get
     end
@@ -254,6 +262,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     feature_id = runner.getStringArgumentValue('feature_id', user_arguments)
     feature_name = runner.getStringArgumentValue('feature_name', user_arguments)
     feature_type = runner.getStringArgumentValue('feature_type', user_arguments)
+    feature_location = runner.getStringArgumentValue('feature_location', user_arguments)
 
     # Assign the user inputs to variables
     reporting_frequency = runner.getStringArgumentValue('reporting_frequency', user_arguments)
@@ -318,13 +327,16 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # Get Location information and store in the feature_report
     ##
 
-    # latitude
-    latitude = epw_file.latitude
-    feature_report.location.latitude = latitude
-
-    # longitude
-    longitude = epw_file.longitude
-    feature_report.location.longitude = longitude
+    if feature_location.include? '['
+      # get latitude from feature_location
+      latitude = (feature_location.split(',')[0].delete! '[]').to_f
+      # get longitude from feature_location
+      longitude = (feature_location.split(',')[1].delete! '[]').to_f
+      # latitude
+      feature_report.location.latitude = latitude
+      # longitude
+      feature_report.location.longitude = longitude
+    end
 
     # surface_elevation
     elev = sql_query(runner, sql_file, 'InputVerificationandResultsSummary', "TableName='General' AND RowName='Elevation' AND ColumnName='Value'")
@@ -332,6 +344,7 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
 
     ##########################################################################
     ##
+
     # Get program information and store in the feature_report
     ##
 
@@ -474,6 +487,39 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # total_construction_cost
     total_construction_cost = sql_query(runner, sql_file, 'Life-Cycle Cost Report', "TableName='Present Value for Recurring, Nonrecurring and Energy Costs (Before Tax)' AND RowName='LCC_MAT - BUILDING - LIFE CYCLE COSTS' AND ColumnName='Cost'")
     feature_report.program.total_construction_cost = total_construction_cost
+
+    # packaged thermal storage capacities by cooling coil
+    ptes_keys = sql_file.availableKeyValues('RUN Period 1', 'Zone Timestep', 'Cooling Coil Ice Thermal Storage End Fraction')
+    if ptes_keys.empty?
+      ptes_size = nil
+      runner.registerWarning('Query failed for Packaged Ice Thermal Storage Capacity')
+    else
+      begin
+        ptes_size = 0
+        ptes_keys.each do |pk|
+          ptes_size += sql_query(runner, sql_file, 'ComponentSizingSummary', "TableName='Coil:Cooling:DX:SingleSpeed:ThermalStorage' AND RowName='#{pk}' AND ColumnName='Ice Storage Capacity'").to_f
+        end
+        ptes_size = convert_units(ptes_size, 'GJ', 'kWh')
+      rescue StandardError
+        runner.registerWarning('Query ptes_size.get failed')
+      end
+    end
+    feature_report.thermal_storage.ptes_size = ptes_size
+
+    # get the central tank thermal storage capacity
+    its_size = nil
+    its_size_index = sql_file.execAndReturnFirstDouble("SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Ice Thermal Storage Capacity'")
+    if its_size_index.empty?
+      runner.registerWarning('Query failed for Ice Thermal Storage Capacity')
+    else
+      begin
+        its_size = sql_file.execAndReturnFirstDouble("SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex=#{its_size_index}").get
+        its_size = convert_units(its_size.to_f, 'GJ', 'kWh')
+      rescue StandardError
+        runner.registerWarning('Query its_size.get failed')
+      end
+    end
+    feature_report.thermal_storage.its_size = its_size
 
     ############################################################################
     ##
@@ -668,6 +714,10 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # add additional power timeseries (for calculating transformer apparent power to compare to rating ) in VA
     powerTimeseries = ['Net Electric Energy', 'Electricity:Facility Power', 'ElectricityProduced:Facility Power', 'Electricity:Facility Apparent Power', 'ElectricityProduced:Facility Apparent Power', 'Net Power', 'Net Apparent Power']
     requested_timeseries_names += powerTimeseries
+
+    # add additional thermal storage timeseries
+    tesTimeseries = ['Ice Thermal Storage End Fraction', 'Cooling Coil Ice Thermal Storage End Fraction']
+    requested_timeseries_names += tesTimeseries
 
     # register info all timeseries
     runner.registerInfo("All timeseries: #{requested_timeseries_names}")
@@ -870,6 +920,22 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
         #   puts "units = #{new_unit}"
         # end
 
+        # thermal storage ice end fractions have multiple timeseries, aggregate into a single series with consistent name and use the average value at each timestep
+        if tesTimeseries.include? timeseries_name
+
+          # set up array if 1st key_value
+          if key_i == 0
+            runner.registerInfo("SETTING UP NEW ARRAY FOR: #{timeseries_name}")
+            tmpArray = Array.new(n, 1)
+          end
+
+          # add to array (keep min value at each timestep)
+          (0..(n - 1)).each do |ind|
+            tVal = values[key_cnt][ind].to_f
+            tmpArray[ind] = [tVal, tmpArray[ind]].min
+          end
+        end
+
         # comfort results usually have multiple timeseries (per zone), aggregate into a single series with consistent name and use worst value at each timestep
         if comfortTimeseries.include? timeseries_name
 
@@ -960,7 +1026,6 @@ class DefaultFeatureReports < OpenStudio::Measure::ReportingMeasure
     # insert datetime header to names
     final_timeseries_names.insert(0, 'Datetime')
 
-    # rubocop: enable Metrics/BlockLength
     runner.registerInfo("new final_timeseries_names size: #{final_timeseries_names.size}")
 
     # Save the 'default_feature_reports.csv' file
