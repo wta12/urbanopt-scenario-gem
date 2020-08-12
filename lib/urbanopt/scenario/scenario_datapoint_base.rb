@@ -60,6 +60,13 @@ module URBANopt
       end
 
       ##
+      # Gets the type of a feature
+      ##
+      def feature_location
+        @feature.feature_location
+      end
+
+      ##
       # Return the directory that this datapoint will run in.
       ##
       # [return:] _String_ - Directory that this datapoint will run in.

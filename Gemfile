@@ -22,18 +22,24 @@ allow_local = ENV['FAVOR_LOCAL_GEMS']
 
 if allow_local && File.exist?('../openstudio-common-measures-gem')
   gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
-elsif allow_local
+else
   gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
 end
 
 if allow_local && File.exist?('../openstudio-model-articulation-gem')
   gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
-elsif allow_local
+else
   gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
 end
 
 if allow_local && File.exist?('../urbanopt-core-gem')
   gem 'urbanopt-core', path: '../urbanopt-core-gem'
-elsif allow_local
+else
   gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
+end
+
+if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
+  gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
+else
+  gem 'openstudio-load-flexibility-measures', github: 'NREL/openstudio-load-flexibility-measures-gem', branch: 'master'
 end

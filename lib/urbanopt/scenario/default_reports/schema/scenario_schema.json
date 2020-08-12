@@ -63,6 +63,9 @@
 				},
 				"distributed_generation": {
 					"$ref": "#/definitions/DistributedGeneration"
+				},
+				"thermal_storage": {
+					"$ref": "#/definitions/ThermalStorage"
 				}
 			},
 			"required": [
@@ -216,6 +219,9 @@
 				},
 				"power_distribution": {
 					"$ref": "#/definitions/PowerDistribution"
+				},
+				"thermal_storage": {
+					"$ref": "#/definitions/ThermalStorage"
 				}
 			},
 			"required": [
@@ -541,11 +547,11 @@
 			"type": "object",
 			"properties": {
 				"latitude": {
-					"description": "(deg)",
+					"description": "latitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"longitude": {
-					"description": "(deg)",
+					"description": "longitude for the centroid of the feature (deg)",
 					"type": "number"
 				},
 				"surface_elevation": {
@@ -849,6 +855,19 @@
 					"type": "number"
 				},
 				"under_voltage_hours": {
+					"type": "number"
+				}
+			}
+		},
+		"ThermalStorage": {
+			"type": "object",
+			"properties": {
+				"its_size": {
+					"description": "Total central plant TES capacity in kWh",
+					"type": "number"
+				},
+				"ptes_size": {
+					"description": "Total distributed/packaged TES capacity in kWh",
 					"type": "number"
 				}
 			}
