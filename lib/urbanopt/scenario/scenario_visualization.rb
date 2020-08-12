@@ -36,20 +36,35 @@ require 'fileutils'
 module URBANopt
   module Scenario
     class ResultVisualization
-      def self.create_visualization(root_dir)
-        run_dir = File.join(root_dir, 'run')
+      
+      def self.create_visualization(run_dir, feature = true)
 
-        @all_scenario_results = []
+        @all_results = []
+
         Dir.foreach(run_dir) do |folder|
-          next if (folder == '.') || (folder == '..') || (folder == 'scenarioData.js') || (folder == 'scenario_comparison.html')
-          scenario_dir = File.join(run_dir, folder)
-          scenario_csv_dir = File.join(scenario_dir, 'default_scenario_report.csv')
-          scenario_name = folder.delete_suffix('_scenario')
 
-          if File.exist?(scenario_csv_dir)
-            headers = CSV.open(scenario_csv_dir, &:readline)
-            size = CSV.open(scenario_csv_dir).readlines.size
+          next if folder == '.' or folder == '..' or folder == 'scenarioData.js' or folder == 'scenario_comparison.html' or folder == 'default_scenario_report.csv' or folder == 'default_scenario_report.json'
+          name = folder.delete_suffix('_scenario')
 
+          # create visualization for scenarios
+          if feature == false
+            folder_dir = File.join(run_dir, folder)
+            csv_dir = File.join(folder_dir,'default_scenario_report.csv')
+          # create visualization for features
+          elsif feature == true
+            folder_dir = Dir[File.join(run_dir, folder,  "/feature_reports")]
+            # check if feature reports folder is empty
+            unless folder_dir.empty?
+              csv_dir = File.join(folder_dir,'default_feature_report.csv')
+            end
+          end
+
+          next if folder_dir.empty?
+
+          if File.exist?(csv_dir)
+            headers = CSV.open(csv_dir, &:readline)
+            size = CSV.open(csv_dir).readlines.size
+            
             monthly_values = {}
             monthly_totals = {}
             annual_values = {}
@@ -59,7 +74,7 @@ module URBANopt
             end
 
             i = 0
-            CSV.foreach(scenario_csv_dir).map do |row|
+            CSV.foreach(csv_dir).map do |row|
               if i == 0
                 # store header values from csv
                 headers = row
@@ -103,120 +118,143 @@ module URBANopt
               index = monthly_values['Datetime'].index(i)
 
               # store index of each date from the csv
-              if jan_date == date_obj
-                @@jan_index = index
-              elsif feb_date == date_obj
-                @@feb_index = index
+              if feb_date == date_obj
+                @feb_index = index
               elsif mar_date == date_obj
-                @@mar_index = index
+                @mar_index = index
               elsif apr_date == date_obj
-                @@apr_index = index
+                @apr_index = index
               elsif may_date == date_obj
-                @@may_index = index
+                @may_index = index
               elsif jun_date == date_obj
-                @@jun_index = index
+                @jun_index = index
               elsif jul_date == date_obj
-                @@jul_index = index
+                @jul_index = index
               elsif aug_date == date_obj
-                @@aug_index = index
+                @aug_index = index
               elsif sep_date == date_obj
-                @@sep_index = index
+                @sep_index = index
               elsif oct_date == date_obj
-                @@oct_index = index
+                @oct_index = index
               elsif nov_date == date_obj
-                @@nov_index = index
+                @nov_index = index
               elsif dec_date == date_obj
-                @@dec_index = index
+                @dec_index = index
               elsif jan_next_year == date_obj
-                @@jan_next_year_index = index
+                @jan_next_year_index = index
               end
             end
 
             headers.each_index do |j|
+              
               i = 0
+              k = 0
 
               monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
 
               # loop through values for each header
               all_values = monthly_values[headers[j]]
 
-              # for each header store monthly sums of values
-              all_values.each do |v|
-                if i < @@feb_index
-                  monthly_sum_jan += v.to_f
-                  i += 1
-                elsif @@feb_index <= i && i < @@mar_index
-                  monthly_sum_feb += v.to_f
-                  i += 1
-                elsif @@mar_index <= i && i < @@apr_index
-                  monthly_sum_mar += v.to_f
-                  i += 1
-                elsif @@apr_index <= i && i < @@may_index
-                  monthly_sum_apr += v.to_f
-                  i += 1
-                elsif @@may_index <= i && i < @@jun_index
-                  monthly_sum_may += v.to_f
-                  i += 1
-                elsif @@jun_index <= i && i < @@jul_index
-                  monthly_sum_jun += v.to_f
-                  i += 1
-                elsif @@jul_index <= i && i < @@aug_index
-                  monthly_sum_jul += v.to_f
-                  i += 1
-                elsif @@aug_index <= i && i < @@sep_index
-                  monthly_sum_aug += v.to_f
-                  i += 1
-                elsif @@sep_index <= i && i < @@oct_index
-                  monthly_sum_sep += v.to_f
-                  i += 1
-                elsif @@oct_index <= i && i < @@nov_index
-                  monthly_sum_oct += v.to_f
-                  i += 1
-                elsif @@nov_index <= i && i < @@dec_index
-                  monthly_sum_nov += v.to_f
-                  i += 1
-                elsif @@dec_index <= i && i < @@jan_next_year_index
-                  monthly_sum_dec += v.to_f
-                  i += 1
-                # sum up all values for annual aggregate
-                elsif i < size
-                  annual_sum += v.to_f
+              unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
+                
+                # for each header store monthly sums of values
+                all_values.each do |v|
+                  if i < @feb_index
+                    monthly_sum_jan += v.to_f
+                    i += 1
+                  elsif @feb_index <= i && i < @mar_index
+                    monthly_sum_feb += v.to_f
+                    i += 1
+                  elsif @mar_index <= i && i < @apr_index
+                    monthly_sum_mar += v.to_f
+                    i += 1
+                  elsif @apr_index <= i && i < @may_index
+                    monthly_sum_apr += v.to_f
+                    i += 1
+                  elsif @may_index <= i && i < @jun_index
+                    monthly_sum_may += v.to_f
+                    i += 1
+                  elsif @jun_index <= i && i < @jul_index
+                    monthly_sum_jun += v.to_f
+                    i += 1
+                  elsif @jul_index <= i && i < @aug_index
+                    monthly_sum_jul += v.to_f
+                    i += 1
+                  elsif @aug_index <= i && i < @sep_index
+                    monthly_sum_aug += v.to_f
+                    i += 1
+                  elsif @sep_index <= i && i < @oct_index
+                    monthly_sum_sep += v.to_f
+                    i += 1
+                  elsif @oct_index <= i && i < @nov_index
+                    monthly_sum_oct += v.to_f
+                    i += 1
+                  elsif @nov_index <= i && i < @dec_index
+                    monthly_sum_nov += v.to_f
+                    i += 1
+                  elsif @dec_index <= i && i < @jan_next_year_index
+                    monthly_sum_dec += v.to_f
+                    i +=1
+                  end
+                  # sum up all values for annual aggregate
+                  if k <= size
+                    annual_sum += v.to_f
+                    k += 1
+                  end
+
                 end
               end
-
+              
               # store headers as key and monthly sums as values for each header
               monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
 
               annual_values[headers[j]] = annual_sum
-
-              @scenario_results = {}
-              @scenario_results['name'] = scenario_name
-              @scenario_results['monthly_values'] = {}
-              @scenario_results['annual_values'] = {}
+            
+            end 
+            
+            @results = {}
+            @results["name"] = name
+            @results["monthly_values"] = {}
+            @results["annual_values"] = {}
+            
+            unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
+            @results["complete_simulation"] = true
+            else
+            @results["complete_simulation"] = false
             end
+            
+            unless monthly_totals.nil?
+              monthly_totals.each do |key, value|
+                unless key == 'Datetime'
+                  @results["monthly_values"][key] = value
+                end
+              end
+
+            end
+
+            unless annual_values.nil?
+              annual_values.each do |key, value|
+                unless key == 'Datetime'
+                  @results["annual_values"][key] = value
+                end
+              end
+            end
+          
           end
 
-          monthly_totals.each do |key, value|
-            unless key == 'Datetime'
-              @scenario_results['monthly_values'][key] = value
-            end
+          unless @results.nil?
+            @all_results << @results
           end
 
-          annual_values.each do |key, value|
-            unless key == 'Datetime'
-              @scenario_results['annual_values'][key] = value
-            end
-          end
-
-          @all_scenario_results << @scenario_results
         end
-
+        
         # create json with required data stored in a variable
-        results_path = File.join(root_dir, '/run/scenarioData.js')
+        results_path = File.join(run_dir, "/scenarioData.js")
         File.open(results_path, 'w') do |file|
-          file << "var scenarioData = #{JSON.pretty_generate(@all_scenario_results)};"
+          file << "var scenarioData = #{JSON.pretty_generate(@all_results)};"
         end
-        end
+      end
+    
     end # ResultVisualization
   end # Scenario
 end # URBANopt
