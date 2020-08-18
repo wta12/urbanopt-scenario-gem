@@ -20,17 +20,20 @@ allow_local = ENV['FAVOR_LOCAL_GEMS']
 #   gem 'openstudio-extension', github: 'NREL/OpenStudio-extension-gem', branch: 'develop'
 # end
 
-if allow_local && File.exist?('../openstudio-common-measures-gem')
-  gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
-elsif allow_local
-  gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
-end
+# TEMPORARY CHANGE
+gem 'openstudio-extension', github: 'NREL/OpenStudio-extension-gem', branch: 'develop'
 
-if allow_local && File.exist?('../openstudio-model-articulation-gem')
-  gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
-elsif allow_local
-  gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
-end
+# if allow_local && File.exist?('../openstudio-common-measures-gem')
+#   gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
+# elsif allow_local
+#   gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
+# end
+
+# if allow_local && File.exist?('../openstudio-model-articulation-gem')
+#   gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
+# elsif allow_local
+#   gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
+# end
 
 if allow_local && File.exist?('../urbanopt-core-gem')
   gem 'urbanopt-core', path: '../urbanopt-core-gem'
@@ -38,8 +41,8 @@ elsif allow_local
   gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
 end
 
-#if allow_local && File.exist?('../urbanopt-reporting-gem')
-#  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
-#elsif allow_local
-  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'master'
-#end
+if allow_local && File.exist?('../urbanopt-reporting-gem')
+  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
+elsif allow_local
+  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
+end

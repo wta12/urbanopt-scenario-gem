@@ -51,12 +51,27 @@ RSpec.describe URBANopt::Scenario do
   it 'can run a scenario' do
     name = 'Example Scenario'
 
+    # copy all files into test directory
+    root_dir = File.join(File.dirname(__FILE__), '../test')
+    Dir.mkdir(root_dir) unless File.exists?(root_dir)
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
-    feature_file_path = File.join(File.dirname(__FILE__), '../files/example_feature_file.json')
-    mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
-    csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/example_feature_file.json'), File.join(File.dirname(__FILE__), '../test/example_feature_file.json'))
+    feature_file_path = File.join(File.dirname(__FILE__), '../test/example_feature_file.json')
+    FileUtils.cp_r(File.join(File.dirname(__FILE__), '../files/mappers'), File.join(File.dirname(__FILE__), '../test/mappers'), remove_destination: true)
+    FileUtils.cp_r(File.join(File.dirname(__FILE__), '../files/weather'), File.join(File.dirname(__FILE__), '../test/weather'), remove_destination: true)
+    mapper_files_dir = File.join(File.dirname(__FILE__), '../test/mappers/')
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/example_scenario.csv'), File.join(File.dirname(__FILE__), '../test/example_scenario.csv'))
+    csv_file = File.join(File.dirname(__FILE__), '../test/example_scenario.csv')
     num_header_rows = 1
-    root_dir = File.join(File.dirname(__FILE__), '../../')
+
+
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/Gemfile'), File.join(File.dirname(__FILE__), '../test/Gemfile'))
+
+    # write a runner.conf in project dir
+    options = {gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), "../test/.bundle/install")}
+    File.open(File.join(root_dir, 'runner.conf'), "w") do |f|
+      f.write(options.to_json)
+    end
 
     feature_file = ExampleFeatureFile.new(feature_file_path)
     expect(feature_file.features.size).to eq(3)
