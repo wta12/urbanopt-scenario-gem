@@ -44,4 +44,5 @@ require 'urbanopt/scenario/simulation_dir_osw'
 require 'urbanopt/scenario/simulation_mapper_base'
 require 'urbanopt/scenario/scenario_visualization'
 
+
 require 'urbanopt/scenario/default_reports'
