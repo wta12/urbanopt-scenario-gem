@@ -41,11 +41,13 @@ else
   gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
 end
 
-if allow_local && File.exist?('../urbanopt-reporting-gem')
-  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
-elsif allow_local
+#if allow_local && File.exist?('../urbanopt-reporting-gem')
+#  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
+#elsif allow_local
   gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
-endif allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
+#end
+
+if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
   gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
 else
   gem 'openstudio-load-flexibility-measures', github: 'NREL/openstudio-load-flexibility-measures-gem', branch: 'master'
