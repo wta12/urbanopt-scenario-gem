@@ -29,8 +29,7 @@
 # *********************************************************************************
 
 require 'urbanopt/scenario/scenario_post_processor_base'
-require 'urbanopt/scenario/default_reports'
-require 'urbanopt/scenario/default_reports/logger'
+require 'urbanopt/reporting/default_reports'
 
 require 'csv'
 require 'json'
@@ -48,9 +47,9 @@ module URBANopt
         super(scenario_base)
 
         initialization_hash = { directory_name: scenario_base.run_dir, name: scenario_base.name, id: scenario_base.name }
-        @scenario_result = URBANopt::Scenario::DefaultReports::ScenarioReport.new(initialization_hash)
+        @scenario_result = URBANopt::Reporting::DefaultReports::ScenarioReport.new(initialization_hash)
 
-        @@logger ||= URBANopt::Scenario::DefaultReports.logger
+        @@logger ||= URBANopt::Reporting::DefaultReports.logger
       end
 
       ##
@@ -70,7 +69,7 @@ module URBANopt
       # [parameters:]
       # +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
       def add_simulation_dir(simulation_dir)
-        feature_reports = URBANopt::Scenario::DefaultReports::FeatureReport.from_simulation_dir(simulation_dir)
+        feature_reports = URBANopt::Reporting::DefaultReports::FeatureReport.from_simulation_dir(simulation_dir)
 
         feature_reports.each do |feature_report|
           if feature_report.to_hash[:simulation_status] == 'Complete'

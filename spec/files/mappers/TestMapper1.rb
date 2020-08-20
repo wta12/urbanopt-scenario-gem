@@ -28,11 +28,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario'
+require 'urbanopt/reporting'
 require 'openstudio/common_measures'
 require 'openstudio/model_articulation'
 require 'openstudio/load_flexibility_measures'
-
 require 'json'
 
 module URBANopt

@@ -31,11 +31,5 @@
 ##
 # Retrieve all default_reports classes.
 ##
-require 'urbanopt/scenario/default_reports/construction_cost'
-require 'urbanopt/scenario/default_reports/feature_report'
-require 'urbanopt/scenario/default_reports/logger'
-require 'urbanopt/scenario/default_reports/program'
-require 'urbanopt/scenario/default_reports/reporting_period'
-require 'urbanopt/scenario/default_reports/scenario_report'
-require 'urbanopt/scenario/default_reports/timeseries_csv'
-require 'urbanopt/scenario/default_reports/thermal_storage'
+
+require 'urbanopt/reporting/default_reports'
