@@ -136,6 +136,10 @@ RSpec.describe URBANopt::Scenario do
     end
 
     expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
+        
+    # expect run_status.json to exist
+    expect(File.exist?(File.join(scenario.run_dir, 'run_status.json'))).to be true
+
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     $scenario_result = default_post_processor.run
 
