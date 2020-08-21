@@ -73,14 +73,18 @@ module URBANopt
       # Require all simulation mappers in mapper_files_dir
       def load_mapper_files
         dirs = Dir.glob(File.join(@mapper_files_dir, '/*.rb'))
-        # order is not guaranteed...make sure to add Baseline first, then High Efficiency
+        # order is not guaranteed...attempt to add Baseline first, then High Efficiency
         ordered_dirs = []
         bindex = dirs.find_index {|i| i.include? "Baseline.rb"}
-        ordered_dirs << dirs[bindex]
-        dirs.delete_at(bindex)
+        if bindex
+          ordered_dirs << dirs[bindex] 
+          dirs.delete_at(bindex)
+        end
         hindex = dirs.find_index {|i| i.include? "HighEfficiency.rb"}
-        ordered_dirs << dirs[hindex]
-        dirs.delete_at(hindex)
+        if hindex
+          ordered_dirs << dirs[hindex] if hindex
+          dirs.delete_at(hindex)
+        end
         # then the rest
         ordered_dirs = ordered_dirs + dirs
 
