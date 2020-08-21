@@ -31,4 +31,5 @@
 ##
 # Retrieve all default_reports classes.
 ##
+
 require 'urbanopt/reporting/default_reports'
