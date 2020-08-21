@@ -225,7 +225,7 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
   it 'can create visualization for scenario result' do
     
-    run_dir = File.join(File.dirname(__FILE__), '../run')
+    run_dir = File.join(File.dirname(__FILE__), '../vis_test')
     scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, false)
     file = File.join(run_dir, 'scenarioData.js')
 
@@ -248,7 +248,7 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
   it 'can create visualization for feature result' do
     
-    run_dir = File.join(File.dirname(__FILE__), '../run/baseline_scenario')
+    run_dir = File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario')
 
     scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, true)
     
@@ -261,12 +261,21 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     visualization_file = visualization_file.split(';')[0]
 
     json_file = JSON.parse(visualization_file)
-
-    expect(json_file[0]["name"]).to eq '2'
+    # order does not seem to be the same
+    if ['2', '3'].include? json_file[0]["name"]
+      testName = true
+    else
+      testName = false
+    end
+    expect(testName).to be_truthy
     expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"].size).to eq 12
-    expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 1833016.431105801
-    expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 3230104.682959298
-  
+    if json_file[0]["name"] == '2'
+      expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 1833016.431105801
+      expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 3230104.682959298
+    else
+      expect(json_file[0]["monthly_values"]["Electricity:Facility(kWh)"][0]).to eq 2083432.9873940796
+      expect(json_file[0]["annual_values"]["Electricity:Facility(kWh)"]).to eq 27937661.623504374
+    end
   end
 
 end
