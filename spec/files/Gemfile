@@ -60,4 +60,4 @@ end
 #   #gem 'urbanopt-reporting', '~> 0.1.0'
 # end
 
-gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'split_update'
+gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
