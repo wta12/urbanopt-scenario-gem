@@ -55,7 +55,7 @@ module URBANopt
       # +force_clear+ - _Bool_ - Clear Scenario before creating Simulation input files.
       #
       # [return:] _Array_ Returns an array of all SimulationDirs, even those created previously, for Scenario.
-      def run(scenario, force_clear = false)
+      def run(scenario, force_clear = false, options = {})
         raise 'run is not implemented for ScenarioRunnerBase, override in your class'
       end
     end

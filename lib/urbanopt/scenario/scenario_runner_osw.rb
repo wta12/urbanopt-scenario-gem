@@ -82,10 +82,11 @@ module URBANopt
       # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.
       # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.
       # [return:] _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
-      def run(scenario, force_clear = false)
+      def run(scenario, force_clear = false, options = {})
         # instantiate openstudio runner - use the defaults for now. If need to change then create
         # the runner.conf file (i.e. run `rake openstudio:runner:init`)
-        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
+        # allow passing gemfile_path and bundle_install_path in options
+        runner = OpenStudio::Extension::Runner.new(scenario.root_dir, [], options)
 
         # create simulation files
         simulation_dirs = create_simulation_files(scenario, force_clear)

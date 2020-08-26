@@ -110,6 +110,7 @@ RSpec.describe URBANopt::Scenario do
     end
 
     # create a ScenarioRunnerOSW to run the ScenarioCSV
+
     scenario_runner = URBANopt::Scenario::ScenarioRunnerOSW.new
 
     scenario_runner.create_simulation_files(scenario, clear_results)
@@ -117,7 +118,9 @@ RSpec.describe URBANopt::Scenario do
     expect(File.exist?(simulation_dirs[1].run_dir)).to be true
     expect(File.exist?(simulation_dirs[2].run_dir)).to be true
 
-    simulation_dirs = scenario_runner.run(scenario)
+    # pass Gemfile and bundle paths to extension gem runner, otherwise it will use this gem's and that doesn't work b/c of native gems
+    options = {gemfile_path: File.join(File.dirname(__FILE__),'../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__),'../test/.bundle/install'), skip_config: false}
+    simulation_dirs = scenario_runner.run(scenario, false, options)
     if clear_results
       expect(simulation_dirs.size).to eq(3)
       expect(simulation_dirs[0].in_osw_path).to eq(File.join(run_dir, '1/in.osw'))
@@ -136,7 +139,7 @@ RSpec.describe URBANopt::Scenario do
     end
 
     expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
-        
+
     # expect run_status.json to exist
     expect(File.exist?(File.join(scenario.run_dir, 'run_status.json'))).to be true
 
@@ -145,6 +148,7 @@ RSpec.describe URBANopt::Scenario do
 
     # save scenario result
     $scenario_result.save
+    default_post_processor.create_scenario_db_file
 
     ### save feature reports
     $scenario_result.feature_reports.each(&:save_feature_report)
