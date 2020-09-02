@@ -212,6 +212,7 @@ module URBANopt
             @results["complete_simulation"] = true
             else
             @results["complete_simulation"] = false
+            puts "Scenario #{name} did not contain an annual simulation…visualizations will not render for this scenario."
             end
             
             unless monthly_totals.nil?
