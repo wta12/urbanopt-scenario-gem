@@ -40,26 +40,17 @@ module URBANopt
       def self.create_visualization(run_dir, feature = true)
 
         @all_results = []
+        run_dir.each do |folder|
 
-        Dir.foreach(run_dir) do |folder|
-
-          next if folder == '.' or folder == '..' or folder == 'scenarioData.js' or folder == 'scenario_comparison.html' or folder == 'default_scenario_report.csv' or folder == 'default_scenario_report.json'
-          name = folder.delete_suffix('_scenario')
+          name = folder.split('/')[-1]
 
           # create visualization for scenarios
           if feature == false
-            folder_dir = File.join(run_dir, folder)
-            csv_dir = File.join(folder_dir,'default_scenario_report.csv')
+            csv_dir = File.join(folder,'default_scenario_report.csv')
           # create visualization for features
           elsif feature == true
-            folder_dir = Dir[File.join(run_dir, folder,  "/feature_reports")]
-            # check if feature reports folder is empty
-            unless folder_dir.empty?
-              csv_dir = File.join(folder_dir,'default_feature_report.csv')
-            end
+            csv_dir = File.join(folder, "feature_reports/default_feature_report.csv")
           end
-
-          next if folder_dir.empty?
 
           if File.exist?(csv_dir)
             headers = CSV.open(csv_dir, &:readline)
@@ -221,6 +212,7 @@ module URBANopt
             @results["complete_simulation"] = true
             else
             @results["complete_simulation"] = false
+            puts "Scenario #{name} did not contain an annual simulation…visualizations will not render for this scenario."
             end
             
             unless monthly_totals.nil?
@@ -247,9 +239,8 @@ module URBANopt
           end
 
         end
-        
         # create json with required data stored in a variable
-        results_path = File.join(run_dir, "/scenarioData.js")
+        results_path = File.join(run_dir[0], "../scenarioData.js")
         File.open(results_path, 'w') do |file|
           file << "var scenarioData = #{JSON.pretty_generate(@all_results)};"
         end
