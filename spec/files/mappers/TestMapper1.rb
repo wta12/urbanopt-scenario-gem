@@ -78,7 +78,7 @@ module URBANopt
 
         # now we have the feature, we can look up its properties and set arguments in the OSW
         OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature.area)
-        OpenStudio::Extension.set_measure_argument(osw, 'add_distributed_ice_storage_to_air_loop_for_load_flexibility', '__SKIP__', false)
+        OpenStudio::Extension.set_measure_argument(osw, 'add_packaged_ice_storage', '__SKIP__', false)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_id', feature.id)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_name', feature_name)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_type', feature.feature_type)
