@@ -65,7 +65,7 @@
 
 		}
   },{
-    "measure_dir_name": "add_distributed_ice_storage_to_air_loop_for_load_flexibility",
+    "measure_dir_name": "add_packaged_ice_storage",
     "arguments": {
       "__SKIP__": true
     }
