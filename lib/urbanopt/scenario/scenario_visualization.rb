@@ -53,29 +53,27 @@ module URBANopt
           end
 
           if File.exist?(csv_dir)
-            headers = CSV.open(csv_dir, &:readline)
             size = CSV.open(csv_dir).readlines.size
             
             monthly_values = {}
             monthly_totals = {}
             annual_values = {}
 
-            headers.each do |header|
-              monthly_values[header] = []
-            end
-
+            headers_unitless = []
             i = 0
             CSV.foreach(csv_dir).map do |row|
               if i == 0
                 # store header values from csv
                 headers = row
                 headers.each do |header|
-                  monthly_values[header] = []
+                header_unitless = (header.to_s).split('(')[0]
+                headers_unitless << header_unitless
+                monthly_values[header_unitless] = []
                 end
-                # store values from csv for each row
+               # store values from csv for each row
               elsif i <= size
-                headers.each_index do |j|
-                  monthly_values[headers[j]] << row[j]
+                headers_unitless.each_index do |j|
+                  monthly_values[headers_unitless[j]] << row[j]
                 end
               end
               i += 1
@@ -136,7 +134,7 @@ module URBANopt
               end
             end
 
-            headers.each_index do |j|
+            headers_unitless.each_index do |j|
               
               i = 0
               k = 0
@@ -144,7 +142,7 @@ module URBANopt
               monthly_sum_jan = monthly_sum_feb = monthly_sum_mar = monthly_sum_apr = monthly_sum_may = monthly_sum_jun = monthly_sum_jul = monthly_sum_aug = monthly_sum_sep = monthly_sum_oct = monthly_sum_nov = monthly_sum_dec = annual_sum = 0
 
               # loop through values for each header
-              all_values = monthly_values[headers[j]]
+              all_values = monthly_values[headers_unitless[j]]
 
               unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
                 
@@ -197,9 +195,9 @@ module URBANopt
               end
               
               # store headers as key and monthly sums as values for each header
-              monthly_totals[headers[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
+              monthly_totals[headers_unitless[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
 
-              annual_values[headers[j]] = annual_sum
+              annual_values[headers_unitless[j]] = annual_sum
             
             end 
             
@@ -212,7 +210,7 @@ module URBANopt
             @results["complete_simulation"] = true
             else
             @results["complete_simulation"] = false
-            puts "Scenario #{name} did not contain an annual simulation…visualizations will not render for this scenario."
+            puts "#{name} did not contain an annual simulation…visualizations will not render for it."
             end
             
             unless monthly_totals.nil?
