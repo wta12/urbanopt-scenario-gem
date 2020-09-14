@@ -2,7 +2,7 @@
 
 ### [back to main docs](../)
 
-The URBANopt Scenario Gem includes functionality for defining scenarios, running simulations, and post-processing results. User defined SimulationMapper classes translate each Feature to a SimulationDir which is a directory containing simulation input files. A ScenarioRunner is used to perform simulations for each SimulationDir. Finally, a ScenarioPostProcessor can run on a Scenario to generate scenario level results.
+The URBANopt™ Scenario Gem includes functionality for defining scenarios, running simulations, and post-processing results. User defined SimulationMapper classes translate each Feature to a SimulationDir which is a directory containing simulation input files. A ScenarioRunner is used to perform simulations for each SimulationDir. Finally, a ScenarioPostProcessor can run on a Scenario to generate scenario level results.
 
 [RDoc Documentation](https://urbanopt.github.io/urbanopt-scenario-gem/)
 
