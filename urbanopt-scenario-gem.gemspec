@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Library to export data point OSW files from URBANopt Scenario CSV'
   spec.description   = 'Library to export data point OSW files from URBANopt Scenario CSV'
   spec.homepage      = 'https://github.com/urbanopt'
+  spec.licenses      = 'Nonstandard'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -27,11 +28,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.7'
 
-  spec.add_dependency 'json-schema'
-  spec.add_dependency 'json_pure'
-  spec.add_dependency 'openstudio-common-measures', '~> 0.2.0'
-  spec.add_dependency 'openstudio-model-articulation', '~> 0.2.0'
-  spec.add_dependency 'sqlite3', '1.4.2'
-  spec.add_dependency 'urbanopt-core', '~> 0.3.0'
-  spec.add_dependency 'urbanopt-reporting', '~> 0.1.0'
+  spec.add_runtime_dependency 'json-schema', '~> 2.8'
+  spec.add_runtime_dependency 'json_pure', '~> 2.3'
+  spec.add_runtime_dependency 'openstudio-common-measures', '~> 0.2.0'
+  # spec.add_runtime_dependency 'openstudio-model-articulation', '~> 0.2.0'
+  spec.add_runtime_dependency 'sqlite3', '1.4.2'
+  # spec.add_runtime_dependency 'urbanopt-core', '~> 0.4.0'
+  # spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.1.1'
+  spec.add_runtime_dependency 'openstudio-load-flexibility-measures', '~> 0.1.3'
+  spec.add_runtime_dependency 'openstudio-extension', '~> 0.2.5'
 end

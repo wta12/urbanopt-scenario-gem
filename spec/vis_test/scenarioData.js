@@ -1,8 +1,8 @@
 var scenarioData = [
   {
-    "name": "baseline",
+    "name": "baseline_scenario",
     "monthly_values": {
-      "Electricity:Facility(kWh)": [
+      "Electricity:Facility": [
         2083432.9873999027,
         1939044.6427116012,
         2259819.4350607996,
@@ -16,7 +16,7 @@ var scenarioData = [
         2199722.8960006004,
         2285866.869645197
       ],
-      "ElectricityProduced:Facility()": [
+      "ElectricityProduced:Facility": [
         0.0,
         0.0,
         0.0,
@@ -30,7 +30,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "Gas:Facility(kBtu)": [
+      "Gas:Facility": [
         13177819.940705001,
         12176374.47418479,
         11372321.085503198,
@@ -44,7 +44,7 @@ var scenarioData = [
         9526154.953072108,
         12616805.150104616
       ],
-      "Cooling:Electricity(kWh)": [
+      "Cooling:Electricity": [
         11414.875531849017,
         11944.393285707998,
         54808.96919390704,
@@ -58,7 +58,7 @@ var scenarioData = [
         47756.904549144056,
         15171.796364032009
       ],
-      "Heating:Electricity(kWh)": [
+      "Heating:Electricity": [
         0.0,
         0.0,
         0.0,
@@ -72,7 +72,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "InteriorLights:Electricity(kWh)": [
+      "InteriorLights:Electricity": [
         264207.6821883203,
         238386.99928690045,
         265643.3533953205,
@@ -86,7 +86,7 @@ var scenarioData = [
         259151.6330398801,
         262440.09427586023
       ],
-      "ExteriorLights:Electricity(kWh)": [
+      "ExteriorLights:Electricity": [
         102012.34100539978,
         81555.69236569964,
         81976.53648309958,
@@ -100,7 +100,7 @@ var scenarioData = [
         91343.1990022997,
         102263.77325429978
       ],
-      "InteriorEquipment:Electricity(kWh)": [
+      "InteriorEquipment:Electricity": [
         1183611.0498604013,
         1129752.560936099,
         1319050.4068502076,
@@ -114,7 +114,7 @@ var scenarioData = [
         1275942.2803946072,
         1381071.368649396
       ],
-      "Fans:Electricity(kWh)": [
+      "Fans:Electricity": [
         283257.0780780395,
         256880.10176611,
         282074.9784218401,
@@ -128,7 +128,7 @@ var scenarioData = [
         270021.9266687801,
         283959.5804719996
       ],
-      "Pumps:Electricity(kWh)": [
+      "Pumps:Electricity": [
         18145.340513158106,
         18677.15494525372,
         36925.953654445875,
@@ -142,7 +142,7 @@ var scenarioData = [
         48674.636139345996,
         23392.133535226083
       ],
-      "WaterSystems:Electricity(kWh)": [
+      "WaterSystems:Electricity": [
         177635.59597094785,
         162738.49817626103,
         179577.985908351,
@@ -156,21 +156,21 @@ var scenarioData = [
         171282.93615074898,
         175119.495669886
       ],
-      "HeatRejection:Electricity(kWh)": [
-        13.687087266999999,
-        14.336970044000001,
-        734.2824803349997,
-        185.69536066299995,
-        2610.2334230899983,
-        11685.541360867004,
-        19813.185822503987,
-        15641.787393466999,
-        8370.009961811993,
-        1042.7074820179998,
-        342.1998741549999,
-        24.114242976000003
+      "HeatRejection:Electricity": [
+        4.340717703,
+        4.139086777999999,
+        16.231821170000003,
+        3.364241898,
+        731.1755314749998,
+        3.0551386219999994,
+        172.26617631199997,
+        14.150018768,
+        1163.9724365900006,
+        1943.117870183,
+        4005.234003775001,
+        7999.618461741998
       ],
-      "HeatRejection:Gas(kBtu)": [
+      "HeatRejection:Gas": [
         0.0,
         0.0,
         0.0,
@@ -184,7 +184,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "Heating:Gas(kBtu)": [
+      "Heating:Gas": [
         4106539.198477055,
         3917050.9151631403,
         2283722.7248134785,
@@ -198,7 +198,7 @@ var scenarioData = [
         1219970.4596501542,
         3733469.220512333
       ],
-      "WaterSystems:Gas(kBtu)": [
+      "WaterSystems:Gas": [
         5469441.405751468,
         5005252.078629684,
         5485876.364620766,
@@ -212,7 +212,7 @@ var scenarioData = [
         4819679.336016731,
         5280613.933740216
       ],
-      "InteriorEquipment:Gas(kBtu)": [
+      "InteriorEquipment:Gas": [
         3601839.3365239957,
         3254071.4803099963,
         3602721.996057496,
@@ -226,7 +226,7 @@ var scenarioData = [
         3486505.157474996,
         3602721.996057496
       ],
-      "DistrictCooling:Facility()": [
+      "DistrictCooling:Facility": [
         0.0,
         0.0,
         0.0,
@@ -240,7 +240,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "DistrictHeating:Facility()": [
+      "DistrictHeating:Facility": [
         0.0,
         0.0,
         0.0,
@@ -254,7 +254,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Cooling Chilled Water Rate()": [
+      "District Cooling Chilled Water Rate": [
         0.0,
         0.0,
         0.0,
@@ -268,7 +268,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Cooling Mass Flow Rate()": [
+      "District Cooling Mass Flow Rate": [
         0.0,
         0.0,
         0.0,
@@ -282,7 +282,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Cooling Inlet Temperature()": [
+      "District Cooling Inlet Temperature": [
         0.0,
         0.0,
         0.0,
@@ -296,7 +296,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Cooling Outlet Temperature()": [
+      "District Cooling Outlet Temperature": [
         0.0,
         0.0,
         0.0,
@@ -310,7 +310,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Heating Hot Water Rate()": [
+      "District Heating Hot Water Rate": [
         0.0,
         0.0,
         0.0,
@@ -324,7 +324,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Heating Mass Flow Rate()": [
+      "District Heating Mass Flow Rate": [
         0.0,
         0.0,
         0.0,
@@ -338,7 +338,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Heating Inlet Temperature()": [
+      "District Heating Inlet Temperature": [
         0.0,
         0.0,
         0.0,
@@ -352,7 +352,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "District Heating Outlet Temperature()": [
+      "District Heating Outlet Temperature": [
         0.0,
         0.0,
         0.0,
@@ -366,7 +366,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "Net Electric Energy(kWh)": [
+      "Net Electric Energy": [
         2083432.9873999027,
         1939044.6427116012,
         2259819.4350607996,
@@ -380,7 +380,7 @@ var scenarioData = [
         2199722.8960006004,
         2285866.869645197
       ],
-      "Electricity:Facility Power(kW)": [
+      "Electricity:Facility Power": [
         2083432.9873999027,
         1939044.6427116012,
         2259819.4350607996,
@@ -394,7 +394,7 @@ var scenarioData = [
         2199722.8960006004,
         2285866.869645197
       ],
-      "ElectricityProduced:Facility Power(kW)": [
+      "ElectricityProduced:Facility Power": [
         0.0,
         0.0,
         0.0,
@@ -408,7 +408,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "Electricity:Facility Apparent Power(kVA)": [
+      "Electricity:Facility Apparent Power": [
         2314925.5415539006,
         2154494.0474563013,
         2510910.483409102,
@@ -422,7 +422,7 @@ var scenarioData = [
         2444136.5511097,
         2539852.0773839992
       ],
-      "ElectricityProduced:Facility Apparent Power(kVA)": [
+      "ElectricityProduced:Facility Apparent Power": [
         0.0,
         0.0,
         0.0,
@@ -436,7 +436,7 @@ var scenarioData = [
         0.0,
         0.0
       ],
-      "Net Power(kW)": [
+      "Net Power": [
         2083432.9873999027,
         1939044.6427116012,
         2259819.4350607996,
@@ -450,7 +450,7 @@ var scenarioData = [
         2199722.8960006004,
         2285866.869645197
       ],
-      "Net Apparent Power(kVA)": [
+      "Net Apparent Power": [
         2314925.5415539006,
         2154494.0474563013,
         2510910.483409102,
@@ -463,57 +463,42 @@ var scenarioData = [
         2481296.7859479985,
         2444136.5511097,
         2539852.0773839992
-      ],
-      "HeatRejection:Electricity()": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
       ]
     },
     "annual_values": {
-      "Electricity:Facility(kWh)": 27937661.62353445,
-      "ElectricityProduced:Facility()": 0.0,
-      "Gas:Facility(kBtu)": 119103752.24059068,
-      "Cooling:Electricity(kWh)": 2376608.075513817,
-      "Heating:Electricity(kWh)": 0.0,
-      "InteriorLights:Electricity(kWh)": 3090470.143076241,
-      "ExteriorLights:Electricity(kWh)": 922469.3405164229,
-      "InteriorEquipment:Electricity(kWh)": 15120378.808145488,
-      "Fans:Electricity(kWh)": 3349332.903047512,
-      "Pumps:Electricity(kWh)": 580768.2756635845,
-      "WaterSystems:Electricity(kWh)": 2082383.2307850502,
-      "HeatRejection:Electricity(kWh)": 60477.781459198064,
-      "HeatRejection:Gas(kBtu)": 0.0,
-      "Heating:Gas(kBtu)": 18140904.165974244,
-      "WaterSystems:Gas(kBtu)": 58543701.992461495,
-      "InteriorEquipment:Gas(kBtu)": 42419146.082613565,
-      "DistrictCooling:Facility()": 0.0,
-      "DistrictHeating:Facility()": 0.0,
-      "District Cooling Chilled Water Rate()": 0.0,
-      "District Cooling Mass Flow Rate()": 0.0,
-      "District Cooling Inlet Temperature()": 0.0,
-      "District Cooling Outlet Temperature()": 0.0,
-      "District Heating Hot Water Rate()": 0.0,
-      "District Heating Mass Flow Rate()": 0.0,
-      "District Heating Inlet Temperature()": 0.0,
-      "District Heating Outlet Temperature()": 0.0,
-      "Net Electric Energy(kWh)": 27937661.62353445,
-      "Electricity:Facility Power(kW)": 27937661.62353445,
-      "ElectricityProduced:Facility Power(kW)": 0.0,
-      "Electricity:Facility Apparent Power(kVA)": 31041846.248337593,
-      "ElectricityProduced:Facility Apparent Power(kVA)": 0.0,
-      "Net Power(kW)": 27937661.62353445,
-      "Net Apparent Power(kVA)": 31041846.248337593,
-      "HeatRejection:Electricity()": 0.0
+      "Electricity:Facility": 27937661.62353445,
+      "ElectricityProduced:Facility": 0.0,
+      "Gas:Facility": 119103752.24059068,
+      "Cooling:Electricity": 2376608.075513817,
+      "Heating:Electricity": 0.0,
+      "InteriorLights:Electricity": 3090470.143076241,
+      "ExteriorLights:Electricity": 922469.3405164229,
+      "InteriorEquipment:Electricity": 15120378.808145488,
+      "Fans:Electricity": 3349332.903047512,
+      "Pumps:Electricity": 580768.2756635845,
+      "WaterSystems:Electricity": 2082383.2307850502,
+      "HeatRejection:Electricity": 16096.06504036601,
+      "HeatRejection:Gas": 0.0,
+      "Heating:Gas": 18140904.165974244,
+      "WaterSystems:Gas": 58543701.992461495,
+      "InteriorEquipment:Gas": 42419146.082613565,
+      "DistrictCooling:Facility": 0.0,
+      "DistrictHeating:Facility": 0.0,
+      "District Cooling Chilled Water Rate": 0.0,
+      "District Cooling Mass Flow Rate": 0.0,
+      "District Cooling Inlet Temperature": 0.0,
+      "District Cooling Outlet Temperature": 0.0,
+      "District Heating Hot Water Rate": 0.0,
+      "District Heating Mass Flow Rate": 0.0,
+      "District Heating Inlet Temperature": 0.0,
+      "District Heating Outlet Temperature": 0.0,
+      "Net Electric Energy": 27937661.62353445,
+      "Electricity:Facility Power": 27937661.62353445,
+      "ElectricityProduced:Facility Power": 0.0,
+      "Electricity:Facility Apparent Power": 31041846.248337593,
+      "ElectricityProduced:Facility Apparent Power": 0.0,
+      "Net Power": 27937661.62353445,
+      "Net Apparent Power": 31041846.248337593
     },
     "complete_simulation": true
   }
