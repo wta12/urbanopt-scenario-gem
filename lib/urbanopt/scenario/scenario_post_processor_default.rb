@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -49,7 +49,7 @@ module URBANopt
 
         @initialization_hash = { directory_name: scenario_base.run_dir, name: scenario_base.name, id: scenario_base.name }
         @scenario_result = URBANopt::Reporting::DefaultReports::ScenarioReport.new(@initialization_hash)
-        @default_save_name = "default_scenario_report"
+        @default_save_name = 'default_scenario_report'
 
         @@logger ||= URBANopt::Reporting::DefaultReports.logger
       end
@@ -84,7 +84,6 @@ module URBANopt
         return feature_reports
       end
 
-
       # Create database file with scenario-level results
       #   Sum values for each timestep across all features. Save to new table in a new database
       def create_scenario_db_file(file_name = @default_save_name)
@@ -97,10 +96,10 @@ module URBANopt
           )"
 
         values_arr = []
-        feature_list = Pathname.new(@initialization_hash[:directory_name]).children.select(&:directory?)  # Folders in the run/scenario directory
-        feature_1_name = File.basename(feature_list[0])  # Get name of first feature, so we can read eplusout.sql from there
-        uo_output_sql_file = File.join(@initialization_hash[:directory_name], feature_1_name, "eplusout.sql")
-        feature_list.each do |feature|  # Loop through each feature in the scenario
+        feature_list = Pathname.new(@initialization_hash[:directory_name]).children.select(&:directory?) # Folders in the run/scenario directory
+        feature_1_name = File.basename(feature_list[0]) # Get name of first feature, so we can read eplusout.sql from there
+        uo_output_sql_file = File.join(@initialization_hash[:directory_name], feature_1_name, 'eplusout.sql')
+        feature_list.each do |feature| # Loop through each feature in the scenario
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
@@ -110,17 +109,17 @@ module URBANopt
             WHERE (TimeIndex % 2) != 0
             AND ReportDataDictionaryIndex=10 order by TimeIndex"
 
-          elec_query.each do |row|  # Add up all the values for electricity usage across all Features at this timestep
+          elec_query.each do |row| # Add up all the values for electricity usage across all Features at this timestep
             # row[0] == TimeIndex, row[1] == Value
-            arr_match = values_arr.find {|v| v[:time_index] == row[0] }
+            arr_match = values_arr.find { |v| v[:time_index] == row[0] }
             if arr_match.nil?
               # add new row to value_arr
-              values_arr << {time_index: row[0], elec_val: Float(row[1]), gas_val: 0}
+              values_arr << { time_index: row[0], elec_val: Float(row[1]), gas_val: 0 }
             else
               # running sum
               arr_match[:elec_val] += Float(row[1])
             end
-          end  # End elec_query
+          end # End elec_query
           elec_query.close
 
           # RDDI == 255 is the timestep value for facility gas
@@ -131,10 +130,10 @@ module URBANopt
 
           gas_query.each do |row|
             # row[0] == TimeIndex, row[1] == Value
-            arr_match = values_arr.find {|v| v[:time_index] == row[0] }
+            arr_match = values_arr.find { |v| v[:time_index] == row[0] }
             if arr_match.nil?
               # add new row to value_arr
-              values_arr << {time_index: row[0], gas_val: Float(row[1]), elec_val: 0}
+              values_arr << { time_index: row[0], gas_val: Float(row[1]), elec_val: 0 }
             else
               # running sum
               arr_match[:gas_val] += Float(row[1])
@@ -142,8 +141,7 @@ module URBANopt
           end # End gas_query
           gas_query.close
           feature_db.close
-
-        end  # End feature_list loop
+        end # End feature_list loop
 
         elec_sql = []
         gas_sql = []

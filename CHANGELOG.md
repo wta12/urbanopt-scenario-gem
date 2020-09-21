@@ -1,5 +1,37 @@
 # URBANopt Scenario Gem
 
+## Version 0.4.0
+Date Range: 06/05/20 - 09/21/20
+
+- Fixed [#138]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/138 ), Order features in scenarioData.js so that they are in the same order as in the feature file
+- Fixed [#140]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/140 ), sqlite gem not found error on windows
+- Fixed [#142]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/142 ), Split Reporting gem out of Scenario gem
+- Fixed [#146]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/146 ), For ScenarioVisualization, add headers from the feature/scenario report without units
+- Fixed [#148]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/148 ), Chore: Add TM to first mention URBANopt on LICENSE file and LICENSE section
+- Fixed [#97]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/97 ), Updated PR for writing scenario outputs to sql db
+- Fixed [#100]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/100 ), Bump acorn from 6.4.0 to 6.4.1 in /docs
+- Fixed [#122]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/122 ), Bump websocket-extensions from 0.1.3 to 0.1.4 in /docs
+- Fixed [#123]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/123 ), added location to feature reports
+- Fixed [#125]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/125 ), Aggregate data from scenario reports for visualization
+- Fixed [#126]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/126 ), Bump lodash from 4.17.15 to 4.17.19 in /docs
+- Fixed [#127]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/127 ), Thermalstorage heine
+- Fixed [#128]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/128 ), Bump elliptic from 6.5.2 to 6.5.3 in /docs
+- Fixed [#129]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/129 ), bump minimist and dot-prop
+- Fixed [#131]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/131 ), Adds a run_status.json
+- Fixed [#132]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/132 ), Update Jenkins CI pipeline
+- Fixed [#133]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/133 ), Bump prismjs from 1.19.0 to 1.21.0 in /docs
+- Fixed [#134]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/134 ), Bump serialize-javascript from 2.1.2 to 3.1.0 in /docs
+- Fixed [#135]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/135 ), Create visualizations for features in a scenario
+- Fixed [#136]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/136 ), Bump dot-prop from 4.2.0 to 5.1.1 in /docs
+- Fixed [#141]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/141 ), update sqlite dependency
+- Fixed [#143]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/143 ), Uo visualization
+- Fixed [#144]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/144 ), updated ice storage measures names
+- Fixed [#145]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/145 ), Bump http-proxy from 1.18.0 to 1.18.1 in /docs
+- Fixed [#147]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/147 ), Add unitless header values
+- Fixed [#149]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/149 ), add tm symbol
+- Fixed [#150]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/150 ), workaround bug when using reopt postprocessor
+- Fixed [#151]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/151 ), dbot recommendations and gemspec/gemfile updates
+
 ## Version 0.3.0
 Date Range: 04/01/20 - 06/04/20:
 

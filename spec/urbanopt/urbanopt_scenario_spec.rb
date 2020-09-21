@@ -33,7 +33,6 @@ require_relative '../files/example_feature_file'
 require 'json'
 require 'json-schema'
 RSpec.describe URBANopt::Scenario do
-
   @@logger ||= URBANopt::Reporting::DefaultReports.logger
 
   it 'has a version number' do
@@ -53,7 +52,7 @@ RSpec.describe URBANopt::Scenario do
 
     # copy all files into test directory
     root_dir = File.join(File.dirname(__FILE__), '../test')
-    Dir.mkdir(root_dir) unless File.exists?(root_dir)
+    Dir.mkdir(root_dir) unless File.exist?(root_dir)
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
     FileUtils.cp(File.join(File.dirname(__FILE__), '../files/example_feature_file.json'), File.join(File.dirname(__FILE__), '../test/example_feature_file.json'))
     feature_file_path = File.join(File.dirname(__FILE__), '../test/example_feature_file.json')
@@ -64,12 +63,11 @@ RSpec.describe URBANopt::Scenario do
     csv_file = File.join(File.dirname(__FILE__), '../test/example_scenario.csv')
     num_header_rows = 1
 
-
     FileUtils.cp(File.join(File.dirname(__FILE__), '../files/Gemfile'), File.join(File.dirname(__FILE__), '../test/Gemfile'))
 
     # write a runner.conf in project dir
-    options = {gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), "../test/.bundle/install")}
-    File.open(File.join(root_dir, 'runner.conf'), "w") do |f|
+    options = { gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), '../test/.bundle/install') }
+    File.open(File.join(root_dir, 'runner.conf'), 'w') do |f|
       f.write(options.to_json)
     end
 
@@ -119,7 +117,7 @@ RSpec.describe URBANopt::Scenario do
     expect(File.exist?(simulation_dirs[2].run_dir)).to be true
 
     # pass Gemfile and bundle paths to extension gem runner, otherwise it will use this gem's and that doesn't work b/c of native gems
-    options = {gemfile_path: File.join(File.dirname(__FILE__),'../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__),'../test/.bundle/install'), skip_config: false}
+    options = { gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), '../test/.bundle/install'), skip_config: false }
     simulation_dirs = scenario_runner.run(scenario, false, options)
     if clear_results
       expect(simulation_dirs.size).to eq(3)
@@ -203,7 +201,7 @@ RSpec.describe URBANopt::Scenario do
     ##
 
     # initialize validator class
-    validator = URBANopt::Reporting::DefaultReports::Validator.new()
+    validator = URBANopt::Reporting::DefaultReports::Validator.new
 
     # Get scenario schema hash
     schema = validator.schema
@@ -228,13 +226,11 @@ RSpec.describe URBANopt::Scenario do
     scenario_csv_schema_headers = validator.csv_headers
     expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
 
-
     # Read feature_reprot json file and validate against schema
     Dir["#{File.dirname(__FILE__)}/../**/*default_feature_reports.json"].each do |json_file|
       feature_json = JSON.parse(File.read(json_file))
       expect(JSON::Validator.fully_validate(schema[:definitions][:FeatureReport][:properties], feature_json).empty?).to be true
     end
-
   end
 
   it 'can integrate opendss results' do

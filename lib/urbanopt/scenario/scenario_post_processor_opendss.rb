@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -166,8 +166,8 @@ module URBANopt
 
             # create transformer report
             transformer_report = URBANopt::Reporting::DefaultReports::FeatureReport.new(id: k, name: k, directory_name: transformer_dir, feature_type: 'Transformer',
-                                                                                       timesteps_per_hour: @scenario_report.timesteps_per_hour,
-                                                                                       simulation_status: 'complete')
+                                                                                        timesteps_per_hour: @scenario_report.timesteps_per_hour,
+                                                                                        simulation_status: 'complete')
 
             # assign results to transfomrer report
             transformer_report.power_distribution.over_voltage_hours = over_voltage_hrs
