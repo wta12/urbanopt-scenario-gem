@@ -50,14 +50,12 @@ else
   gem 'urbanopt-geojson', '~> 0.3.0'
 end
 
-# if allow_local && File.exists?('../urbanopt-reporting-gem')
-#   gem 'urbanopt-reporting', path: '../urbanotp-reporting-gem'
-# elsif allow_local
-#   gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
-# else
-#   # TEMP
-#   gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'split_update'
-#   #gem 'urbanopt-reporting', '~> 0.1.0'
-# end
+#if allow_local && File.exists?('../urbanopt-reporting-gem')
+#	gem 'urbanopt-reporting', path: '../urbanotp-reporting-gem'
+#elsif allow_local
+#	gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
+#else
+	gem 'urbanopt-reporting', '~> 0.2.0'
+#end
 
-gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
+
