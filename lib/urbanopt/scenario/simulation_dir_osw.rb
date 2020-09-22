@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -60,8 +60,7 @@ module URBANopt
         @mapper_class = mapper_class
       end
 
-      attr_reader :mapper_class
-
+      attr_reader :mapper_class, :feature_id
       ##
       # Return the directory that this simulation will run in.
       ##
@@ -195,7 +194,6 @@ module URBANopt
 
         return false
       end
-      # rubocop: enable Metrics/AbcSize #:nodoc:
 
       ##
       # Return simulation status one of {'Not Started', 'Started', 'Complete', 'Failed'}
@@ -213,7 +211,6 @@ module URBANopt
 
         return 'Not Started'
       end
-      # rubocop: enable Style/GuardClause #:nodoc:
 
       ##
       # Clear the directory that this simulation runs in

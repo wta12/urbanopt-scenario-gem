@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,8 @@ require_relative '../files/example_feature_file'
 require 'json'
 require 'json-schema'
 RSpec.describe URBANopt::Scenario do
+  @@logger ||= URBANopt::Reporting::DefaultReports.logger
+
   it 'has a version number' do
     expect(URBANopt::Scenario::VERSION).not_to be nil
   end
@@ -48,12 +50,26 @@ RSpec.describe URBANopt::Scenario do
   it 'can run a scenario' do
     name = 'Example Scenario'
 
+    # copy all files into test directory
+    root_dir = File.join(File.dirname(__FILE__), '../test')
+    Dir.mkdir(root_dir) unless File.exist?(root_dir)
     run_dir = File.join(File.dirname(__FILE__), '../test/example_scenario/')
-    feature_file_path = File.join(File.dirname(__FILE__), '../files/example_feature_file.json')
-    mapper_files_dir = File.join(File.dirname(__FILE__), '../files/mappers/')
-    csv_file = File.join(File.dirname(__FILE__), '../files/example_scenario.csv')
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/example_feature_file.json'), File.join(File.dirname(__FILE__), '../test/example_feature_file.json'))
+    feature_file_path = File.join(File.dirname(__FILE__), '../test/example_feature_file.json')
+    FileUtils.cp_r(File.join(File.dirname(__FILE__), '../files/mappers'), File.join(File.dirname(__FILE__), '../test/mappers'), remove_destination: true)
+    FileUtils.cp_r(File.join(File.dirname(__FILE__), '../files/weather'), File.join(File.dirname(__FILE__), '../test/weather'), remove_destination: true)
+    mapper_files_dir = File.join(File.dirname(__FILE__), '../test/mappers/')
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/example_scenario.csv'), File.join(File.dirname(__FILE__), '../test/example_scenario.csv'))
+    csv_file = File.join(File.dirname(__FILE__), '../test/example_scenario.csv')
     num_header_rows = 1
-    root_dir = File.join(File.dirname(__FILE__), '../../')
+
+    FileUtils.cp(File.join(File.dirname(__FILE__), '../files/Gemfile'), File.join(File.dirname(__FILE__), '../test/Gemfile'))
+
+    # write a runner.conf in project dir
+    options = { gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), '../test/.bundle/install') }
+    File.open(File.join(root_dir, 'runner.conf'), 'w') do |f|
+      f.write(options.to_json)
+    end
 
     feature_file = ExampleFeatureFile.new(feature_file_path)
     expect(feature_file.features.size).to eq(3)
@@ -73,7 +89,7 @@ RSpec.describe URBANopt::Scenario do
     expect(scenario.num_header_rows).to eq(1)
 
     # set clear_results to be false if you want the tests to run faster
-    clear_results = true # edited
+    clear_results = true
     scenario.clear if clear_results
 
     simulation_dirs = scenario.simulation_dirs
@@ -92,6 +108,7 @@ RSpec.describe URBANopt::Scenario do
     end
 
     # create a ScenarioRunnerOSW to run the ScenarioCSV
+
     scenario_runner = URBANopt::Scenario::ScenarioRunnerOSW.new
 
     scenario_runner.create_simulation_files(scenario, clear_results)
@@ -99,7 +116,9 @@ RSpec.describe URBANopt::Scenario do
     expect(File.exist?(simulation_dirs[1].run_dir)).to be true
     expect(File.exist?(simulation_dirs[2].run_dir)).to be true
 
-    simulation_dirs = scenario_runner.run(scenario)
+    # pass Gemfile and bundle paths to extension gem runner, otherwise it will use this gem's and that doesn't work b/c of native gems
+    options = { gemfile_path: File.join(File.dirname(__FILE__), '../test/Gemfile'), bundle_install_path: File.join(File.dirname(__FILE__), '../test/.bundle/install'), skip_config: false }
+    simulation_dirs = scenario_runner.run(scenario, false, options)
     if clear_results
       expect(simulation_dirs.size).to eq(3)
       expect(simulation_dirs[0].in_osw_path).to eq(File.join(run_dir, '1/in.osw'))
@@ -118,11 +137,16 @@ RSpec.describe URBANopt::Scenario do
     end
 
     expect(failures).to be_empty, "the following directories failed to run [#{failures.join(', ')}]"
+
+    # expect run_status.json to exist
+    expect(File.exist?(File.join(scenario.run_dir, 'run_status.json'))).to be true
+
     default_post_processor = URBANopt::Scenario::ScenarioDefaultPostProcessor.new(scenario)
     $scenario_result = default_post_processor.run
 
     # save scenario result
     $scenario_result.save
+    default_post_processor.create_scenario_db_file
 
     ### save feature reports
     $scenario_result.feature_reports.each(&:save_feature_report)
@@ -176,20 +200,22 @@ RSpec.describe URBANopt::Scenario do
     # validate all results against schema
     ##
 
-    # Read scenario schema file
-    schema_json = File.open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_schema.json', File.dirname(__FILE__)), 'r')
-    schema = JSON.parse(File.read(schema_json))
+    # initialize validator class
+    validator = URBANopt::Reporting::DefaultReports::Validator.new
+
+    # Get scenario schema hash
+    schema = validator.schema
 
     # Read scenario json file and validated againt schema
     scenario_json = JSON.parse(File.read(scenario_json_file))
 
-    puts JSON::Validator.fully_validate(schema, scenario_json)
+    @@logger.info("Schema Validation Errors: #{JSON::Validator.fully_validate(schema, scenario_json)}")
     expect(JSON::Validator.fully_validate(schema, scenario_json).empty?).to be true
 
     # close json file
     scenario_json_file.close
 
-    # Read scenario csv file and validate against schema
+    # Read scenario csv file and validate against scenario CSV schema
     scenario_csv_headers = CSV.open(File.expand_path($scenario_result.csv_path, File.dirname(__FILE__)), &:readline)
     # strip the units partial string from the scenario_csv_header since these units can change
     scenario_csv_headers_with_no_units = []
@@ -197,30 +223,14 @@ RSpec.describe URBANopt::Scenario do
       scenario_csv_headers_with_no_units << x.split('(')[0]
     end
 
-    # rubocop: disable Security/Open
-
-    # read scenario csv schema headers
-    scenario_csv_schema = open(File.expand_path('../../lib/urbanopt/scenario/default_reports/schema/scenario_csv_columns.txt', File.dirname(__FILE__))) # .read()
-
-    scenario_csv_schema_headers = []
-    File.readlines(scenario_csv_schema).each do |line|
-      l = line.delete("\n")
-      a = l.delete("\t")
-      scenario_csv_schema_headers << a
-    end
-
-    # rubocop: enable Security/Open
-
+    scenario_csv_schema_headers = validator.csv_headers
     expect(scenario_csv_headers_with_no_units).to eq(scenario_csv_schema_headers)
 
     # Read feature_reprot json file and validate against schema
     Dir["#{File.dirname(__FILE__)}/../**/*default_feature_reports.json"].each do |json_file|
       feature_json = JSON.parse(File.read(json_file))
-      expect(JSON::Validator.fully_validate(schema['definitions']['FeatureReport']['properties'], feature_json).empty?).to be true
+      expect(JSON::Validator.fully_validate(schema[:definitions][:FeatureReport][:properties], feature_json).empty?).to be true
     end
-
-    # close schema file
-    schema_json.close
   end
 
   it 'can integrate opendss results' do
@@ -233,4 +243,3 @@ RSpec.describe URBANopt::Scenario do
     opendss_post_processor.run
   end
 end
-# rubocop:enable Metrics/BlockLength

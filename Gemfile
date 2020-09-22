@@ -20,20 +20,36 @@ allow_local = ENV['FAVOR_LOCAL_GEMS']
 #   gem 'openstudio-extension', github: 'NREL/OpenStudio-extension-gem', branch: 'develop'
 # end
 
-if allow_local && File.exist?('../openstudio-common-measures-gem')
-  gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
-elsif allow_local
-  gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
-end
+# if allow_local && File.exist?('../openstudio-common-measures-gem')
+#   gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
+# elsif allow_local
+#   gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
+# end
 
-if allow_local && File.exist?('../openstudio-model-articulation-gem')
-  gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
-elsif allow_local
-  gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
-end
+# if allow_local && File.exist?('../openstudio-model-articulation-gem')
+#   gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
+# elsif allow_local
+#   gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
+# end
 
-if allow_local && File.exist?('../urbanopt-core-gem')
-  gem 'urbanopt-core', path: '../urbanopt-core-gem'
-elsif allow_local
-  gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
-end
+#if allow_local && File.exist?('../urbanopt-core-gem')
+#	gem 'urbanopt-core', path: '../urbanopt-core-gem'
+#elsif allow_local
+#	gem 'urbanopt-core', github: 'URBANopt/urbanopt-core-gem', branch: 'develop'
+#else
+#	gem 'urbanopt-core', '~>0.4.0'
+#end
+
+#if allow_local && File.exist?('../urbanopt-reporting-gem')
+#  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
+#elsif allow_local
+#  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
+#else
+#	gem 'urbanopt-reporting', '~> 0.2.0'
+#end
+
+# if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
+#   gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
+# elseif allow_local
+#   gem 'openstudio-load-flexibility-measures', github: 'NREL/openstudio-load-flexibility-measures-gem', branch: 'master'
+# end

@@ -14,6 +14,8 @@ Gemfile.lock
 /test/
 /lib/measures/test_results
 /lib/measures/*/tests/output
+/spec/run/*/scenarioData.js
+/spec/run/scenarioData.js
 
 .rubocop*s3*
 

@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -55,7 +55,7 @@ module URBANopt
       # +force_clear+ - _Bool_ - Clear Scenario before creating Simulation input files.
       #
       # [return:] _Array_ Returns an array of all SimulationDirs, even those created previously, for Scenario.
-      def run(scenario, force_clear = false)
+      def run(scenario, force_clear = false, options = {})
         raise 'run is not implemented for ScenarioRunnerBase, override in your class'
       end
     end

@@ -1,0 +1,310 @@
+{
+  "id": "2",
+  "name": "Restaurant 1",
+  "directory_name": "C:/Gitrepos/urbanopt-example-geojson-project/run/baseline_scenario/2",
+  "feature_type": "Building",
+  "timesteps_per_hour": 1,
+  "simulation_status": "Complete",
+  "timeseries_csv": {
+    "path": "/feature_reports/default_feature_report.csv",
+    "first_report_datetime": "0",
+    "column_names": [
+      "Datetime",
+      "Electricity:Facility(kWh)",
+      "ElectricityProduced:Facility()",
+      "Gas:Facility(kBtu)",
+      "Cooling:Electricity(kWh)",
+      "Heating:Electricity(kWh)",
+      "InteriorLights:Electricity(kWh)",
+      "ExteriorLights:Electricity(kWh)",
+      "InteriorEquipment:Electricity(kWh)",
+      "Fans:Electricity(kWh)",
+      "Pumps:Electricity(kWh)",
+      "WaterSystems:Electricity(kWh)",
+      "HeatRejection:Electricity()",
+      "HeatRejection:Gas(kBtu)",
+      "Heating:Gas(kBtu)",
+      "WaterSystems:Gas(kBtu)",
+      "InteriorEquipment:Gas(kBtu)",
+      "DistrictCooling:Facility()",
+      "DistrictHeating:Facility()",
+      "District Cooling Chilled Water Rate()",
+      "District Cooling Mass Flow Rate()",
+      "District Cooling Inlet Temperature()",
+      "District Cooling Outlet Temperature()",
+      "District Heating Hot Water Rate()",
+      "District Heating Mass Flow Rate()",
+      "District Heating Inlet Temperature()",
+      "District Heating Outlet Temperature()",
+      "ZONE FULLSERVICERESTAURANT DINING A  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 88KBTU/HR 11.0EER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING A END_A - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 16KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 509KBTU/HR 9.8EER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B END_A - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 101KBTU/HR 11.0EER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 90KBTU/HR 11.0EER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C END_A - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 16KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 25KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A END_B - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 15KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 153KBTU/HR 10.8EER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B END_B - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 104KBTU/HR 11.0EER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C  - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 24KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C END_B - STORY GROUND PSZ-AC 1SPD DX AC CLG COIL 16KBTU/HR 14.0SEER(W)",
+      "ZONE FULLSERVICERESTAURANT DINING A  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING A  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING A END_A - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING A END_A - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B END_A - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING B END_A - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C END_A - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT DINING C END_A - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A END_B - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN A END_B - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B END_B - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN B END_B - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C  - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C  - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C END_B - STORY GROUND PSZ-AC ELECTRIC BACKUP HTG COIL(W)",
+      "ZONE FULLSERVICERESTAURANT KITCHEN C END_B - STORY GROUND PSZ-AC GAS HTG COIL(W)",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING A  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING A END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING B  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING B END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING C  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT DINING C END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN A  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN A END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN B  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN B END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN C  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PMV ZONE FULLSERVICERESTAURANT KITCHEN C END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING A  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING A END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING B  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING B END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING C  - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT DINING C END_A - STORY GROUND FULLSERVICERESTAURANT DINING PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN A  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN A END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN B  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN B END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN C  - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Zone Thermal Comfort Fanger Model PPD ZONE FULLSERVICERESTAURANT KITCHEN C END_B - STORY GROUND FULLSERVICERESTAURANT KITCHEN PEOPLE()",
+      "Net Electric Energy(kWh)",
+      "Electricity:Facility Power(kW)",
+      "ElectricityProduced:Facility Power(kW)",
+      "Electricity:Facility Apparent Power(kVA)",
+      "ElectricityProduced:Facility Apparent Power(kVA)",
+      "Net Power(kW)",
+      "Net Apparent Power(kVA)"
+    ]
+  },
+  "location": {
+    "latitude": 42.93,
+    "longitude": -78.73,
+    "surface_elevation": 215.0
+  },
+  "program": {
+    "floor_area": 22313.048098318417,
+    "conditioned_area": 22313.048098318417,
+    "unconditioned_area": 0.0,
+    "footprint_area": 22313.048098318417,
+    "maximum_roof_height": 0.0,
+    "maximum_number_of_stories": 1,
+    "number_of_residential_units": 1,
+    "building_types": [
+      {
+        "building_type": "FullServiceRestaurant",
+        "floor_area": 22312.99999999999,
+        "maximum_occupancy": 1166.2558839999995
+      }
+    ],
+    "window_area": {
+      "north_window_area": 268.88248220940886,
+      "south_window_area": 268.88248220940886,
+      "east_window_area": 268.88248220940886,
+      "west_window_area": 268.88248220940886,
+      "total_window_area": 1075.5299288376355
+    },
+    "wall_area": {
+      "north_wall_area": 1493.7078485268082,
+      "south_wall_area": 1493.7078485268082,
+      "east_wall_area": 1493.7078485268082,
+      "west_wall_area": 1493.7078485268082,
+      "total_wall_area": 5974.831394107233
+    },
+    "roof_area": {
+      "total_roof_area": 22312.999999999993
+    },
+    "orientation": 0.0,
+    "aspect_ratio": 1.0
+  },
+  "construction_costs": [
+
+  ],
+  "reporting_periods": [
+    {
+      "start_date": {
+        "month": 1,
+        "day_of_month": 1,
+        "year": 2017
+      },
+      "end_date": {
+        "month": 12,
+        "day_of_month": 31,
+        "year": 2017
+      },
+      "total_site_energy": 7710539.664604852,
+      "total_source_energy": 14881809.300436238,
+      "net_site_energy": 7710539.664604852,
+      "net_source_energy": 14881809.300436238,
+      "electricity": 3131824.7197952787,
+      "natural_gas": 4578714.944809574,
+      "additional_fuel": 0.0,
+      "district_cooling": 0.0,
+      "district_heating": 0.0,
+      "water": 5602.86,
+      "electricity_produced": 3131822.824161038,
+      "end_uses": {
+        "electricity": {
+          "heating": 0.0,
+          "cooling": 213164.07035846505,
+          "interior_lighting": 319812.4527361195,
+          "exterior_lighting": 134163.51338035005,
+          "interior_equipment": 1605317.8566746656,
+          "exterior_equipment": 0.0,
+          "fans": 503944.88469938777,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 63484.790718586,
+          "water_systems": 291937.15122770483,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        },
+        "natural_gas": {
+          "heating": 282876.0195575096,
+          "cooling": 0.0,
+          "interior_lighting": 0.0,
+          "exterior_lighting": 0.0,
+          "interior_equipment": 1806169.7826402604,
+          "exterior_equipment": 0.0,
+          "fans": 0.0,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 0.0,
+          "water_systems": 2489669.142611803,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        },
+        "additional_fuel": {
+          "heating": 0.0,
+          "cooling": 0.0,
+          "interior_lighting": 0.0,
+          "exterior_lighting": 0.0,
+          "interior_equipment": 0.0,
+          "exterior_equipment": 0.0,
+          "fans": 0.0,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 0.0,
+          "water_systems": 0.0,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        },
+        "district_cooling": {
+          "heating": 0.0,
+          "cooling": 0.0,
+          "interior_lighting": 0.0,
+          "exterior_lighting": 0.0,
+          "interior_equipment": 0.0,
+          "exterior_equipment": 0.0,
+          "fans": 0.0,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 0.0,
+          "water_systems": 0.0,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        },
+        "district_heating": {
+          "heating": 0.0,
+          "cooling": 0.0,
+          "interior_lighting": 0.0,
+          "exterior_lighting": 0.0,
+          "interior_equipment": 0.0,
+          "exterior_equipment": 0.0,
+          "fans": 0.0,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 0.0,
+          "water_systems": 0.0,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        },
+        "water": {
+          "heating": 0.0,
+          "cooling": 0.0,
+          "interior_lighting": 0.0,
+          "exterior_lighting": 0.0,
+          "interior_equipment": 0.0,
+          "exterior_equipment": 0.0,
+          "fans": 0.0,
+          "pumps": 0.0,
+          "heat_rejection": 0.0,
+          "humidification": 0.0,
+          "heat_recovery": 0.0,
+          "water_systems": 5310486.630718673,
+          "refrigeration": 0.0,
+          "generators": 0.0
+        }
+      },
+      "energy_production": {
+        "electricity_produced": {
+          "photovoltaic": 0.0
+        }
+      },
+      "utility_costs": [
+        {
+          "fuel_type": "Electricity"
+        },
+        {
+          "fuel_type": "Natural Gas"
+        }
+      ],
+      "comfort_result": {
+        "time_setpoint_not_met_during_occupied_cooling": 245.0,
+        "time_setpoint_not_met_during_occupied_heating": 83.0,
+        "time_setpoint_not_met_during_occupied_hours": 328.0,
+        "hours_out_of_comfort_bounds_PMV": 6299.0,
+        "hours_out_of_comfort_bounds_PPD": 4140.0
+      }
+    }
+  ],
+  "distributed_generation": {
+    "solar_pv": [
+
+    ],
+    "wind": [
+
+    ],
+    "generator": [
+
+    ],
+    "storage": [
+
+    ]
+  },
+  "power_distribution": {
+  }
+}

@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,10 +31,5 @@
 ##
 # Retrieve all default_reports classes.
 ##
-require 'urbanopt/scenario/default_reports/construction_cost'
-require 'urbanopt/scenario/default_reports/feature_report'
-require 'urbanopt/scenario/default_reports/logger'
-require 'urbanopt/scenario/default_reports/program'
-require 'urbanopt/scenario/default_reports/reporting_period'
-require 'urbanopt/scenario/default_reports/scenario_report'
-require 'urbanopt/scenario/default_reports/timeseries_csv'
+
+require 'urbanopt/reporting/default_reports'

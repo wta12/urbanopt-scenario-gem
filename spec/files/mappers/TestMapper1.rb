@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,10 +28,10 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-require 'urbanopt/scenario'
+require 'urbanopt/reporting'
 require 'openstudio/common_measures'
 require 'openstudio/model_articulation'
-
+require 'openstudio/load_flexibility_measures'
 require 'json'
 
 module URBANopt
@@ -78,9 +78,11 @@ module URBANopt
 
         # now we have the feature, we can look up its properties and set arguments in the OSW
         OpenStudio::Extension.set_measure_argument(osw, 'create_bar_from_building_type_ratios', 'total_bldg_floor_area', feature.area)
+        OpenStudio::Extension.set_measure_argument(osw, 'add_packaged_ice_storage', '__SKIP__', false)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_id', feature.id)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_name', feature_name)
         OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_type', feature.feature_type)
+        OpenStudio::Extension.set_measure_argument(osw, 'default_feature_reports', 'feature_location', feature.feature_location)
 
         osw[:name] = feature_name
         osw[:description] = feature_name

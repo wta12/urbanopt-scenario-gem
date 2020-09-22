@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -55,6 +55,7 @@ module URBANopt
         end
 
         FileUtils.mkdir_p(scenario.run_dir) if !File.exist?(scenario.run_dir)
+        FileUtils.rm_rf(File.join(scenario.run_dir, 'run_status.json')) if File.exist?(File.join(scenario.run_dir, 'run_status.json'))
 
         simulation_dirs = scenario.simulation_dirs
 
@@ -81,10 +82,11 @@ module URBANopt
       # +scenario+ - _ScenarioBase_ - Scenario to create and run SimulationFiles for.
       # +force_clear+ - _Bool_ - Clear Scenario before creating SimulationFiles.
       # [return:] _Array_ Returns array of all SimulationFiles, even those created previously, for Scenario.
-      def run(scenario, force_clear = false)
+      def run(scenario, force_clear = false, options = {})
         # instantiate openstudio runner - use the defaults for now. If need to change then create
         # the runner.conf file (i.e. run `rake openstudio:runner:init`)
-        runner = OpenStudio::Extension::Runner.new(scenario.root_dir)
+        # allow passing gemfile_path and bundle_install_path in options
+        runner = OpenStudio::Extension::Runner.new(scenario.root_dir, [], options)
 
         # create simulation files
         simulation_dirs = create_simulation_files(scenario, force_clear)
@@ -156,18 +158,30 @@ module URBANopt
         #   puts "DATAPOINT FAILURES: #{failures}"
         # end
 
-        # look for other failed datapoints
+        # write results to file and to command line
+        get_results(scenario, simulation_dirs)
+
+        return simulation_dirs
+      end
+
+      def get_results(scenario, simulation_dirs)
+        # look for other failed datapoints (command line display)
+        # also compile datapoint status for latest_run.json file
+        status_arr = []
         failed_sims = []
-        simulation_dirs.each do |simulation_dir|
-          if File.exist?(File.join(simulation_dir.run_dir, 'failed.job'))
-            failed_sims << simulation_dir.run_dir.split('/')[-1]
+        simulation_dirs.each do |sim_dir|
+          if File.exist?(sim_dir.failed_job_path)
+            failed_sims << sim_dir.run_dir.split('/')[-1]
           end
+          status_arr << { "id": sim_dir.feature_id, "status": sim_dir.simulation_status, "mapper_class": sim_dir.mapper_class }
         end
+
+        # write to file
+        File.open(File.join(scenario.run_dir, 'run_status.json'), 'w') { |f| f.write JSON.pretty_generate("timestamp": Time.now.strftime('%Y-%m-%dT%k:%M:%S.%L'), "results": status_arr) }
+
         if !failed_sims.empty?
           puts "FAILED SIMULATION IDs: #{failed_sims.join(',')}"
         end
-
-        return simulation_dirs
       end
     end
   end

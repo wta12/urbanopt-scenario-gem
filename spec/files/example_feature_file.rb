@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -45,6 +45,11 @@ class ExampleFeature < URBANopt::Core::Feature
 
   def feature_type
     'Building'
+  end
+
+  def feature_location
+    # take just 1 vertex here for testing
+    (@json[:geometry][:coordinates][0][1]).to_s
   end
 end
 

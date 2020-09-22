@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,17 +29,17 @@
 # *********************************************************************************
 
 require_relative '../spec_helper'
-RSpec.describe URBANopt::Scenario::DefaultReports do
+RSpec.describe URBANopt::Reporting::DefaultReports do
   it 'has a logger' do
-    expect(URBANopt::Scenario::DefaultReports.logger).not_to be nil
-    current_level = URBANopt::Scenario::DefaultReports.logger.level
-    URBANopt::Scenario::DefaultReports.logger.level = Logger::DEBUG
-    expect(URBANopt::Scenario::DefaultReports.logger.level).to eq Logger::DEBUG
-    URBANopt::Scenario::DefaultReports.logger.level = current_level
+    expect(URBANopt::Reporting::DefaultReports.logger).not_to be nil
+    current_level = URBANopt::Reporting::DefaultReports.logger.level
+    URBANopt::Reporting::DefaultReports.logger.level = Logger::DEBUG
+    expect(URBANopt::Reporting::DefaultReports.logger.level).to eq Logger::DEBUG
+    URBANopt::Reporting::DefaultReports.logger.level = current_level
   end
 
   it 'can construct a scenario report' do
-    feature_report_1 = URBANopt::Scenario::DefaultReports::FeatureReport.new
+    feature_report_1 = URBANopt::Reporting::DefaultReports::FeatureReport.new
     feature_report_1.id = 'feature_1'
     feature_report_1.name = 'Feature 1'
     feature_report_1.directory_name = 'feature_1'
@@ -54,7 +54,7 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
     # feature_report_1.reporting_periods[0][:total_site_energy] = 100
 
-    feature_report_2 = URBANopt::Scenario::DefaultReports::FeatureReport.new
+    feature_report_2 = URBANopt::Reporting::DefaultReports::FeatureReport.new
     feature_report_2.id = 'feature_2'
     feature_report_2.name = 'Feature 2'
     feature_report_2.directory_name = 'feature_2'
@@ -69,7 +69,7 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
     # feature_report_1.reporting_periods[0][:total_site_energy] = 100
 
-    scenario_report = URBANopt::Scenario::DefaultReports::ScenarioReport.new
+    scenario_report = URBANopt::Reporting::DefaultReports::ScenarioReport.new
 
     expect(scenario_report.feature_reports.size).to eq(0)
     expect(scenario_report.timesteps_per_hour).to be_nil
@@ -105,20 +105,20 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_costs = []
     new_costs = []
 
-    new_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
-                                                                          cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
-    new_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'roof', unit_cost: 1,
-                                                                          cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+    new_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
+                                                                           cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+    new_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'roof', unit_cost: 1,
+                                                                           cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
 
-    existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
-                                                                               cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
-    existing_costs << URBANopt::Scenario::DefaultReports::ConstructionCost.new(category: 'HVACComponent', item_name: 'hvac', unit_cost: 1,
-                                                                               cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+    existing_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
+                                                                                cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+    existing_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'HVACComponent', item_name: 'hvac', unit_cost: 1,
+                                                                                cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
 
     # puts "existing_costs = #{existing_costs}"
     # puts "new_costs = #{new_costs}"
 
-    construction_cost = URBANopt::Scenario::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs)
+    construction_cost = URBANopt::Reporting::DefaultReports::ConstructionCost.merge_construction_costs(existing_costs, new_costs)
 
     if construction_cost[0].item_name == 'wall'
       expect(construction_cost[0].category).to eq('Construction')
@@ -148,8 +148,8 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
   end
 
   it 'can merge end uses' do
-    existing_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
-    new_end_uses = URBANopt::Scenario::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
+    existing_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
+    new_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
 
     existing_end_uses.merge_end_uses!(new_end_uses)
 
@@ -163,30 +163,30 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
     existing_periods = []
     new_periods = []
 
-    existing_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new(
+    existing_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 5, name: 'Annual', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 12, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
       end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
-    existing_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new(
+    existing_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
       end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
 
-    new_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new(
+    new_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 5, name: 'Annual', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 12, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
       end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
-    new_periods << URBANopt::Scenario::DefaultReports::ReportingPeriod.new(id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
-                                                                           end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
-                                                                           end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
+    new_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
+                                                                            end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
+                                                                            end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
 
     # puts "\nexisting periods: #{existing_periods}"
     # puts "\nnew periods: #{new_periods}"
 
-    reporting_period = URBANopt::Scenario::DefaultReports::ReportingPeriod.merge_reporting_periods(existing_periods, new_periods)
+    reporting_period = URBANopt::Reporting::DefaultReports::ReportingPeriod.merge_reporting_periods(existing_periods, new_periods)
 
     expect(reporting_period[0].id).to eq(5)
     expect(reporting_period[0].name).to eq('Annual')
@@ -222,5 +222,55 @@ RSpec.describe URBANopt::Scenario::DefaultReports do
 
     # puts "\nfinal periods: #{existing_periods}"
   end
+
+  it 'can create visualization for scenario result' do
+    run_dir = [File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario')]
+    scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, false)
+    file = File.join(run_dir[0], '../scenarioData.js')
+
+    expect(File.exist?(file)).to be true
+
+    visualization_file = File.read(file)
+    visualization_file = visualization_file.to_s
+    visualization_file = visualization_file.split('=')[1]
+    visualization_file = visualization_file.split(';')[0]
+
+    json_file = JSON.parse(visualization_file)
+
+    expect(json_file[0]['name']).to eq 'baseline_scenario'
+    expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
+    expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873999027
+    expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.62353445
+  end
+
+  it 'can create visualization for feature result' do
+    run_dir = [File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/1'), File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/2')]
+
+    scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, true)
+
+    file = File.join(run_dir[0], '../scenarioData.js')
+    expect(File.exist?(file)).to be true
+
+    visualization_file = File.read(file)
+    visualization_file = visualization_file.to_s
+    visualization_file = visualization_file.split('=')[1]
+    visualization_file = visualization_file.split(';')[0]
+
+    json_file = JSON.parse(visualization_file)
+    # order does not seem to be the same
+    if ['1', '2'].include? json_file[0]['name']
+      testName = true
+    else
+      testName = false
+    end
+    expect(testName).to be_truthy
+    expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
+    if json_file[0]['name'] == '1'
+      expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 1833016.431105801
+      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 3230104.682959298
+    else
+      expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873940796
+      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.623504374
+    end
+  end
 end
-# rubocop: enable Metrics/BlockLength

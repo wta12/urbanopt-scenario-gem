@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -52,7 +52,6 @@ module URBANopt
 
       def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
         super(name, root_dir, run_dir, feature_file)
-
         @mapper_files_dir = mapper_files_dir
         @csv_file = csv_file
         @num_header_rows = num_header_rows
@@ -73,13 +72,27 @@ module URBANopt
 
       # Require all simulation mappers in mapper_files_dir
       def load_mapper_files
-        Dir.glob(File.join(@mapper_files_dir, '/*.rb')).each do |f|
-          begin
-            require(f)
-          rescue LoadError => e
-            @@logger.error(e.message)
-            raise
-          end
+        dirs = Dir.glob(File.join(@mapper_files_dir, '/*.rb'))
+        # order is not guaranteed...attempt to add Baseline first, then High Efficiency
+        ordered_dirs = []
+        bindex = dirs.find_index { |i| i.include? 'Baseline.rb' }
+        if bindex
+          ordered_dirs << dirs[bindex]
+          dirs.delete_at(bindex)
+        end
+        hindex = dirs.find_index { |i| i.include? 'HighEfficiency.rb' }
+        if hindex
+          ordered_dirs << dirs[hindex] if hindex
+          dirs.delete_at(hindex)
+        end
+        # then the rest
+        ordered_dirs += dirs
+
+        ordered_dirs.each do |f|
+          require(f)
+        rescue LoadError => e
+          @@logger.error(e.message)
+          raise
         end
       end
 
