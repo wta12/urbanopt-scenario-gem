@@ -106,14 +106,14 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     new_costs = []
 
     new_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
-                                                                          cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+                                                                           cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
     new_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'roof', unit_cost: 1,
-                                                                          cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+                                                                           cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
 
     existing_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'Construction', item_name: 'wall', unit_cost: 1,
-                                                                               cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+                                                                                cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
     existing_costs << URBANopt::Reporting::DefaultReports::ConstructionCost.new(category: 'HVACComponent', item_name: 'hvac', unit_cost: 1,
-                                                                               cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
+                                                                                cost_units: 'CostPerEach', item_quantity: 1, total_cost: 1)
 
     # puts "existing_costs = #{existing_costs}"
     # puts "new_costs = #{new_costs}"
@@ -180,8 +180,8 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
       end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
     new_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
-                                                                           end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
-                                                                           end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
+                                                                            end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy: 1, total_source_energy: 1,
+                                                                            end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
 
     # puts "\nexisting periods: #{existing_periods}"
     # puts "\nnew periods: #{new_periods}"
@@ -224,7 +224,6 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
   end
 
   it 'can create visualization for scenario result' do
-    
     run_dir = [File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario')]
     scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, false)
     file = File.join(run_dir[0], '../scenarioData.js')
@@ -238,20 +237,17 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
     json_file = JSON.parse(visualization_file)
 
-  
-    expect(json_file[0]["name"]).to eq 'baseline_scenario'
-    expect(json_file[0]["monthly_values"]["Electricity:Facility"].size).to eq 12
-    expect(json_file[0]["monthly_values"]["Electricity:Facility"][0]).to eq 2083432.9873999027
-    expect(json_file[0]["annual_values"]["Electricity:Facility"]).to eq 27937661.62353445
-
+    expect(json_file[0]['name']).to eq 'baseline_scenario'
+    expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
+    expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873999027
+    expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.62353445
   end
 
   it 'can create visualization for feature result' do
-    
     run_dir = [File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/1'), File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/2')]
 
     scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, true)
-    
+
     file = File.join(run_dir[0], '../scenarioData.js')
     expect(File.exist?(file)).to be true
 
@@ -262,20 +258,19 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
     json_file = JSON.parse(visualization_file)
     # order does not seem to be the same
-    if ['1', '2'].include? json_file[0]["name"]
+    if ['1', '2'].include? json_file[0]['name']
       testName = true
     else
       testName = false
     end
     expect(testName).to be_truthy
-    expect(json_file[0]["monthly_values"]["Electricity:Facility"].size).to eq 12
-    if json_file[0]["name"] == '1'
-      expect(json_file[0]["monthly_values"]["Electricity:Facility"][0]).to eq 1833016.431105801
-      expect(json_file[0]["annual_values"]["Electricity:Facility"]).to eq 3230104.682959298
+    expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
+    if json_file[0]['name'] == '1'
+      expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 1833016.431105801
+      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 3230104.682959298
     else
-      expect(json_file[0]["monthly_values"]["Electricity:Facility"][0]).to eq 2083432.9873940796
-      expect(json_file[0]["annual_values"]["Electricity:Facility"]).to eq 27937661.623504374
+      expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873940796
+      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.623504374
     end
   end
-
 end

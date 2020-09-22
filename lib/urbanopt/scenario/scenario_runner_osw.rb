@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -161,8 +161,6 @@ module URBANopt
         # write results to file and to command line
         get_results(scenario, simulation_dirs)
 
-
-
         return simulation_dirs
       end
 
@@ -175,11 +173,11 @@ module URBANopt
           if File.exist?(sim_dir.failed_job_path)
             failed_sims << sim_dir.run_dir.split('/')[-1]
           end
-          status_arr << {"id": sim_dir.feature_id, "status": sim_dir.simulation_status, "mapper_class": sim_dir.mapper_class}
+          status_arr << { "id": sim_dir.feature_id, "status": sim_dir.simulation_status, "mapper_class": sim_dir.mapper_class }
         end
 
         # write to file
-        File.open(File.join(scenario.run_dir, "run_status.json"), "w") { |f| f.write JSON.pretty_generate({"timestamp": Time.now().strftime("%Y-%m-%dT%k:%M:%S.%L"), "results": status_arr}) }
+        File.open(File.join(scenario.run_dir, 'run_status.json'), 'w') { |f| f.write JSON.pretty_generate("timestamp": Time.now.strftime('%Y-%m-%dT%k:%M:%S.%L'), "results": status_arr) }
 
         if !failed_sims.empty?
           puts "FAILED SIMULATION IDs: #{failed_sims.join(',')}"

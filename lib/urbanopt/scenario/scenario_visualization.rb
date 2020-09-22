@@ -1,5 +1,5 @@
 # *********************************************************************************
-# URBANopt™, Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
+# URBANopt (tm), Copyright (c) 2019-2020, Alliance for Sustainable Energy, LLC, and other
 # contributors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,25 +36,22 @@ require 'fileutils'
 module URBANopt
   module Scenario
     class ResultVisualization
-      
       def self.create_visualization(run_dir, feature = true)
-
         @all_results = []
         run_dir.each do |folder|
-
           name = folder.split('/')[-1]
 
           # create visualization for scenarios
           if feature == false
-            csv_dir = File.join(folder,'default_scenario_report.csv')
+            csv_dir = File.join(folder, 'default_scenario_report.csv')
           # create visualization for features
           elsif feature == true
-            csv_dir = File.join(folder, "feature_reports/default_feature_report.csv")
+            csv_dir = File.join(folder, 'feature_reports/default_feature_report.csv')
           end
 
           if File.exist?(csv_dir)
             size = CSV.open(csv_dir).readlines.size
-            
+
             monthly_values = {}
             monthly_totals = {}
             annual_values = {}
@@ -66,11 +63,11 @@ module URBANopt
                 # store header values from csv
                 headers = row
                 headers.each do |header|
-                header_unitless = (header.to_s).split('(')[0]
-                headers_unitless << header_unitless
-                monthly_values[header_unitless] = []
+                  header_unitless = header.to_s.split('(')[0]
+                  headers_unitless << header_unitless
+                  monthly_values[header_unitless] = []
                 end
-               # store values from csv for each row
+              # store values from csv for each row
               elsif i <= size
                 headers_unitless.each_index do |j|
                   monthly_values[headers_unitless[j]] << row[j]
@@ -135,7 +132,6 @@ module URBANopt
             end
 
             headers_unitless.each_index do |j|
-              
               i = 0
               k = 0
 
@@ -144,8 +140,8 @@ module URBANopt
               # loop through values for each header
               all_values = monthly_values[headers_unitless[j]]
 
-              unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
-                
+              unless @jan_next_year_index.nil? || @feb_index.nil? || @mar_index.nil? || @apr_index.nil? || @may_index.nil? || @jun_index.nil? || @jul_index.nil? || @aug_index.nil? || @sep_index.nil? || @oct_index.nil? || @nov_index.nil? || @dec_index.nil?
+
                 # for each header store monthly sums of values
                 all_values.each do |v|
                   if i < @feb_index
@@ -183,67 +179,58 @@ module URBANopt
                     i += 1
                   elsif @dec_index <= i && i < @jan_next_year_index
                     monthly_sum_dec += v.to_f
-                    i +=1
+                    i += 1
                   end
                   # sum up all values for annual aggregate
                   if k <= size
                     annual_sum += v.to_f
                     k += 1
                   end
-
                 end
               end
-              
+
               # store headers as key and monthly sums as values for each header
               monthly_totals[headers_unitless[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
 
               annual_values[headers_unitless[j]] = annual_sum
-            
-            end 
-            
+            end
+
             @results = {}
-            @results["name"] = name
-            @results["monthly_values"] = {}
-            @results["annual_values"] = {}
-            
-            unless @jan_next_year_index.nil? or @feb_index.nil? or @mar_index.nil? or @apr_index.nil? or @may_index.nil? or @jun_index.nil? or @jul_index.nil? or @aug_index.nil? or @sep_index.nil? or @oct_index.nil? or @nov_index.nil? or @dec_index.nil?
-            @results["complete_simulation"] = true
+            @results['name'] = name
+            @results['monthly_values'] = {}
+            @results['annual_values'] = {}
+
+            if @jan_next_year_index.nil? || @feb_index.nil? || @mar_index.nil? || @apr_index.nil? || @may_index.nil? || @jun_index.nil? || @jul_index.nil? || @aug_index.nil? || @sep_index.nil? || @oct_index.nil? || @nov_index.nil? || @dec_index.nil?
+              @results['complete_simulation'] = false
+              puts "#{name} did not contain an annual simulation…visualizations will not render for it."
             else
-            @results["complete_simulation"] = false
-            puts "#{name} did not contain an annual simulation…visualizations will not render for it."
-            end
-            
-            unless monthly_totals.nil?
-              monthly_totals.each do |key, value|
-                unless key == 'Datetime'
-                  @results["monthly_values"][key] = value
-                end
-              end
-
+              @results['complete_simulation'] = true
             end
 
-            unless annual_values.nil?
-              annual_values.each do |key, value|
-                unless key == 'Datetime'
-                  @results["annual_values"][key] = value
-                end
+            monthly_totals&.each do |key, value|
+              unless key == 'Datetime'
+                @results['monthly_values'][key] = value
               end
             end
-          
+
+            annual_values&.each do |key, value|
+              unless key == 'Datetime'
+                @results['annual_values'][key] = value
+              end
+            end
+
           end
 
           unless @results.nil?
             @all_results << @results
           end
-
         end
         # create json with required data stored in a variable
-        results_path = File.join(run_dir[0], "../scenarioData.js")
+        results_path = File.join(run_dir[0], '../scenarioData.js')
         File.open(results_path, 'w') do |file|
           file << "var scenarioData = #{JSON.pretty_generate(@all_results)};"
         end
       end
-    
     end # ResultVisualization
   end # Scenario
 end # URBANopt
