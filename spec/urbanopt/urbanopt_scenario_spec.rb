@@ -48,7 +48,7 @@ RSpec.describe URBANopt::Scenario do
   end
 
   it 'can run a scenario' do
-    name = 'Example Scenario'
+    name = 'example_scenario'
 
     # copy all files into test directory
     root_dir = File.join(File.dirname(__FILE__), '../test')
