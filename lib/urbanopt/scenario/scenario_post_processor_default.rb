@@ -97,6 +97,26 @@ module URBANopt
 
         values_arr = []
         feature_list = Pathname.new(@initialization_hash[:directory_name]).children.select(&:directory?) # Folders in the run/scenario directory
+        
+        # can you get scenario CSV filename?
+        scenario_csv = File.join(@initialization_hash[:directory_name], '..', '..', @initialization_hash[:name] + '.csv')
+        puts "...attempting to retrieve scenario CSV: #{scenario_csv}"  
+
+        if File.exist?(scenario_csv)
+          # csv found
+          feature_ids = CSV.read(scenario_csv, :headers => true)
+          feature_list = []
+          # loop through building feature ids from scenario csv
+          feature_ids["Feature Id"].each do |feature|
+            if Dir.exist?(File.join(@initialization_hash[:directory_name], feature))
+              feature_list << File.join(@initialization_hash[:directory_name], feature)
+            else
+              puts "warning: did not find a directory for datapoint #{feature}...skipping"
+            end
+          end
+        else
+          raise "Couldn't find scenario CSV: #{scenario_csv}"
+        end
         feature_1_name = File.basename(feature_list[0]) # Get name of first feature, so we can read eplusout.sql from there
         uo_output_sql_file = File.join(@initialization_hash[:directory_name], feature_1_name, 'eplusout.sql')
         feature_list.each do |feature| # Loop through each feature in the scenario
