@@ -1,5 +1,10 @@
 # URBANopt Scenario Gem
 
+## Version 0.4.1
+Date Range: 09/22/20 - 09/28/20
+
+- Fixed [#156] (https://github.com/urbanopt/urbanopt-scenario-gem/issues/156), Ignore non-datapoint directories in scenario dir when creating scenario sqlite file
+
 ## Version 0.4.0
 Date Range: 06/05/20 - 09/21/20
 
