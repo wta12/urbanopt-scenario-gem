@@ -47,7 +47,7 @@ module URBANopt
       def initialize(scenario_base)
         super(scenario_base)
 
-        @initialization_hash = { directory_name: scenario_base.run_dir, name: scenario_base.name, id: scenario_base.name }
+        @initialization_hash = { directory_name: scenario_base.run_dir, name: scenario_base.name, id: scenario_base.name, root_dir: scenario_base.root_dir }
         @scenario_result = URBANopt::Reporting::DefaultReports::ScenarioReport.new(@initialization_hash)
         @default_save_name = 'default_scenario_report'
 
@@ -98,10 +98,8 @@ module URBANopt
         values_arr = []
         feature_list = Pathname.new(@initialization_hash[:directory_name]).children.select(&:directory?) # Folders in the run/scenario directory
         
-        # can you get scenario CSV filename?
-        scenario_csv = File.join(@initialization_hash[:directory_name], '..', '..', @initialization_hash[:name] + '.csv')
-        puts "...attempting to retrieve scenario CSV: #{scenario_csv}"  
-
+        # get scenario CSV
+        scenario_csv = File.join(@initialization_hash[:root_dir], @initialization_hash[:name] + '.csv')
         if File.exist?(scenario_csv)
           # csv found
           feature_ids = CSV.read(scenario_csv, :headers => true)
