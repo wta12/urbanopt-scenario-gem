@@ -91,21 +91,27 @@ module URBANopt
         scenario_db = SQLite3::Database.open new_db_file
         scenario_db.execute "CREATE TABLE IF NOT EXISTS ReportData(
           TimeIndex INTEGER,
+          Year VARCHAR(255),
+          Month VARCHAR(255),
+          Day VARCHAR(255),
+          Hour VARCHAR(255),
+          Minute VARCHAR(255),
+          Dst INTEGER,
           ReportDataDictionaryIndex INTEGER,
           Value INTEGER
           )"
 
         values_arr = []
         feature_list = Pathname.new(@initialization_hash[:directory_name]).children.select(&:directory?) # Folders in the run/scenario directory
-        
+
         # get scenario CSV
         scenario_csv = File.join(@initialization_hash[:root_dir], @initialization_hash[:name] + '.csv')
         if File.exist?(scenario_csv)
           # csv found
-          feature_ids = CSV.read(scenario_csv, :headers => true)
+          feature_ids = CSV.read(scenario_csv, headers: true)
           feature_list = []
           # loop through building feature ids from scenario csv
-          feature_ids["Feature Id"].each do |feature|
+          feature_ids['Feature Id'].each do |feature|
             if Dir.exist?(File.join(@initialization_hash[:directory_name], feature))
               feature_list << File.join(@initialization_hash[:directory_name], feature)
             else
@@ -121,40 +127,45 @@ module URBANopt
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
-          # RDDI == 10 is the timestep value for facility electricity
-          elec_query = feature_db.query "SELECT TimeIndex, Value
-            FROM ReportData
-            WHERE (TimeIndex % 2) != 0
-            AND ReportDataDictionaryIndex=10 order by TimeIndex"
+          # RDDI == 10 is the timestep value for facility electricity in OS 3.0.1
+          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
+          elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          FROM ReportData
+          INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
+          WHERE ReportDataDictionaryIndex == 10
+          ORDER BY ReportData.TimeIndex"
 
           elec_query.each do |row| # Add up all the values for electricity usage across all Features at this timestep
             # row[0] == TimeIndex, row[1] == Value
+
             arr_match = values_arr.find { |v| v[:time_index] == row[0] }
             if arr_match.nil?
               # add new row to value_arr
-              values_arr << { time_index: row[0], elec_val: Float(row[1]), gas_val: 0 }
+              values_arr << { time_index: row[0], year: row[1], month: row[2], day: row[3], hour: row[4], minute: row[5], dst: row[6], elec_val: Float(row[7]), gas_val: 0 }
             else
               # running sum
-              arr_match[:elec_val] += Float(row[1])
+              arr_match[:elec_val] += Float(row[7])
             end
           end # End elec_query
           elec_query.close
 
-          # RDDI == 255 is the timestep value for facility gas
-          gas_query = feature_db.query "SELECT TimeIndex, Value
-            FROM ReportData
-            WHERE (TimeIndex % 2) != 0
-            AND ReportDataDictionaryIndex=255 order by TimeIndex"
+          # RDDI == 1382 is the timestep value for facility gas in OS 3.0.1
+          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
+          gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          FROM ReportData
+          INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
+          WHERE ReportDataDictionaryIndex == 1382
+          ORDER BY ReportData.TimeIndex"
 
           gas_query.each do |row|
             # row[0] == TimeIndex, row[1] == Value
             arr_match = values_arr.find { |v| v[:time_index] == row[0] }
             if arr_match.nil?
               # add new row to value_arr
-              values_arr << { time_index: row[0], gas_val: Float(row[1]), elec_val: 0 }
+              values_arr << { time_index: row[0], year: row[1], month: row[2], day: row[3], hour: row[4], minute: row[5], dst: row[6], gas_val: Float(row[7]), elec_val: 0 }
             else
               # running sum
-              arr_match[:gas_val] += Float(row[1])
+              arr_match[:gas_val] += Float(row[7])
             end
           end # End gas_query
           gas_query.close
@@ -164,13 +175,13 @@ module URBANopt
         elec_sql = []
         gas_sql = []
         values_arr.each do |i|
-          elec_sql << "(#{i[:time_index]}, 10, #{i[:elec_val]})"
-          gas_sql << "(#{i[:time_index]}, 255, #{i[:gas_val]})"
+          elec_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 10, #{i[:elec_val]})"
+          gas_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 1382, #{i[:gas_val]})"
         end
 
         # Put summed Values into the database
-        scenario_db.execute("INSERT INTO ReportData (TimeIndex, ReportDataDictionaryIndex, Value) VALUES #{elec_sql.join(', ')}")
-        scenario_db.execute("INSERT INTO ReportData (TimeIndex, ReportDataDictionaryIndex, Value) VALUES #{gas_sql.join(', ')}")
+        scenario_db.execute("INSERT INTO ReportData VALUES #{elec_sql.join(', ')}")
+        scenario_db.execute("INSERT INTO ReportData VALUES #{gas_sql.join(', ')}")
         scenario_db.close
       end
 
