@@ -50,7 +50,7 @@ else
   gem 'urbanopt-geojson', '~> 0.3.0'
 end
 
-if allow_local && File.exists?('../urbanopt-reporting-gem')
+if allow_local && File.exist?('../urbanopt-reporting-gem')
   gem 'urbanopt-reporting', path: '../urbanotp-reporting-gem'
 elsif allow_local
   gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
