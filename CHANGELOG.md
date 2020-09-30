@@ -1,5 +1,10 @@
 # URBANopt Scenario Gem
 
+## Version 0.4.2
+Date Range: 09/29/20 - 09/30/20
+
+- Fixed [#158]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/158 ), SQLite Query fix for gas consumption reporting
+
 ## Version 0.4.1
 Date Range: 09/22/20 - 09/28/20
 
