@@ -148,15 +148,15 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
   end
 
   it 'can merge end uses' do
-    existing_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
-    new_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity: { heating: 1, cooling: 1 }, natural_gas: { fans: 1, pumps: 1 })
+    existing_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity_kwh: { heating: 1, cooling: 1 }, natural_gas_kwh: { fans: 1, pumps: 1 })
+    new_end_uses = URBANopt::Reporting::DefaultReports::EndUses.new(electricity_kwh: { heating: 1, cooling: 1 }, natural_gas_kwh: { fans: 1, pumps: 1 })
 
     existing_end_uses.merge_end_uses!(new_end_uses)
 
-    expect(existing_end_uses.electricity.heating).to eq(2)
-    expect(existing_end_uses.electricity.cooling).to eq(2)
-    expect(existing_end_uses.natural_gas.fans).to eq(2)
-    expect(existing_end_uses.natural_gas.pumps).to eq(2)
+    expect(existing_end_uses.electricity_kwh.heating).to eq(2)
+    expect(existing_end_uses.electricity_kwh.cooling).to eq(2)
+    expect(existing_end_uses.natural_gas_kwh.fans).to eq(2)
+    expect(existing_end_uses.natural_gas_kwh.pumps).to eq(2)
   end
 
   it 'can merge reporting periods together' do
@@ -166,22 +166,22 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     existing_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 5, name: 'Annual', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 12, day_of_month: 31, year: 2019 }, total_site_energy_kwh: 1, total_source_energy_kwh: 1,
-      end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
+      end_uses: { electricity_kwh: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
     existing_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy_kwh: 1, total_source_energy_kwh: 1,
-      end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
+      end_uses: { electricity_kwh: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
 
     new_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(
       id: 5, name: 'Annual', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
       end_date: { month: 12, day_of_month: 31, year: 2019 }, total_site_energy_kwh: 1, total_source_energy_kwh: 1,
-      end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
+      end_uses: { electricity_kwh: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }]
     )
     new_periods << URBANopt::Reporting::DefaultReports::ReportingPeriod.new(id: 6, name: 'January', multiplier: 1, start_date: { month: 1, day_of_month: 1, year: 2019 },
                                                                             end_date: { month: 1, day_of_month: 31, year: 2019 }, total_site_energy_kwh: 1, total_source_energy_kwh: 1,
-                                                                            end_uses: { electricity: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
+                                                                            end_uses: { electricity_kwh: { heating: 1, cooling: 1, fans: 1, pumps: 1 } }, utility_costs_dollar: [{ fuel_type: 'Electricity', total_cost: 1, usage_cost: 1, demand_cost: 1 }])
 
     # puts "\nexisting periods: #{existing_periods}"
     # puts "\nnew periods: #{new_periods}"
@@ -199,10 +199,10 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     expect(reporting_period[0].end_date.year).to eq(2019)
     expect(reporting_period[0].total_site_energy_kwh).to eq(2)
     expect(reporting_period[0].total_source_energy_kwh).to eq(2)
-    expect(reporting_period[0].end_uses.electricity.heating).to eq(2)
-    expect(reporting_period[0].end_uses.electricity.cooling).to eq(2)
-    expect(reporting_period[0].end_uses.electricity.fans).to eq(2)
-    expect(reporting_period[0].end_uses.electricity.pumps).to eq(2)
+    expect(reporting_period[0].end_uses.electricity_kwh.heating).to eq(2)
+    expect(reporting_period[0].end_uses.electricity_kwh.cooling).to eq(2)
+    expect(reporting_period[0].end_uses.electricity_kwh.fans).to eq(2)
+    expect(reporting_period[0].end_uses.electricity_kwh.pumps).to eq(2)
 
     expect(reporting_period[1].id).to eq(6)
     expect(reporting_period[1].name).to eq('January')
@@ -215,10 +215,10 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     expect(reporting_period[1].end_date.year).to eq(2019)
     expect(reporting_period[1].total_site_energy_kwh).to eq(2)
     expect(reporting_period[1].total_source_energy_kwh).to eq(2)
-    expect(reporting_period[1].end_uses.electricity.heating).to eq(2)
-    expect(reporting_period[1].end_uses.electricity.cooling).to eq(2)
-    expect(reporting_period[1].end_uses.electricity.fans).to eq(2)
-    expect(reporting_period[1].end_uses.electricity.pumps).to eq(2)
+    expect(reporting_period[1].end_uses.electricity_kwh.heating).to eq(2)
+    expect(reporting_period[1].end_uses.electricity_kwh.cooling).to eq(2)
+    expect(reporting_period[1].end_uses.electricity_kwh.fans).to eq(2)
+    expect(reporting_period[1].end_uses.electricity_kwh.pumps).to eq(2)
 
     # puts "\nfinal periods: #{existing_periods}"
   end

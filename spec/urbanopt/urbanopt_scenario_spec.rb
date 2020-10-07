@@ -146,7 +146,9 @@ RSpec.describe URBANopt::Scenario do
 
     # save scenario result
     $scenario_result.save
-    default_post_processor.create_scenario_db_file
+
+    ## create scenario sql db file 
+    #default_post_processor.create_scenario_db_file
 
     ### save feature reports
     $scenario_result.feature_reports.each(&:save_feature_report)
