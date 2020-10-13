@@ -128,8 +128,6 @@ module URBANopt
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
-          # RDDI == 10 is the timestep value for facility electricity in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
           elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
             Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
@@ -153,8 +151,6 @@ module URBANopt
           end # End elec_query
           elec_query.close
 
-          # RDDI == 1382 is the timestep value for facility gas in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
           gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
             Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
