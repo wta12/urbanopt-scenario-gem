@@ -147,8 +147,11 @@ RSpec.describe URBANopt::Scenario do
     # save scenario result
     $scenario_result.save
 
-    ## create scenario sql db file 
-    #default_post_processor.create_scenario_db_file
+    # create scenario sql db file
+    default_post_processor.create_scenario_db_file
+
+    # expect default_scenario_report.db to exist
+    expect(File.exist?(File.join(scenario.run_dir, 'default_scenario_report.db'))).to be true
 
     ### save feature reports
     $scenario_result.feature_reports.each(&:save_feature_report)
