@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class URBANopt::Scenario::ScenarioRunnerOSW - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/jquery.js"></script>
+<script src="../../js/darkfish.js"></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+<link href="../../custom_rdoc_styles.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="ScenarioRunnerBase.html">URBANopt::Scenario::ScenarioRunnerBase</a>
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-create_simulation_files">#create_simulation_files</a>
+    
+    <li ><a href="#method-i-get_results">#get_results</a>
+    
+    <li ><a href="#method-i-run">#run</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-URBANopt::Scenario::ScenarioRunnerOSW">
+  <h1 id="class-URBANopt::Scenario::ScenarioRunnerOSW" class="class">
+    class URBANopt::Scenario::ScenarioRunnerOSW
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p><a href="ScenarioRunnerOSW.html">ScenarioRunnerOSW</a> is a class to create
+and run SimulationFileOSWs</p>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_runner_osw.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>; <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-create_simulation_files" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_simulation_files</span><span
+            class="method-args">(scenario, force_clear = false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Create all OSWs for <a href="../Scenario.html">Scenario</a>.</p>
+<dl class="rdoc-list label-list"><dt>parameters:
+<dd>
+<p><code>scenario</code> - <em>ScenarioBase</em> - <a
+href="../Scenario.html">Scenario</a> to create simulation input files for.
+<code>force_clear</code> - <em>Bool</em> - Clear <a
+href="../Scenario.html">Scenario</a> before creating simulation input
+files.</p>
+<dl class="rdoc-list label-list"><dt>return:
+<dd>
+<p><em>Array</em> Returns array of all SimulationDirs, even those created
+previously, for <a href="../Scenario.html">Scenario</a>.</p>
+</dd></dl>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="create_simulation_files-source">
+            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_runner_osw.rb, line 52</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create_simulation_files</span>(<span class="ruby-identifier">scenario</span>, <span class="ruby-identifier">force_clear</span> = <span class="ruby-keyword">false</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">force_clear</span>
+    <span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">clear</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">mkdir_p</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">run_dir</span>) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">run_dir</span>)
+  <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">rm_rf</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">run_dir</span>, <span class="ruby-string">&#39;run_status.json&#39;</span>)) <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">run_dir</span>, <span class="ruby-string">&#39;run_status.json&#39;</span>))
+
+  <span class="ruby-identifier">simulation_dirs</span> = <span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">simulation_dirs</span>
+
+  <span class="ruby-identifier">simulation_dirs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">simulation_dir</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">out_of_date?</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;simulation_dir #{simulation_dir.run_dir} is out of date, regenerating input files&quot;</span>
+      <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">create_input_files</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">simulation_dirs</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-get_results" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_results</span><span
+            class="method-args">(scenario, simulation_dirs)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="get_results-source">
+            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_runner_osw.rb, line 167</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_results</span>(<span class="ruby-identifier">scenario</span>, <span class="ruby-identifier">simulation_dirs</span>)
+  <span class="ruby-comment"># look for other failed datapoints (command line display)</span>
+  <span class="ruby-comment"># also compile datapoint status for latest_run.json file</span>
+  <span class="ruby-identifier">status_arr</span> = []
+  <span class="ruby-identifier">failed_sims</span> = []
+  <span class="ruby-identifier">simulation_dirs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sim_dir</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">sim_dir</span>.<span class="ruby-identifier">failed_job_path</span>)
+      <span class="ruby-identifier">failed_sims</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sim_dir</span>.<span class="ruby-identifier">run_dir</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;/&#39;</span>)[<span class="ruby-value">-1</span>]
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">status_arr</span> <span class="ruby-operator">&lt;&lt;</span> { <span class="ruby-value">&quot;id&quot;:</span> <span class="ruby-identifier">sim_dir</span>.<span class="ruby-identifier">feature_id</span>, <span class="ruby-value">&quot;status&quot;:</span> <span class="ruby-identifier">sim_dir</span>.<span class="ruby-identifier">simulation_status</span>, <span class="ruby-value">&quot;mapper_class&quot;:</span> <span class="ruby-identifier">sim_dir</span>.<span class="ruby-identifier">mapper_class</span> }
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># write to file</span>
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">run_dir</span>, <span class="ruby-string">&#39;run_status.json&#39;</span>), <span class="ruby-string">&#39;w&#39;</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span> <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">pretty_generate</span>(<span class="ruby-value">&quot;timestamp&quot;:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&#39;%Y-%m-%dT%k:%M:%S.%L&#39;</span>), <span class="ruby-value">&quot;results&quot;:</span> <span class="ruby-identifier">status_arr</span>) }
+
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">failed_sims</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;FAILED SIMULATION IDs: #{failed_sims.join(&#39;,&#39;)}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-run" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">run</span><span
+            class="method-args">(scenario, force_clear = false, options = {})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Create and run all SimulationFileOSW for <a
+href="../Scenario.html">Scenario</a>. A staged runner is implented to run
+buildings, then transformers then district systems.</p>
+<ul><li>
+<p>instantiate openstudio runner to run .osw files.</p>
+</li><li>
+<p>create simulation files for this scenario.</p>
+</li><li>
+<p>get feature_type value from in.osw files</p>
+</li><li>
+<p>cretae 3 groups to store .osw files (<code>building_osws</code> ,
+<code>transformer_osws</code> , <code>district_system_osws</code>)</p>
+</li><li>
+<p>add each osw file to its corresponding group id <code>simulation_dir</code>
+is out_of_date</p>
+</li><li>
+<p>Run osw file groups in order and store simulation failure in a array.</p>
+</li></ul>
+<dl class="rdoc-list label-list"><dt>parameters:
+<dd>
+<p><code>scenario</code> - <em>ScenarioBase</em> - <a
+href="../Scenario.html">Scenario</a> to create and run SimulationFiles for.
+<code>force_clear</code> - <em>Bool</em> - Clear <a
+href="../Scenario.html">Scenario</a> before creating SimulationFiles.</p>
+<dl class="rdoc-list label-list"><dt>return:
+<dd>
+<p><em>Array</em> Returns array of all SimulationFiles, even those created
+previously, for <a href="../Scenario.html">Scenario</a>.</p>
+</dd></dl>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="run-source">
+            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_runner_osw.rb, line 85</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>(<span class="ruby-identifier">scenario</span>, <span class="ruby-identifier">force_clear</span> = <span class="ruby-keyword">false</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-comment"># instantiate openstudio runner - use the defaults for now. If need to change then create</span>
+  <span class="ruby-comment"># the runner.conf file (i.e. run `rake openstudio:runner:init`)</span>
+  <span class="ruby-comment"># allow passing gemfile_path and bundle_install_path in options</span>
+  <span class="ruby-identifier">runner</span> = <span class="ruby-constant">OpenStudio</span><span class="ruby-operator">::</span><span class="ruby-constant">Extension</span><span class="ruby-operator">::</span><span class="ruby-constant">Runner</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">scenario</span>.<span class="ruby-identifier">root_dir</span>, [], <span class="ruby-identifier">options</span>)
+
+  <span class="ruby-comment"># create simulation files</span>
+  <span class="ruby-identifier">simulation_dirs</span> = <span class="ruby-identifier">create_simulation_files</span>(<span class="ruby-identifier">scenario</span>, <span class="ruby-identifier">force_clear</span>)
+
+  <span class="ruby-comment"># osws = []</span>
+  <span class="ruby-comment"># simulation_dirs.each do |simulation_dir|</span>
+  <span class="ruby-comment">#   if !simulation_dir.is_a?(SimulationDirOSW)</span>
+  <span class="ruby-comment">#     raise &quot;ScenarioRunnerOSW does not know how to run #{simulation_dir.class}&quot;</span>
+  <span class="ruby-comment">#   end</span>
+  <span class="ruby-comment">#   if simulation_dir.out_of_date?</span>
+  <span class="ruby-comment">#     osws &lt;&lt; simulation_dir.in_osw_path</span>
+  <span class="ruby-comment">#   end</span>
+  <span class="ruby-comment"># end</span>
+
+  <span class="ruby-comment"># cretae 3 groups to store .osw files (+building_osws+ , +transformer_osws+ , +district_system_osws+)</span>
+  <span class="ruby-identifier">building_osws</span> = []
+  <span class="ruby-identifier">transformer_osws</span> = []
+  <span class="ruby-identifier">district_system_osws</span> = []
+
+  <span class="ruby-identifier">simulation_dirs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">simulation_dir</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">in_osw</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">in_osw_path</span>)
+    <span class="ruby-identifier">in_osw_hash</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">in_osw</span>, <span class="ruby-value">symbolize_names:</span> <span class="ruby-keyword">true</span>)
+
+    <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">SimulationDirOSW</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ScenarioRunnerOSW does not know how to run #{simulation_dir.class}&quot;</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-comment"># get feature_type value from in.osw files</span>
+    <span class="ruby-identifier">feature_type</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-identifier">in_osw_hash</span>[<span class="ruby-value">:steps</span>].<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">feature_type</span> = <span class="ruby-identifier">x</span>[<span class="ruby-value">:arguments</span>][<span class="ruby-value">:feature_type</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">x</span>[<span class="ruby-value">:arguments</span>][<span class="ruby-value">:feature_type</span>] }
+
+    <span class="ruby-comment"># add each osw file to its corresponding group id +simulation_dir+ is out_of_date</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">out_of_date?</span>
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">feature_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Building&#39;</span>
+        <span class="ruby-identifier">building_osws</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">in_osw_path</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">feature_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;District System&#39;</span>
+        <span class="ruby-identifier">district_system_osws</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">in_osw_path</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">feature_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Transformer&#39;</span>
+        <span class="ruby-identifier">transformer_osws</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">simulation_dir</span>.<span class="ruby-identifier">in_osw_path</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ScenarioRunnerOSW does not know how to run a #{feature_type} feature&quot;</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Run osw groups in order and store simulation failure in an array.</span>
+  <span class="ruby-comment"># Return simulation_dirs after running all simulations.</span>
+
+  <span class="ruby-comment"># failures</span>
+  <span class="ruby-identifier">failures</span> = []
+  <span class="ruby-comment"># run building_osws</span>
+  <span class="ruby-comment"># building_failures = runner.run_osws(building_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)</span>
+  <span class="ruby-identifier">building_failures</span> = <span class="ruby-identifier">runner</span>.<span class="ruby-identifier">run_osws</span>(<span class="ruby-identifier">building_osws</span>)
+  <span class="ruby-identifier">failures</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">building_failures</span>
+  <span class="ruby-comment"># run district_system_osws</span>
+  <span class="ruby-comment"># district_system_failures = runner.run_osws(district_system_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)</span>
+  <span class="ruby-identifier">district_system_failures</span> = <span class="ruby-identifier">runner</span>.<span class="ruby-identifier">run_osws</span>(<span class="ruby-identifier">district_system_osws</span>)
+  <span class="ruby-identifier">failures</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">district_system_failures</span>
+  <span class="ruby-comment"># run transformer_osws</span>
+  <span class="ruby-comment"># transformer_failures = runner.run_osws(transformer_osws, num_parallel = Extension::NUM_PARALLEL, max_to_run = Extension::MAX_DATAPOINTS)</span>
+  <span class="ruby-identifier">transformer_failures</span> = <span class="ruby-identifier">runner</span>.<span class="ruby-identifier">run_osws</span>(<span class="ruby-identifier">transformer_osws</span>)
+  <span class="ruby-identifier">failures</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">transformer_failures</span>
+
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&#39;Done Running Scenario&#39;</span>
+
+  <span class="ruby-comment"># if failures.size &gt; 0</span>
+  <span class="ruby-comment">#   puts &quot;DATAPOINT FAILURES: #{failures}&quot;</span>
+  <span class="ruby-comment"># end</span>
+
+  <span class="ruby-comment"># write results to file and to command line</span>
+  <span class="ruby-identifier">get_results</span>(<span class="ruby-identifier">scenario</span>, <span class="ruby-identifier">simulation_dirs</span>)
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">simulation_dirs</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
