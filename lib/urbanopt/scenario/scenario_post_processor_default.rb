@@ -97,8 +97,9 @@ module URBANopt
           Hour VARCHAR(255),
           Minute VARCHAR(255),
           Dst INTEGER,
-          ReportDataDictionaryIndex INTEGER,
-          Value INTEGER
+          FuelType VARCHAR(255),
+          Value INTEGER,
+          FuelUnits VARCHAR(255)
           )"
 
         values_arr = []
@@ -127,12 +128,13 @@ module URBANopt
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
-          # RDDI == 10 is the timestep value for facility electricity in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
-          elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+            Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
           INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-          WHERE ReportDataDictionaryIndex == 10
+          INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+          WHERE rddi.IndexGroup == 'Facility:Electricity'
+          AND rddi.ReportingFrequency == 'Zone Timestep'
           ORDER BY ReportData.TimeIndex"
 
           elec_query.each do |row| # Add up all the values for electricity usage across all Features at this timestep
@@ -149,12 +151,13 @@ module URBANopt
           end # End elec_query
           elec_query.close
 
-          # RDDI == 1382 is the timestep value for facility gas in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
-          gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+            Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
           INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-          WHERE ReportDataDictionaryIndex == 1382
+          INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+          WHERE rddi.IndexGroup == 'Facility:Gas'
+          AND rddi.ReportingFrequency == 'Zone Timestep'
           ORDER BY ReportData.TimeIndex"
 
           gas_query.each do |row|
@@ -175,8 +178,8 @@ module URBANopt
         elec_sql = []
         gas_sql = []
         values_arr.each do |i|
-          elec_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 10, #{i[:elec_val]})"
-          gas_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 1382, #{i[:gas_val]})"
+          elec_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 'Electricity', #{i[:elec_val]}, 'J')"
+          gas_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 'Gas', #{i[:gas_val]}, 'J')"
         end
 
         # Put summed Values into the database
