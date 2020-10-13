@@ -253,8 +253,9 @@ href="SimulationDirOSW.html">SimulationDirOSW</a> class.</p>
     Hour VARCHAR(255),
     Minute VARCHAR(255),
     Dst INTEGER,
-    ReportDataDictionaryIndex INTEGER,
-    Value INTEGER
+    FuelType VARCHAR(255),
+    Value INTEGER,
+    FuelUnits VARCHAR(255)
     )&quot;</span>
 
   <span class="ruby-identifier">values_arr</span> = []
@@ -283,12 +284,13 @@ href="SimulationDirOSW.html">SimulationDirOSW</a> class.</p>
     <span class="ruby-identifier">feature_db</span> = <span class="ruby-constant">SQLite3</span><span class="ruby-operator">::</span><span class="ruby-constant">Database</span>.<span class="ruby-identifier">open</span> <span class="ruby-identifier">uo_output_sql_file</span>
     <span class="ruby-comment"># Doing &quot;db.results_as_hash = true&quot; is prettier, but in this case significantly slower.</span>
 
-    <span class="ruby-comment"># RDDI == 10 is the timestep value for facility electricity in OS 3.0.1</span>
-    <span class="ruby-comment"># TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it</span>
-    <span class="ruby-identifier">elec_query</span> = <span class="ruby-identifier">feature_db</span>.<span class="ruby-identifier">query</span> <span class="ruby-string">&quot;SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+    <span class="ruby-identifier">elec_query</span> = <span class="ruby-identifier">feature_db</span>.<span class="ruby-identifier">query</span> <span class="ruby-string">&quot;SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+      Time.Minute, Time.Dst, ReportData.Value
     FROM ReportData
     INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-    WHERE ReportDataDictionaryIndex == 10
+    INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+    WHERE rddi.IndexGroup == &#39;Facility:Electricity&#39;
+    AND rddi.ReportingFrequency == &#39;Zone Timestep&#39;
     ORDER BY ReportData.TimeIndex&quot;</span>
 
     <span class="ruby-identifier">elec_query</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-comment"># Add up all the values for electricity usage across all Features at this timestep</span>
@@ -305,12 +307,13 @@ href="SimulationDirOSW.html">SimulationDirOSW</a> class.</p>
     <span class="ruby-keyword">end</span> <span class="ruby-comment"># End elec_query</span>
     <span class="ruby-identifier">elec_query</span>.<span class="ruby-identifier">close</span>
 
-    <span class="ruby-comment"># RDDI == 1382 is the timestep value for facility gas in OS 3.0.1</span>
-    <span class="ruby-comment"># TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it</span>
-    <span class="ruby-identifier">gas_query</span> = <span class="ruby-identifier">feature_db</span>.<span class="ruby-identifier">query</span> <span class="ruby-string">&quot;SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+    <span class="ruby-identifier">gas_query</span> = <span class="ruby-identifier">feature_db</span>.<span class="ruby-identifier">query</span> <span class="ruby-string">&quot;SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+      Time.Minute, Time.Dst, ReportData.Value
     FROM ReportData
     INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-    WHERE ReportDataDictionaryIndex == 1382
+    INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+    WHERE rddi.IndexGroup == &#39;Facility:Gas&#39;
+    AND rddi.ReportingFrequency == &#39;Zone Timestep&#39;
     ORDER BY ReportData.TimeIndex&quot;</span>
 
     <span class="ruby-identifier">gas_query</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
@@ -331,8 +334,8 @@ href="SimulationDirOSW.html">SimulationDirOSW</a> class.</p>
   <span class="ruby-identifier">elec_sql</span> = []
   <span class="ruby-identifier">gas_sql</span> = []
   <span class="ruby-identifier">values_arr</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">elec_sql</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 10, #{i[:elec_val]})&quot;</span>
-    <span class="ruby-identifier">gas_sql</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 1382, #{i[:gas_val]})&quot;</span>
+    <span class="ruby-identifier">elec_sql</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, &#39;Electricity&#39;, #{i[:elec_val]}, &#39;J&#39;)&quot;</span>
+    <span class="ruby-identifier">gas_sql</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, &#39;Gas&#39;, #{i[:gas_val]}, &#39;J&#39;)&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Put summed Values into the database</span>
@@ -412,7 +415,7 @@ scenario results file</p>
 
           
           <div class="method-source-code" id="save-source">
-            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_post_processor_default.rb, line 193</span>
+            <pre><span class="ruby-comment"># File lib/urbanopt/scenario/scenario_post_processor_default.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save</span>(<span class="ruby-identifier">file_name</span> = <span class="ruby-ivar">@default_save_name</span>)
   <span class="ruby-ivar">@scenario_result</span>.<span class="ruby-identifier">save</span>
 
