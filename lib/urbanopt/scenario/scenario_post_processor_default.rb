@@ -43,7 +43,7 @@ module URBANopt
       # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
       ##
       # [parameters:]
-      # +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
+      # * +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
       def initialize(scenario_base)
         super(scenario_base)
 
@@ -69,7 +69,7 @@ module URBANopt
       # Add results from a simulation_dir to this result.
       ##
       # [parameters:]
-      # +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
+      # * +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
       def add_simulation_dir(simulation_dir)
         feature_reports = URBANopt::Reporting::DefaultReports::FeatureReport.from_simulation_dir(simulation_dir)
 
@@ -86,6 +86,9 @@ module URBANopt
 
       # Create database file with scenario-level results
       #   Sum values for each timestep across all features. Save to new table in a new database
+      ##
+      # [parameters:]
+      # * +file_name+ - _String_ - Assign a name to the saved scenario results file
       def create_scenario_db_file(file_name = @default_save_name)
         new_db_file = File.join(@initialization_hash[:directory_name], "#{file_name}.db")
         scenario_db = SQLite3::Database.open new_db_file
@@ -192,7 +195,7 @@ module URBANopt
       # Save scenario result
       ##
       # [parameters:]
-      # +file_name+ - _String_ - Assign a name to the saved scenario results file
+      # * +file_name+ - _String_ - Assign a name to the saved scenario results file
       def save(file_name = @default_save_name)
         @scenario_result.save
 

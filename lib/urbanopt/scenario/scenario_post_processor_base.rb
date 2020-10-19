@@ -35,7 +35,7 @@ module URBANopt
       # ScenarioPostProcessorBase post-processes a Scenario to create scenario level results.
       ##
       # [parameters:]
-      # +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
+      # * +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
       def initialize(scenario_base)
         @scenario_base = scenario_base
       end
@@ -53,7 +53,7 @@ module URBANopt
       # Add results from a simulation_dir to this result.
       ##
       # [parameters:]
-      # +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
+      # * +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
       def add_simulation_dir(simulation_dir)
         raise 'add_simulation_dir not implemented for ScenarioPostProcessorBase, override in your class'
       end

@@ -43,8 +43,8 @@ module URBANopt
       # OpenDSSPostProcessor post-processes OpenDSS results to selected OpenDSS results and integrate them in scenario and feature reports.
       ##
       # [parameters:]
-      # +scenario_report+ - _ScenarioBase_ - An object of Scenario_report class.
-      # +opendss_results_dir_name+ - _directory name of opendss results
+      # * +scenario_report+ - _ScenarioBase_ - An object of Scenario_report class.
+      # * +opendss_results_dir_name+ - _directory name of opendss results
       def initialize(scenario_report, opendss_results_dir_name = 'opendss')
         if !scenario_report.nil?
           @scenario_report = scenario_report
@@ -202,9 +202,9 @@ module URBANopt
       # Save csv report method
       ##
       # [parameters:]
-      # +feature_report+ - _feature report object_ - An onject of the feature report
-      # +updated_feature_report_csv+ - _CSV_ - An updated feature report csv
-      # +file_name+ - _String_ - Assigned name to save the file with no extension
+      # * +feature_report+ - _feature report object_ - An onject of the feature report
+      # * +updated_feature_report_csv+ - _CSV_ - An updated feature report csv
+      # * +file_name+ - _String_ - Assigned name to save the file with no extension
       def save_csv(feature_report, updated_feature_report_csv, file_name = 'default_feature_report')
         File.write(File.join(feature_report.directory_name, 'feature_reports', "#{file_name}.csv"), updated_feature_report_csv)
       end
@@ -213,7 +213,7 @@ module URBANopt
       # create opendss json report results
       ##
       # [parameters:]
-      # +feature_report+ - _feature report object_ - An onject of the feature report
+      # * +feature_report+ - _feature report object_ - An onject of the feature report
       def add_summary_results(feature_report)
         under_voltage_hrs = 0
         over_voltage_hrs = 0
