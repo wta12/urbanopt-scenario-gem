@@ -240,7 +240,7 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     expect(json_file[0]['name']).to eq 'baseline_scenario'
     expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
     expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873999027
-    expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.62353445
+    expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27935873.479511403
   end
 
   it 'can create visualization for feature result' do
@@ -267,7 +267,7 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
     expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
     if json_file[0]['name'] == '1'
       expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 1833016.431105801
-      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 3230104.682959298
+      expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 3230104.6829592995
     else
       expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 2083432.9873940796
       expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 27937661.623504374
