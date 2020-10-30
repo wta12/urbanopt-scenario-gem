@@ -138,6 +138,7 @@ module URBANopt
           INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
           WHERE rddi.IndexGroup == 'Facility:Electricity'
           AND rddi.ReportingFrequency == 'Zone Timestep'
+          AND Time.Year > 1900
           ORDER BY ReportData.TimeIndex"
 
           elec_query.each do |row| # Add up all the values for electricity usage across all Features at this timestep
@@ -161,6 +162,7 @@ module URBANopt
           INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
           WHERE rddi.IndexGroup == 'Facility:Gas'
           AND rddi.ReportingFrequency == 'Zone Timestep'
+          AND Time.Year > 1900
           ORDER BY ReportData.TimeIndex"
 
           gas_query.each do |row|
