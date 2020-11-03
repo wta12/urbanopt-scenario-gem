@@ -258,7 +258,7 @@ module URBANopt
           updated_feature_csv = merge_data(@feature_reports_data[id], @opendss_data[id])
 
           # save fetaure reports
-          feature_report.save_feature_report('default_feature_report_opendss')
+          feature_report.save_json_report('default_feature_report_opendss')
 
           # resave updated csv report
           save_csv(feature_report, updated_feature_csv, 'default_feature_report_opendss')
