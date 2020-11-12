@@ -38,10 +38,10 @@ module URBANopt
       # A Simulation Mapper will map the
       ##
       # [parameters:]
-      #  +scenario+ - _ScenarioBase_ - Scenario containing this ScenarioDatapoint.
-      #  +feature_id+ - _String_ - Unique id of the feature for this ScenarioDatapoint.
-      #  +feature_name+ - _String_ - Human readable name of the feature for this ScenarioDatapoint.
-      #  +mapper_class+ - _String_ - Name of Ruby class used to translate feature to simulation OSW.
+      # * +scenario+ - _ScenarioBase_ - Scenario containing this ScenarioDatapoint.
+      # * +feature_id+ - _String_ - Unique id of the feature for this ScenarioDatapoint.
+      # * +feature_name+ - _String_ - Human readable name of the feature for this ScenarioDatapoint.
+      # * +mapper_class+ - _String_ - Name of Ruby class used to translate feature to simulation OSW.
       def initialize(scenario, feature_id, feature_name, mapper_class)
         @scenario = scenario
         @feature_id = feature_id

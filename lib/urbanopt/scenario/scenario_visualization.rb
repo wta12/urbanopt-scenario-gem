@@ -181,14 +181,13 @@ module URBANopt
                     monthly_sum_dec += v.to_f
                     i += 1
                   end
-                  # sum up all values for annual aggregate
-                  if k <= size
-                    annual_sum += v.to_f
-                    k += 1
-                  end
+
                 end
               end
 
+              # sum up monthly values for annual aggregate
+              annual_sum = monthly_sum_jan + monthly_sum_feb + monthly_sum_mar + monthly_sum_apr + monthly_sum_may + monthly_sum_jun + monthly_sum_jul + monthly_sum_aug + monthly_sum_sep + monthly_sum_oct + monthly_sum_nov + monthly_sum_dec
+              
               # store headers as key and monthly sums as values for each header
               monthly_totals[headers_unitless[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
 

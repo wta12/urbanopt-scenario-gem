@@ -43,7 +43,7 @@ module URBANopt
       # ScenarioPostProcessorBase post-processes a scenario to create scenario level results
       ##
       # [parameters:]
-      # +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
+      # * +scenario_base+ - _ScenarioBase_ - An object of ScenarioBase class.
       def initialize(scenario_base)
         super(scenario_base)
 
@@ -69,7 +69,7 @@ module URBANopt
       # Add results from a simulation_dir to this result.
       ##
       # [parameters:]
-      # +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
+      # * +simulation_dir+ - _SimulationDirOSW_ - An object on SimulationDirOSW class.
       def add_simulation_dir(simulation_dir)
         feature_reports = URBANopt::Reporting::DefaultReports::FeatureReport.from_simulation_dir(simulation_dir)
 
@@ -86,6 +86,9 @@ module URBANopt
 
       # Create database file with scenario-level results
       #   Sum values for each timestep across all features. Save to new table in a new database
+      ##
+      # [parameters:]
+      # * +file_name+ - _String_ - Assign a name to the saved scenario results file
       def create_scenario_db_file(file_name = @default_save_name)
         new_db_file = File.join(@initialization_hash[:directory_name], "#{file_name}.db")
         scenario_db = SQLite3::Database.open new_db_file
@@ -97,8 +100,9 @@ module URBANopt
           Hour VARCHAR(255),
           Minute VARCHAR(255),
           Dst INTEGER,
-          ReportDataDictionaryIndex INTEGER,
-          Value INTEGER
+          FuelType VARCHAR(255),
+          Value INTEGER,
+          FuelUnits VARCHAR(255)
           )"
 
         values_arr = []
@@ -127,12 +131,14 @@ module URBANopt
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
-          # RDDI == 10 is the timestep value for facility electricity in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
-          elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          elec_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+            Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
           INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-          WHERE ReportDataDictionaryIndex == 10
+          INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+          WHERE rddi.IndexGroup == 'Facility:Electricity'
+          AND rddi.ReportingFrequency == 'Zone Timestep'
+          AND Time.Year > 1900
           ORDER BY ReportData.TimeIndex"
 
           elec_query.each do |row| # Add up all the values for electricity usage across all Features at this timestep
@@ -149,12 +155,14 @@ module URBANopt
           end # End elec_query
           elec_query.close
 
-          # RDDI == 1382 is the timestep value for facility gas in OS 3.0.1
-          # TODO: Dynamically read RDDI from table RDDI, insted of hardcoding it
-          gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, ReportData.Value
+          gas_query = feature_db.query "SELECT ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour,
+            Time.Minute, Time.Dst, ReportData.Value
           FROM ReportData
           INNER JOIN Time ON Time.TimeIndex=ReportData.TimeIndex
-          WHERE ReportDataDictionaryIndex == 1382
+          INNER JOIN ReportDataDictionary AS rddi ON rddi.ReportDataDictionaryIndex=ReportData.ReportDataDictionaryIndex
+          WHERE rddi.IndexGroup == 'Facility:Gas'
+          AND rddi.ReportingFrequency == 'Zone Timestep'
+          AND Time.Year > 1900
           ORDER BY ReportData.TimeIndex"
 
           gas_query.each do |row|
@@ -175,8 +183,8 @@ module URBANopt
         elec_sql = []
         gas_sql = []
         values_arr.each do |i|
-          elec_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 10, #{i[:elec_val]})"
-          gas_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 1382, #{i[:gas_val]})"
+          elec_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 'Electricity', #{i[:elec_val]}, 'J')"
+          gas_sql << "(#{i[:time_index]}, #{i[:year]}, #{i[:month]}, #{i[:day]}, #{i[:hour]}, #{i[:minute]}, #{i[:dst]}, 'Gas', #{i[:gas_val]}, 'J')"
         end
 
         # Put summed Values into the database
@@ -189,7 +197,7 @@ module URBANopt
       # Save scenario result
       ##
       # [parameters:]
-      # +file_name+ - _String_ - Assign a name to the saved scenario results file
+      # * +file_name+ - _String_ - Assign a name to the saved scenario results file
       def save(file_name = @default_save_name)
         @scenario_result.save
 

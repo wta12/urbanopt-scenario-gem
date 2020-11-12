@@ -36,10 +36,10 @@ module URBANopt
       # Initialize ScenarioBase attributes: +name+ , +root directory+ , +run directory+ and +feature_file+
       ##
       # [parameters:]
-      # +name+ - _String_ - Human readable scenario name.
-      # +root_dir+ - _String_ - Root directory for the scenario, contains Gemfile describing dependencies.
-      # +run_dir+ - _String_ - Directory for simulation of this scenario, deleting run directory clears the scenario.
-      # +feature_file+ - _FeatureFile_ - An instance of +URBANopt::Core::FeatureFile+ containing features for simulation.
+      # * +name+ - _String_ - Human readable scenario name.
+      # * +root_dir+ - _String_ - Root directory for the scenario, contains Gemfile describing dependencies.
+      # * +run_dir+ - _String_ - Directory for simulation of this scenario, deleting run directory clears the scenario.
+      # * +feature_file+ - _FeatureFile_ - An instance of +URBANopt::Core::FeatureFile+ containing features for simulation.
       def initialize(name, root_dir, run_dir, feature_file)
         @name = name
         @root_dir = root_dir

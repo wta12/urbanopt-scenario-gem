@@ -42,14 +42,13 @@ module URBANopt
       # The CSV file has three columns 1) feature_id, 2) feature_name, and 3) mapper_class_name.  There is one row for each Feature.
       ##
       # [parameters:]
-      # +name+ - _String_ - Human readable scenario name.
-      # +root_dir+ - _String_ - Root directory for the scenario, contains Gemfile describing dependencies.
-      # +run_dir+ - _String_ - Directory for simulation of this scenario, deleting run directory clears the scenario.
-      # +feature_file+ - _URBANopt::Core::FeatureFile_ - FeatureFile containing features to simulate.
-      # +mapper_files_dir+ - _String_ - Directory containing all mapper class files containing MapperBase definitions.
-      # +csv_file+ - _String_ - Path to CSV file assigning a MapperBase class to each feature in feature_file.
-      # +num_header_rows+ - _Strng_ - Number of header rows to skip in CSV file.
-
+      # * +name+ - _String_ - Human readable scenario name.
+      # * +root_dir+ - _String_ - Root directory for the scenario, contains Gemfile describing dependencies.
+      # * +run_dir+ - _String_ - Directory for simulation of this scenario, deleting run directory clears the scenario.
+      # * +feature_file+ - _URBANopt::Core::FeatureFile_ - FeatureFile containing features to simulate.
+      # * +mapper_files_dir+ - _String_ - Directory containing all mapper class files containing MapperBase definitions.
+      # * +csv_file+ - _String_ - Path to CSV file assigning a MapperBase class to each feature in feature_file.
+      # * +num_header_rows+ - _String_ - Number of header rows to skip in CSV file.
       def initialize(name, root_dir, run_dir, feature_file, mapper_files_dir, csv_file, num_header_rows)
         super(name, root_dir, run_dir, feature_file)
         @mapper_files_dir = mapper_files_dir

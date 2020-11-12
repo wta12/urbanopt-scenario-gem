@@ -10,11 +10,11 @@
   },
   "author": "NREL",
   "dependencies": {
-    "highlight.js": "^10.2.0",
+    "highlight.js": "^10.2.1",
     "json-schema-ref-parser": "^9.0.6",
     "json-schema-view-js": "git+https://git@github.com/bgschiller/json-schema-view-js.git",
-    "vuepress": "^1.5.4",
-    "webpack-dev-middleware": "^3.7.2"
+    "vuepress": "^1.6.0",
+    "webpack-dev-middleware": "^3.6.0"
   },
   "devDependencies": {
     "braces": "^3.0.2",
@@ -25,6 +25,6 @@
     "node-forge": ">=0.10.0",
     "serialize-javascript": "^5.0.1",
     "set-value": "^3.0.2",
-    "yargs-parser": ">=18.1.1"
+    "yargs-parser": "^20.2.1"
   }
 }
