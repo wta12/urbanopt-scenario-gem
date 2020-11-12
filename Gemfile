@@ -43,9 +43,9 @@ allow_local = ENV['FAVOR_LOCAL_GEMS']
 # if allow_local && File.exist?('../urbanopt-reporting-gem')
 #  gem 'urbanopt-reporting', path: '../urbanopt-reporting-gem'
 # elsif allow_local
-  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
+#  gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
 # else
-#  gem 'urbanopt-reporting', '~> 0.2.0'
+#  gem 'urbanopt-reporting', '~> 0.2.1'
 # end
 
 # if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')

@@ -1,5 +1,19 @@
 # URBANopt Scenario Gem
 
+## Version 0.4.3
+Date Range: 10/01/20 - 11/12/20
+
+- Fixed [#161]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/161 ), updated tests to work with the added units in the json reports
+- Fixed [#162]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/162 ), update spec Gemfile for new geojson version
+- Fixed [#163]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/163 ), Db method
+- Fixed [#165]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/165 ), Update rdoc packages
+- Fixed [#166]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/166 ), use issue-closing keyword and remove period
+- Fixed [#168]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/168 ), Aggregates monthly values to get the annual values.
+- Fixed [#169]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/169 ), Formatting for web display of rdocs
+- Fixed [#171]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/171 ), only use years after 1900 in query
+- Fixed [#173]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/173 ), pin dependencies that upgraded and broke us
+- Fixed [#174]( https://github.com/urbanopt/urbanopt-scenario-gem/pull/174 ), results bug fix
+
 ## Version 0.4.2
 Date Range: 09/29/20 - 09/30/20
 

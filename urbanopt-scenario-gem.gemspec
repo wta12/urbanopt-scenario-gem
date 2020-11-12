@@ -36,5 +36,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'openstudio-model-articulation', '0.2.0'
   spec.add_runtime_dependency 'sqlite3', '1.4.2'
   spec.add_runtime_dependency 'urbanopt-core', '~> 0.4.0'
-  spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.2.0'
+  spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.2.1'
 end
