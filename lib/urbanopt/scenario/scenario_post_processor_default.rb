@@ -125,9 +125,8 @@ module URBANopt
         else
           raise "Couldn't find scenario CSV: #{scenario_csv}"
         end
-        feature_1_name = File.basename(feature_list[0]) # Get name of first feature, so we can read eplusout.sql from there
-        uo_output_sql_file = File.join(@initialization_hash[:directory_name], feature_1_name, 'eplusout.sql')
         feature_list.each do |feature| # Loop through each feature in the scenario
+          uo_output_sql_file = File.join(@initialization_hash[:directory_name], File.basename(feature), 'eplusout.sql')
           feature_db = SQLite3::Database.open uo_output_sql_file
           # Doing "db.results_as_hash = true" is prettier, but in this case significantly slower.
 
