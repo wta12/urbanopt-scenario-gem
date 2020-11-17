@@ -1,5 +1,10 @@
 # URBANopt Scenario Gem
 
+## Version 0.4.4
+Date Range: 11/13/20 - 11/16/20
+
+- Fixed [#183]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/183 ), Bug in query for scenario_db output file
+
 ## Version 0.4.3
 Date Range: 10/01/20 - 11/12/20
 
