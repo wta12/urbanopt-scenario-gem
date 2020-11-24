@@ -32,13 +32,13 @@ gem 'openstudio-extension', '~> 0.3.1'
 # if allow_local && File.exist?('../openstudio-common-measures-gem')
 #   gem 'openstudio-common-measures', path: '../openstudio-common-measures-gem'
 # elsif allow_local
-   gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
+#   gem 'openstudio-common-measures', github: 'NREL/openstudio-common-measures-gem', branch: 'develop'
 # end
 
 # if allow_local && File.exist?('../openstudio-model-articulation-gem')
 #   gem 'openstudio-model-articulation', path: '../openstudio-model-articulation-gem'
 # elsif allow_local
-   gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
+#   gem 'openstudio-model-articulation', github: 'NREL/openstudio-model-articulation-gem', branch: 'develop'
 # end
 
 # if allow_local && File.exist?('../urbanopt-reporting-gem')
