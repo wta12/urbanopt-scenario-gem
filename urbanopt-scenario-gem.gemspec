@@ -38,8 +38,8 @@ Gem::Specification.new do |spec|
   # extension gem is included in urbanopt-core so we shouldn't need to explicitly require it here
   # spec.add_runtime_dependency 'openstudio-extension', '~> 0.3.1'
 
+  # need to include all measure gems listed in mappers in project gemfiles
   # scenario_csv loads the mappers and need access to the extension gems when they are added to a mapper
-  # so we need these?
   spec.add_runtime_dependency 'openstudio-common-measures', '0.3.0'
   spec.add_runtime_dependency 'openstudio-load-flexibility-measures', '~> 0.2.0'
   spec.add_runtime_dependency 'openstudio-model-articulation', '0.3.0'
