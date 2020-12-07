@@ -30,14 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'json-schema', '~> 2.8'
   spec.add_runtime_dependency 'json_pure', '~> 2.3'
-<<<<<<< HEAD
 
-=======
-  spec.add_runtime_dependency 'openstudio-common-measures', '0.2.1'
-  spec.add_runtime_dependency 'openstudio-extension', '~> 0.3.1'
-  spec.add_runtime_dependency 'openstudio-load-flexibility-measures', '~> 0.1.3'
-  spec.add_runtime_dependency 'openstudio-model-articulation', '0.2.1'
->>>>>>> 90a86c9c2f076afac8bbcfd5a0084943f615eeec
   spec.add_runtime_dependency 'sqlite3', '1.4.2'
   spec.add_runtime_dependency 'urbanopt-core', '~> 0.5.0'
   spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.3.0'
