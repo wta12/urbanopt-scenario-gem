@@ -45,4 +45,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'openstudio-model-articulation', '0.3.0'
   spec.add_runtime_dependency 'openstudio-ee', '~> 0.3.0'
   spec.add_runtime_dependency 'openstudio-calibration', '~> 0.3.0'
+
 end
