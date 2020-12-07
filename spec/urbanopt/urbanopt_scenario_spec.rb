@@ -153,8 +153,7 @@ RSpec.describe URBANopt::Scenario do
     #expect(File.exist?(File.join(scenario.run_dir, 'default_scenario_report.db'))).to be true
 
     ### save feature reports
-    $scenario_result.feature_reports.each(&:save_json_report)
-    $scenario_result.feature_reports.each(&:save_csv_report)
+    $scenario_result.feature_reports.each(&:save_feature_report)
 
     ## Add test assertions on scenario_result
     # Check scenario_report JSON file
