@@ -34,7 +34,6 @@ require 'urbanopt/reporting/default_reports'
 require 'csv'
 require 'json'
 require 'fileutils'
-require 'pathname'
 
 module URBANopt
   module Scenario
