@@ -45,9 +45,9 @@ if allow_local && File.exist?('../urbanopt-reporting-gem')
 elsif allow_local
   gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'develop'
 #else
-#  gem 'urbanopt-reporting', '~> 0.3.0'
+#  gem 'urbanopt-reporting', '~> 0.3.1'
 end
-gem 'urbanopt-reporting', github: 'URBANopt/urbanopt-reporting-gem', branch: 'fix-other-fuels'
+
 
 # if allow_local && File.exist?('../openstudio-load-flexibility-measures-gem')
 #   gem 'openstudio-load-flexibility-measures', path: '../openstudio-load-flexibility-measures-gem'
