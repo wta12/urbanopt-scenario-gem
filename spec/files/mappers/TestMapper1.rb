@@ -32,6 +32,7 @@ require 'urbanopt/reporting'
 require 'openstudio/common_measures'
 require 'openstudio/model_articulation'
 require 'openstudio/load_flexibility_measures'
+require 'openstudio/ee_measures'
 require 'openstudio/calibration'
 require 'json'
 
