@@ -35,16 +35,18 @@ require 'json'
 module URBANopt
   module Scenario
     class ResultVisualization
-      def self.create_visualization(run_dir, feature = true)
+      def self.create_visualization(run_dir, feature = true, feature_names = false)
         @all_results = []
+        
         run_dir.each do |folder|
-          name = folder.split('/')[-1]
-
           # create visualization for scenarios
           if feature == false
+            name = folder.split('/')[-1]
             csv_dir = File.join(folder, 'default_scenario_report.csv')
           # create visualization for features
           elsif feature == true
+            index = run_dir.index(folder)
+            name = folder.split('/')[-1] + '-' + feature_names[index]
             csv_dir = File.join(folder, 'feature_reports/default_feature_report.csv')
           end
 
