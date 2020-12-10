@@ -1,5 +1,11 @@
 # URBANopt Scenario Gem
 
+## Version 0.5.0
+Date Range: 11/17/20 - 12/09/20
+
+- Fixed [#177]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/177 ), Fix bug in the method that saves the CSV report
+- Fixed [#188]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/188 ), support OpenStudio 3.1.0
+
 ## Version 0.4.4
 Date Range: 11/13/20 - 11/16/20
 

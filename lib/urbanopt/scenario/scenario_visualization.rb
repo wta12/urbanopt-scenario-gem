@@ -31,7 +31,6 @@
 require 'csv'
 require 'date'
 require 'json'
-require 'fileutils'
 
 module URBANopt
   module Scenario
@@ -187,7 +186,7 @@ module URBANopt
 
               # sum up monthly values for annual aggregate
               annual_sum = monthly_sum_jan + monthly_sum_feb + monthly_sum_mar + monthly_sum_apr + monthly_sum_may + monthly_sum_jun + monthly_sum_jul + monthly_sum_aug + monthly_sum_sep + monthly_sum_oct + monthly_sum_nov + monthly_sum_dec
-              
+
               # store headers as key and monthly sums as values for each header
               monthly_totals[headers_unitless[j]] = [monthly_sum_jan, monthly_sum_feb, monthly_sum_mar, monthly_sum_apr, monthly_sum_may, monthly_sum_jun, monthly_sum_jul, monthly_sum_aug, monthly_sum_sep, monthly_sum_oct, monthly_sum_nov, monthly_sum_dec]
 

@@ -32,8 +32,6 @@ require 'urbanopt/scenario/scenario_post_processor_base'
 require 'urbanopt/reporting/default_reports'
 
 require 'csv'
-require 'json'
-require 'fileutils'
 require 'sqlite3'
 
 module URBANopt
