@@ -267,7 +267,7 @@ module URBANopt
         save_transformers_reports
 
         # save the updated scenario reports
-        @scenario_report.save(file_name = 'scenario_report_opendss')
+        @scenario_report.save(file_name = 'scenario_report_opendss', save_feature_reports = false)
       end
     end
   end
