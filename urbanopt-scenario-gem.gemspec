@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'sqlite3', '1.4.2'
   spec.add_runtime_dependency 'urbanopt-core', '~> 0.5.1'
-  spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.3.2'
+  # spec.add_runtime_dependency 'urbanopt-reporting', '~> 0.3.2'
 
   # extension gem is included in urbanopt-core so we shouldn't need to explicitly require it here
   # spec.add_runtime_dependency 'openstudio-extension', '~> 0.3.1'
