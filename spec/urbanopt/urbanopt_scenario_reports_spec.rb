@@ -245,8 +245,9 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
   it 'can create visualization for feature result' do
     run_dir = [File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/1'), File.join(File.dirname(__FILE__), '../vis_test/baseline_scenario/2')]
+    feature_names = ["Building_1", "Building_2"]
 
-    scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, true)
+    scenario_visualization = URBANopt::Scenario::ResultVisualization.create_visualization(run_dir, true, feature_names)
 
     file = File.join(run_dir[0], '../scenarioData.js')
     expect(File.exist?(file)).to be true
@@ -258,14 +259,14 @@ RSpec.describe URBANopt::Reporting::DefaultReports do
 
     json_file = JSON.parse(visualization_file)
     # order does not seem to be the same
-    if ['1', '2'].include? json_file[0]['name']
+    if ['1-Building_1', '2-Building_2'].include? json_file[0]['name']
       testName = true
     else
       testName = false
     end
     expect(testName).to be_truthy
     expect(json_file[0]['monthly_values']['Electricity:Facility'].size).to eq 12
-    if json_file[0]['name'] == '1'
+    if json_file[0]['name'] == '1-Building_1'
       expect(json_file[0]['monthly_values']['Electricity:Facility'][0]).to eq 1833016.431105801
       expect(json_file[0]['annual_values']['Electricity:Facility']).to eq 3230104.6829592995
     else

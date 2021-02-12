@@ -1,5 +1,12 @@
 # URBANopt Scenario Gem
 
+## Version 0.5.1
+Date Range: 12/15/20 - 02/04/21
+
+- Fixed [#175]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/175 ), Need additional reporting output to supply to DES (Modelica) team
+- Fixed [#194]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/194 ), In the visualization reports, update graphs to show names of features and not feature ids
+- Fixed [#196]( https://github.com/urbanopt/urbanopt-scenario-gem/issues/196 ), In opendss postprocessor:  update scenario reports saving method to not save the feature reports.
+
 ## Version 0.5.0
 Date Range: 11/17/20 - 12/09/20
 
