@@ -111,6 +111,8 @@ module URBANopt
 
         rows_skipped = 0
         result = []
+    
+       
         CSV.foreach(@csv_file) do |row|
           if rows_skipped < @num_header_rows
             rows_skipped += 1
@@ -123,19 +125,22 @@ module URBANopt
           feature_id = row[0].chomp
           feature_name = row[1].chomp
           mapper_class = row[2].chomp
-
+          
           # gets +features+ from the feature_file.
           features = []
-          feature = feature_file.get_feature_by_id(feature_id)
-          features << feature
-
           feature_names = []
-          feature_names << feature_name
 
-          simulation_dir = SimulationDirOSW.new(self, features, feature_names, mapper_class)
-
-          result << simulation_dir
-        end
+          feature = feature_file.get_feature_by_id(feature_id)
+          
+          ## verify if feature inputs are ok
+          verify_feature_input = [feature_name.size > 0, feature.is_a?(URBANopt::GeoJSON::Building)]
+          if verify_feature_input.all?
+            features << feature
+            feature_names << feature_name
+            simulation_dir = SimulationDirOSW.new(self, features, feature_names, mapper_class)
+            result << simulation_dir
+          end
+        end#CSV
 
         return result
       end

@@ -57,7 +57,7 @@ module URBANopt
         if features.size != 1
           raise 'SimulationDirOSW currently cannot simulate more than one feature'
         end
-
+        
         @feature = features[0]
         @feature_id = @feature.id
 
